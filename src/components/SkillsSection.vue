@@ -98,6 +98,8 @@ const isMobileOrTablet = ref(false)
 const skillsTitleRef = ref(null)
 const skillsSectionRef = ref(null)
 let scrollTrigger = null
+let viewportHeightCheckInterval = null
+let lastViewportHeight = 0
 
 const checkScreenSize = () => {
   const tabletBreakpoint = getTabletBreakpoint()
@@ -133,6 +135,7 @@ const setupScrollTrigger = () => {
       start: 'top 90%',
       end: 'top center',
       scrub: 1,
+      invalidateOnRefresh: true,
       onEnter: () => {
         gsap.to(skillsTitleRef.value, {
           opacity: 1,
@@ -161,13 +164,36 @@ const setupScrollTrigger = () => {
   }
 }
 
+// 뷰포트 높이 변화 감지 및 ScrollTrigger 갱신
+const setupViewportHeightWatcher = () => {
+  if (!isMobile()) return
+
+  lastViewportHeight = window.innerHeight
+
+  // 뷰포트 높이 변화 감지를 위한 주기적 체크
+  if (viewportHeightCheckInterval) {
+    clearInterval(viewportHeightCheckInterval)
+  }
+
+  viewportHeightCheckInterval = setInterval(() => {
+    const currentHeight = window.innerHeight
+    if (Math.abs(currentHeight - lastViewportHeight) > 10) {
+      // 뷰포트 높이가 10px 이상 변화하면 ScrollTrigger 갱신
+      lastViewportHeight = currentHeight
+      ScrollTrigger.refresh()
+    }
+  }, 100) // 100ms마다 체크
+}
+
 onMounted(() => {
   checkScreenSize()
   setupScrollTrigger()
+  setupViewportHeightWatcher()
 
   window.addEventListener('resize', () => {
     checkScreenSize()
     setupScrollTrigger()
+    setupViewportHeightWatcher()
     ScrollTrigger.refresh()
   })
 })
@@ -177,6 +203,10 @@ onUnmounted(() => {
   if (scrollTrigger) {
     scrollTrigger.kill()
     scrollTrigger = null
+  }
+  if (viewportHeightCheckInterval) {
+    clearInterval(viewportHeightCheckInterval)
+    viewportHeightCheckInterval = null
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })

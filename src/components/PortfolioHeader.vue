@@ -31,10 +31,29 @@ let nameTextRestoreAnimation = null
 let heroCheckHandler = null
 let heroCheckTimeout = null
 let isRestoring = false
+let viewportHeightCheckInterval = null
+let lastViewportHeight = 0
 
 const isMobile = () => {
   const mobileBreakpoint = getMobileBreakpoint()
   return window.innerWidth <= mobileBreakpoint
+}
+
+// 뷰포트 높이 변화 감지 및 ScrollTrigger 갱신
+const setupViewportHeightWatcher = () => {
+  if (!isMobile()) return
+
+  lastViewportHeight = window.innerHeight
+
+  // 뷰포트 높이 변화 감지를 위한 주기적 체크
+  viewportHeightCheckInterval = setInterval(() => {
+    const currentHeight = window.innerHeight
+    if (Math.abs(currentHeight - lastViewportHeight) > 10) {
+      // 뷰포트 높이가 10px 이상 변화하면 ScrollTrigger 갱신
+      lastViewportHeight = currentHeight
+      ScrollTrigger.refresh()
+    }
+  }, 100) // 100ms마다 체크
 }
 
 // NameTitle 텍스트를 변경하는 함수
@@ -412,6 +431,7 @@ onMounted(() => {
     start: 'top 95%',
     end: 'top center',
     scrub: 1,
+    invalidateOnRefresh: true,
     onEnter: () => {
       hideState()
       if (!isMobile()) {
@@ -442,6 +462,7 @@ onMounted(() => {
     start: 'top 95%',
     end: 'top center',
     scrub: 1,
+    invalidateOnRefresh: true,
     onEnter: () => {
       // Works 섹션에 진입할 때도 hideState 호출 (이미 Skills에서 숨겨졌을 수 있음)
       hideState()
@@ -510,6 +531,9 @@ onMounted(() => {
     // 초기 체크
     heroCheckHandler()
   }
+
+  // 뷰포트 높이 감지 시작
+  setupViewportHeightWatcher()
 })
 
 onUnmounted(() => {
@@ -528,6 +552,10 @@ onUnmounted(() => {
   if (heroCheckHandler) {
     window.removeEventListener('scroll', heroCheckHandler)
     ScrollTrigger.removeEventListener('scrollEnd', heroCheckHandler)
+  }
+  if (viewportHeightCheckInterval) {
+    clearInterval(viewportHeightCheckInterval)
+    viewportHeightCheckInterval = null
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
