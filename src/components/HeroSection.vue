@@ -30,15 +30,27 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
+import { getTabletBreakpoint } from '@/utils/breakpoints'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
 
 const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
 const heroBgSvgRef = ref(null)
+const heroBgPathRef = ref(null)
+let heroBgSvgAnimation = null
+let heroBgPathAnimation = null
+
+const isTablet = () => {
+  const tabletBreakpoint = getTabletBreakpoint()
+  return window.innerWidth <= tabletBreakpoint
+}
 
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
+
+  const tablet = isTablet()
 
   gsap.to(heroImageRef.value, {
     scrollTrigger: {
@@ -47,14 +59,16 @@ onMounted(() => {
       end: 'center top',
       scrub: true,
     },
+    // x: '200%',
+    // scale: 1.5,
     autoAlpha: 0,
     ease: 'power2.in',
   })
 
-  // hero-bg-svg 단순 opacity 애니메이션만 (성능 최적화)
-  if (heroBgSvgRef.value) {
+  // hero-bg-svg 스크롤 애니메이션 (blur) - 태블릿에서는 제거하여 성능 최적화
+  if (!tablet) {
     gsap.to(heroBgSvgRef.value, {
-      opacity: 0.3,
+      filter: 'blur(100px)',
       scrollTrigger: {
         trigger: heroSectionRef.value,
         start: 'top top',
@@ -63,11 +77,57 @@ onMounted(() => {
       },
     })
   }
+
+  // hero-bg-svg 부드러운 움직임 애니메이션 (무한 반복) - 태블릿에서는 간소화
+  if (heroBgSvgRef.value) {
+    heroBgSvgAnimation = gsap.to(heroBgSvgRef.value, {
+      x: tablet ? '+=15' : '+=30',
+      y: tablet ? '+=10' : '+=20',
+      rotation: tablet ? 5 : 10,
+      scale: tablet ? 1.05 : 1.1,
+      duration: tablet ? 15 : 10,
+      ease: 'power2.inOut',
+      repeat: -1,
+      yoyo: true,
+    })
+  }
+
+  // hero-bg-path morphing 애니메이션 - 태블릿에서는 간소화
+  if (heroBgSvgRef.value && heroBgPathRef.value) {
+    // hero-bg-svg 내의 모든 path 요소들의 d 속성을 배열로 가져오기
+    const shapes = gsap.utils.toArray('path', heroBgSvgRef.value).map((el) => el.getAttribute('d'))
+
+    // path가 하나 이상 있을 때만 애니메이션 적용
+    if (shapes.length > 0) {
+      // 랜덤하게 path를 선택하는 함수
+      const getRandomShape = gsap.utils.random(shapes, true)
+
+      // morphing 애니메이션 - 태블릿에서는 repeatRefresh 제거하고 duration 증가
+      heroBgPathAnimation = gsap.to(heroBgPathRef.value, {
+        morphSVG: getRandomShape,
+        repeat: -1,
+        repeatRefresh: !tablet, // 태블릿에서는 false로 설정하여 성능 최적화
+        duration: tablet ? 1.5 : 0.5, // 태블릿에서는 더 느리게
+        ease: 'power1.inOut',
+      })
+    }
+  }
 })
 
 onUnmounted(() => {
+  if (heroBgSvgAnimation) {
+    heroBgSvgAnimation.kill()
+    heroBgSvgAnimation = null
+  }
+  if (heroBgPathAnimation) {
+    heroBgPathAnimation.kill()
+    heroBgPathAnimation = null
+  }
   if (heroBgSvgRef.value) {
     gsap.killTweensOf(heroBgSvgRef.value)
+  }
+  if (heroBgPathRef.value) {
+    gsap.killTweensOf(heroBgPathRef.value)
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
@@ -205,8 +265,9 @@ onUnmounted(() => {
   top: -15%;
   left: 10%;
   pointer-events: none;
-  will-change: opacity;
-  transform: translateZ(0);
+  will-change: transform, filter;
+  transform: translate3d(0, 0, 0); /* GPU 가속 활성화 */
+  /* opacity: 0.2; */
 }
 
 .hero-bg-svg :deep(path) {
