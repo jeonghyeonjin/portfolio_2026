@@ -11,34 +11,6 @@
             xmlns="http://www.w3.org/2000/svg"
             ref="heroBgSvgRef"
           >
-            <defs>
-              <filter id="hero-inner-shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"></feGaussianBlur>
-                <feOffset dy="2" dx="3"></feOffset>
-                <feComposite
-                  in2="SourceAlpha"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-                  result="shadowDiff"
-                ></feComposite>
-                <feFlood flood-color="#444444" flood-opacity="0.25"></feFlood>
-                <feComposite in2="shadowDiff" operator="in"></feComposite>
-                <feComposite in2="SourceGraphic" operator="over" result="firstfilter"></feComposite>
-                <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2"></feGaussianBlur>
-                <feOffset dy="-2" dx="-3"></feOffset>
-                <feComposite
-                  in2="firstfilter"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-                  result="shadowDiff2"
-                ></feComposite>
-                <feFlood flood-color="#444444" flood-opacity="0.25"></feFlood>
-                <feComposite in2="shadowDiff2" operator="in"></feComposite>
-                <feComposite in2="firstfilter" operator="over"></feComposite>
-              </filter>
-            </defs>
             <path
               ref="heroBgPathRef"
               fill-rule="evenodd"
@@ -46,7 +18,6 @@
               d="M392.206 0.607399C483.425 4.94157 579.379 38.8412 635.075 109.419C686.573 174.677 651.971 267.339 666.681 348.422C678.507 413.609 722.644 471.433 712.629 536.908C701.534 609.446 666.16 678.669 608.895 726.214C548.918 776.01 469.479 817.851 392.206 802.941C317.31 788.489 293.979 693.714 229.99 653.104C159.976 608.67 37.9131 633.022 5.91028 557.779C-25.4405 484.069 77.1598 419.319 97.7018 342.076C120.456 256.512 73.1635 153.143 131.509 85.4931C191.956 15.4065 298.403 -3.8495 392.206 0.607399Z"
               class="hero-bg-path"
               fill="rgb(250, 189, 47)"
-              filter="url(#hero-inner-shadow)"
             />
           </svg>
         </div>
@@ -59,16 +30,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 
-gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
+gsap.registerPlugin(ScrollTrigger)
 
 const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
 const heroBgSvgRef = ref(null)
-const heroBgPathRef = ref(null)
-let heroBgSvgAnimation = null
-let heroBgPathAnimation = null
 
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
@@ -80,73 +47,27 @@ onMounted(() => {
       end: 'center top',
       scrub: true,
     },
-    // x: '200%',
-    // scale: 1.5,
     autoAlpha: 0,
     ease: 'power2.in',
   })
 
-  // hero-bg-svg 스크롤 애니메이션 (blur)
-  gsap.to(heroBgSvgRef.value, {
-    filter: 'blur(100px)',
-    scrollTrigger: {
-      trigger: heroSectionRef.value,
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true,
-    },
-  })
-
-  // hero-bg-svg 부드러운 움직임 애니메이션 (무한 반복)
+  // hero-bg-svg 단순 opacity 애니메이션만 (성능 최적화)
   if (heroBgSvgRef.value) {
-    heroBgSvgAnimation = gsap.to(heroBgSvgRef.value, {
-      x: '+=30',
-      y: '+=20',
-      rotation: 10,
-      scale: 1.1,
-      duration: 10,
-      ease: 'power2.inOut',
-      repeat: -1,
-      yoyo: true,
+    gsap.to(heroBgSvgRef.value, {
+      opacity: 0.3,
+      scrollTrigger: {
+        trigger: heroSectionRef.value,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      },
     })
-  }
-
-  // hero-bg-path morphing 애니메이션
-  if (heroBgSvgRef.value && heroBgPathRef.value) {
-    // hero-bg-svg 내의 모든 path 요소들의 d 속성을 배열로 가져오기
-    const shapes = gsap.utils.toArray('path', heroBgSvgRef.value).map((el) => el.getAttribute('d'))
-
-    // path가 하나 이상 있을 때만 애니메이션 적용
-    if (shapes.length > 0) {
-      // 랜덤하게 path를 선택하는 함수
-      const getRandomShape = gsap.utils.random(shapes, true)
-
-      // morphing 애니메이션
-      heroBgPathAnimation = gsap.to(heroBgPathRef.value, {
-        morphSVG: getRandomShape,
-        repeat: -1,
-        repeatRefresh: true,
-        duration: 0.5,
-        ease: 'power1.inOut',
-      })
-    }
   }
 })
 
 onUnmounted(() => {
-  if (heroBgSvgAnimation) {
-    heroBgSvgAnimation.kill()
-    heroBgSvgAnimation = null
-  }
-  if (heroBgPathAnimation) {
-    heroBgPathAnimation.kill()
-    heroBgPathAnimation = null
-  }
   if (heroBgSvgRef.value) {
     gsap.killTweensOf(heroBgSvgRef.value)
-  }
-  if (heroBgPathRef.value) {
-    gsap.killTweensOf(heroBgPathRef.value)
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
@@ -284,7 +205,8 @@ onUnmounted(() => {
   top: -15%;
   left: 10%;
   pointer-events: none;
-  /* opacity: 0.2; */
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 .hero-bg-svg :deep(path) {
