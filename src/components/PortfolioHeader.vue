@@ -31,29 +31,13 @@ let nameTextRestoreAnimation = null
 let heroCheckHandler = null
 let heroCheckTimeout = null
 let isRestoring = false
-let viewportHeightCheckInterval = null
-let lastViewportHeight = 0
+let mobileHeaderAnimation = null
+let mobileBadgeAnimation = null
+let mobileRoleAnimation = null
 
 const isMobile = () => {
   const mobileBreakpoint = getMobileBreakpoint()
   return window.innerWidth <= mobileBreakpoint
-}
-
-// 뷰포트 높이 변화 감지 및 ScrollTrigger 갱신
-const setupViewportHeightWatcher = () => {
-  if (!isMobile()) return
-
-  lastViewportHeight = window.innerHeight
-
-  // 뷰포트 높이 변화 감지를 위한 주기적 체크
-  viewportHeightCheckInterval = setInterval(() => {
-    const currentHeight = window.innerHeight
-    if (Math.abs(currentHeight - lastViewportHeight) > 10) {
-      // 뷰포트 높이가 10px 이상 변화하면 ScrollTrigger 갱신
-      lastViewportHeight = currentHeight
-      ScrollTrigger.refresh()
-    }
-  }, 100) // 100ms마다 체크
 }
 
 // NameTitle 텍스트를 변경하는 함수
@@ -425,53 +409,143 @@ onMounted(() => {
     // NameTitle은 그대로 유지 (텍스트는 changeNameText로 변경됨)
   }
 
-  // Skills 섹션 ScrollTrigger
-  ScrollTrigger.create({
-    trigger: skillsSection,
-    start: 'top 95%',
-    end: 'top center',
-    scrub: 1,
-    invalidateOnRefresh: true,
-    onEnter: () => {
-      hideState()
-      if (!isMobile()) {
+  // 모바일에서 헤더 애니메이션을 gsap.to() + scrollTrigger 방식으로 설정
+  if (isMobile() && portfolioHeaderRef.value) {
+    // 기존 애니메이션 kill
+    if (mobileHeaderAnimation) {
+      mobileHeaderAnimation.kill()
+      mobileHeaderAnimation = null
+    }
+    if (mobileBadgeAnimation) {
+      mobileBadgeAnimation.kill()
+      mobileBadgeAnimation = null
+    }
+    if (mobileRoleAnimation) {
+      mobileRoleAnimation.kill()
+      mobileRoleAnimation = null
+    }
+    gsap.killTweensOf(portfolioHeaderRef.value)
+    if (availableBadgeRef.value?.$el) {
+      gsap.killTweensOf(availableBadgeRef.value.$el)
+    }
+    if (roleTitleRef.value?.$el) {
+      gsap.killTweensOf(roleTitleRef.value.$el)
+    }
+
+    // 초기 상태 설정
+    gsap.set(portfolioHeaderRef.value, {
+      opacity: 1,
+      filter: 'blur(0px)',
+      y: '0%',
+    })
+    if (availableBadgeRef.value?.$el) {
+      availableBadgeRef.value.$el.style.display = 'inline-flex'
+      gsap.set(availableBadgeRef.value.$el, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        y: '0%',
+      })
+    }
+    if (roleTitleRef.value?.$el) {
+      gsap.set(roleTitleRef.value.$el, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        y: '0%',
+      })
+    }
+
+    // Hero 섹션의 bottom 지점을 기준으로 헤더 숨기기/보이기
+    // Hero 섹션의 bottom 지점에서 Skills 섹션의 top 90% 지점까지 헤더를 숨김
+    const setupMobileHeaderAnimation = () => {
+      // Skills 섹션의 top 90% 지점 계산
+      const skillsTop = skillsSection.offsetTop
+      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight
+      // Skills 섹션의 top 90% 지점까지의 거리 계산
+      const distance = skillsTop - heroBottom + window.innerHeight * 1
+
+      mobileHeaderAnimation = gsap.to(portfolioHeaderRef.value, {
+        opacity: 0,
+        filter: 'blur(40px)',
+        y: '-10%',
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'bottom 90%',
+          end: `+=${distance}`,
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      })
+
+      if (availableBadgeRef.value?.$el) {
+        mobileBadgeAnimation = gsap.to(availableBadgeRef.value.$el, {
+          opacity: 0,
+          filter: 'blur(40px)',
+          y: '-10%',
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: heroSection,
+            start: 'bottom 80%',
+            end: `+=${distance}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
+
+      if (roleTitleRef.value?.$el) {
+        mobileRoleAnimation = gsap.to(roleTitleRef.value.$el, {
+          opacity: 0,
+          filter: 'blur(40px)',
+          y: '-10%',
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: heroSection,
+            start: 'bottom 90%',
+            end: `+=${distance}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
+    }
+
+    setupMobileHeaderAnimation()
+
+    // Hero 섹션의 bottom 지점 이전에서는 헤더 보이기
+    // 역방향 스크롤 시 자동으로 처리됨 (scrub: true)
+  }
+
+  // Skills 섹션 ScrollTrigger (데스크톱/태블릿용)
+  if (!isMobile()) {
+    ScrollTrigger.create({
+      trigger: skillsSection,
+      start: 'top 95%',
+      end: 'top center',
+      scrub: 1,
+      onEnter: () => {
+        hideState()
         changeNameText('Skills')
-      }
-    },
-    onLeaveBack: () => {
-      if (isMobile()) {
-        // 모바일: 다른 섹션이 보이지 않을 때만 복원 (hero 섹션으로 완전히 들어왔을 때)
-        const skillsRect = skillsSection.getBoundingClientRect()
-        const worksRect = worksSection.getBoundingClientRect()
-        const isSkillsVisible = skillsRect.top < window.innerHeight && skillsRect.bottom > 0
-        const isWorksVisible = worksRect.top < window.innerHeight && worksRect.bottom > 0
-
-        // Skills와 Works 섹션이 모두 보이지 않으면 복원
-        if (!isSkillsVisible && !isWorksVisible) {
-          restoreOriginalState()
-        }
-      } else {
+      },
+      onLeaveBack: () => {
         restoreOriginalState()
-      }
-    },
-  })
+      },
+    })
+  }
 
-  // Works 섹션 ScrollTrigger
-  ScrollTrigger.create({
-    trigger: worksSection,
-    start: 'top 95%',
-    end: 'top center',
-    scrub: 1,
-    invalidateOnRefresh: true,
-    onEnter: () => {
-      // Works 섹션에 진입할 때도 hideState 호출 (이미 Skills에서 숨겨졌을 수 있음)
-      hideState()
-      if (!isMobile()) {
+  // Works 섹션 ScrollTrigger (데스크톱/태블릿용)
+  if (!isMobile()) {
+    ScrollTrigger.create({
+      trigger: worksSection,
+      start: 'top 95%',
+      end: 'top center',
+      scrub: 1,
+      onEnter: () => {
+        // Works 섹션에 진입할 때도 hideState 호출 (이미 Skills에서 숨겨졌을 수 있음)
+        hideState()
         changeNameText('Works')
-      }
-    },
-    onLeaveBack: () => {
-      if (!isMobile()) {
+      },
+      onLeaveBack: () => {
         // Works 섹션을 벗어날 때, Skills 섹션이 아직 보이면 "Skills"로, 아니면 원래 상태로
         const skillsRect = skillsSection.getBoundingClientRect()
         const isSkillsVisible = skillsRect.top < window.innerHeight && skillsRect.bottom > 0
@@ -483,57 +557,9 @@ onMounted(() => {
           // Skills 섹션도 벗어났으면 복원
           restoreOriginalState()
         }
-      } else {
-        // 모바일: 다른 섹션이 보이지 않을 때만 복원 (hero 섹션으로 완전히 들어왔을 때)
-        const skillsRect = skillsSection.getBoundingClientRect()
-        const worksRect = worksSection.getBoundingClientRect()
-        const isSkillsVisible = skillsRect.top < window.innerHeight && skillsRect.bottom > 0
-        const isWorksVisible = worksRect.top < window.innerHeight && worksRect.bottom > 0
-
-        // Skills와 Works 섹션이 모두 보이지 않으면 복원
-        if (!isSkillsVisible && !isWorksVisible) {
-          restoreOriginalState()
-        }
-      }
-    },
-  })
-
-  // Hero 섹션으로 완전히 들어왔을 때 복원 (모바일에서만)
-  if (isMobile()) {
-    heroCheckHandler = () => {
-      if (!isMobile()) return
-
-      // 디바운싱으로 중복 호출 방지
-      if (heroCheckTimeout) {
-        clearTimeout(heroCheckTimeout)
-      }
-
-      heroCheckTimeout = setTimeout(() => {
-        const heroRect = heroSection.getBoundingClientRect()
-        const skillsRect = skillsSection.getBoundingClientRect()
-        const worksRect = worksSection.getBoundingClientRect()
-
-        // Hero 섹션이 뷰포트에 있고, Skills와 Works 섹션이 모두 보이지 않으면 복원
-        const isHeroVisible = heroRect.top < window.innerHeight && heroRect.bottom > 0
-        const isSkillsVisible = skillsRect.top < window.innerHeight && skillsRect.bottom > 0
-        const isWorksVisible = worksRect.top < window.innerHeight && worksRect.bottom > 0
-
-        if (isHeroVisible && !isSkillsVisible && !isWorksVisible) {
-          restoreOriginalState()
-        }
-      }, 50) // 50ms 디바운싱
-    }
-
-    // 스크롤 이벤트 리스너 추가
-    window.addEventListener('scroll', heroCheckHandler, { passive: true })
-    ScrollTrigger.addEventListener('scrollEnd', heroCheckHandler)
-
-    // 초기 체크
-    heroCheckHandler()
+      },
+    })
   }
-
-  // 뷰포트 높이 감지 시작
-  setupViewportHeightWatcher()
 })
 
 onUnmounted(() => {
@@ -541,10 +567,16 @@ onUnmounted(() => {
   if (roleAnimation) roleAnimation.kill()
   if (nameAnimation) nameAnimation.kill()
   if (headerAnimation) headerAnimation.kill()
+  if (mobileHeaderAnimation) mobileHeaderAnimation.kill()
+  if (mobileBadgeAnimation) mobileBadgeAnimation.kill()
+  if (mobileRoleAnimation) mobileRoleAnimation.kill()
   if (nameTextTimeline) nameTextTimeline.kill()
   if (nameTextRestoreAnimation) nameTextRestoreAnimation.kill()
   if (nameTitleRef.value?.firstLineRef) gsap.killTweensOf(nameTitleRef.value.firstLineRef)
   if (nameTitleRef.value?.secondLineRef) gsap.killTweensOf(nameTitleRef.value.secondLineRef)
+  if (portfolioHeaderRef.value) gsap.killTweensOf(portfolioHeaderRef.value)
+  if (availableBadgeRef.value?.$el) gsap.killTweensOf(availableBadgeRef.value.$el)
+  if (roleTitleRef.value?.$el) gsap.killTweensOf(roleTitleRef.value.$el)
   if (heroCheckTimeout) {
     clearTimeout(heroCheckTimeout)
     heroCheckTimeout = null
@@ -552,10 +584,6 @@ onUnmounted(() => {
   if (heroCheckHandler) {
     window.removeEventListener('scroll', heroCheckHandler)
     ScrollTrigger.removeEventListener('scrollEnd', heroCheckHandler)
-  }
-  if (viewportHeightCheckInterval) {
-    clearInterval(viewportHeightCheckInterval)
-    viewportHeightCheckInterval = null
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })

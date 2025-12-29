@@ -40,9 +40,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const worksTitleRef = ref(null)
 const worksSectionRef = ref(null)
-let scrollTrigger = null
-let viewportHeightCheckInterval = null
-let lastViewportHeight = 0
+let titleAnimation = null
 
 const works = [
   {
@@ -79,11 +77,12 @@ const isMobile = () => {
 const setupScrollTrigger = () => {
   if (!worksTitleRef.value || !worksSectionRef.value) return
 
-  // 기존 ScrollTrigger 제거
-  if (scrollTrigger) {
-    scrollTrigger.kill()
-    scrollTrigger = null
+  // 기존 애니메이션 kill
+  if (titleAnimation) {
+    titleAnimation.kill()
+    titleAnimation = null
   }
+  gsap.killTweensOf(worksTitleRef.value)
 
   if (isMobile()) {
     // 모바일: 초기 상태 숨김, 스크롤 시 등장
@@ -95,29 +94,17 @@ const setupScrollTrigger = () => {
       display: 'block',
     })
 
-    scrollTrigger = ScrollTrigger.create({
-      trigger: worksSectionRef.value,
-      start: 'top 90%',
-      end: 'top center',
-      scrub: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        gsap.to(worksTitleRef.value, {
-          opacity: 1,
-          filter: 'blur(0px)',
-          y: '0%',
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-      },
-      onLeaveBack: () => {
-        gsap.to(worksTitleRef.value, {
-          opacity: 0,
-          filter: 'blur(40px)',
-          y: '-10%',
-          duration: 0.3,
-          ease: 'power2.in',
-        })
+    // gsap.to()에 scrollTrigger를 직접 넣는 방식으로 변경
+    titleAnimation = gsap.to(worksTitleRef.value, {
+      opacity: 1,
+      filter: 'blur(0px)',
+      y: '0%',
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: worksSectionRef.value,
+        start: 'top 90%',
+        end: 'top center',
+        scrub: true,
       },
     })
   } else {
@@ -129,46 +116,22 @@ const setupScrollTrigger = () => {
   }
 }
 
-// 뷰포트 높이 변화 감지 및 ScrollTrigger 갱신
-const setupViewportHeightWatcher = () => {
-  if (!isMobile()) return
-
-  lastViewportHeight = window.innerHeight
-
-  // 뷰포트 높이 변화 감지를 위한 주기적 체크
-  if (viewportHeightCheckInterval) {
-    clearInterval(viewportHeightCheckInterval)
-  }
-
-  viewportHeightCheckInterval = setInterval(() => {
-    const currentHeight = window.innerHeight
-    if (Math.abs(currentHeight - lastViewportHeight) > 10) {
-      // 뷰포트 높이가 10px 이상 변화하면 ScrollTrigger 갱신
-      lastViewportHeight = currentHeight
-      ScrollTrigger.refresh()
-    }
-  }, 100) // 100ms마다 체크
-}
-
 onMounted(() => {
   setupScrollTrigger()
-  setupViewportHeightWatcher()
 
   window.addEventListener('resize', () => {
     setupScrollTrigger()
-    setupViewportHeightWatcher()
     ScrollTrigger.refresh()
   })
 })
 
 onUnmounted(() => {
-  if (scrollTrigger) {
-    scrollTrigger.kill()
-    scrollTrigger = null
+  if (titleAnimation) {
+    titleAnimation.kill()
+    titleAnimation = null
   }
-  if (viewportHeightCheckInterval) {
-    clearInterval(viewportHeightCheckInterval)
-    viewportHeightCheckInterval = null
+  if (worksTitleRef.value) {
+    gsap.killTweensOf(worksTitleRef.value)
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
