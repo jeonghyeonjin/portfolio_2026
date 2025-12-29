@@ -1,0 +1,9 @@
+/* Breakpoints */
+:root {
+  --breakpoint-tablet: 1439px;
+  --breakpoint-mobile: 799px;
+}
+
+/* Custom Media Queries - PostCSS를 통해 미디어 쿼리에서 사용 가능 */
+@custom-media --tablet (max-width: 1439px);
+@custom-media --mobile (max-width: 799px);

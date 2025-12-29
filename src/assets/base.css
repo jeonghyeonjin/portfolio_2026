@@ -60,26 +60,28 @@
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--color-text);
-  background: var(--color-background);
+  background: #ffffff;
   transition:
     color 0.5s,
     background-color 0.5s;
   line-height: 1.6;
   font-family:
-    Inter,
+    'Wanted Sans Variable',
+    'Wanted Sans',
     -apple-system,
     BlinkMacSystemFont,
+    system-ui,
     'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
     sans-serif;
-  font-size: 15px;
+  font-size: var(--body-2---normal----regular);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

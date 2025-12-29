@@ -1,0 +1,48 @@
+/* Color palette - RGB values */
+:root {
+  /* Color styles */
+  --gray--0: rgb(29, 32, 33);
+  --gray----0s: rgb(50, 48, 47);
+  --gray--1: rgb(40, 40, 40);
+  --gray--2: rgb(60, 56, 54);
+  --gray----3: rgb(80, 73, 69);
+  --gray--4: rgb(102, 92, 84);
+  --gray--5: rgb(124, 111, 100);
+  --gray--5s: rgb(117, 117, 117);
+  --gray--6: rgb(146, 131, 116);
+  --gray--7: rgb(168, 153, 132);
+  --gray----8: rgb(189, 174, 147);
+  --gray----9: rgb(213, 196, 161);
+  --gray----10: rgb(235, 219, 178);
+  --gray----10s: rgb(242, 229, 188);
+  --gray----11: rgb(251, 241, 199);
+  --gray----12: rgb(249, 245, 215);
+  --red----dark: rgb(157, 0, 6);
+  --red----normal: rgb(204, 36, 29);
+  --red----light: rgb(251, 73, 52);
+  --green----dark: rgb(121, 116, 14);
+  --green----normal: rgb(152, 151, 26);
+  --green----light: rgb(184, 187, 38);
+  --yellow----dark: rgb(181, 118, 20);
+  --yellow----normal: rgb(215, 153, 33);
+  --yellow----light: rgb(250, 189, 47);
+  --blue----dark: rgb(7, 102, 120);
+  --blue----normal: rgb(69, 133, 136);
+  --blue----light: rgb(131, 165, 152);
+  --purple----dark: rgb(143, 63, 113);
+  --purple----normal: rgb(177, 98, 134);
+  --purple----light: rgb(211, 134, 155);
+  --aqua----dark: rgb(66, 123, 88);
+  --aqua----normal: rgb(104, 157, 106);
+  --aqua----light: rgb(142, 192, 124);
+  --orange----dark: rgb(175, 58, 3);
+  --orange----normal: rgb(214, 93, 14);
+  --orange----light: rgb(254, 128, 25);
+  --white--0: rgb(255, 255, 255);
+  --white--1: rgb(238, 238, 238);
+  --white--2: rgb(221, 221, 221);
+  --white--3: rgb(204, 204, 204);
+
+  /* RGB values for rgba() usage */
+  --green----normal-rgb: 152, 151, 26;
+}
