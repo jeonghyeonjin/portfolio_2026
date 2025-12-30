@@ -184,6 +184,9 @@ const restoreNameText = () => {
 }
 
 onMounted(() => {
+  // 모바일에서 주소표시줄/하단 메뉴 변화로 인한 스크롤 이슈 해결
+  ScrollTrigger.normalizeScroll(true)
+
   const heroSection = document.querySelector('.hero-section')
   const skillsSection = document.querySelector('.skills-section')
   const worksSection = document.querySelector('.works-section')
@@ -586,6 +589,8 @@ onUnmounted(() => {
     ScrollTrigger.removeEventListener('scrollEnd', heroCheckHandler)
   }
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+  // normalizeScroll 정리
+  ScrollTrigger.normalizeScroll(false)
 })
 </script>
 
