@@ -83,7 +83,7 @@ const parsedKeys = computed(() => {
   height: 20px;
   padding: 0 6px;
   border-radius: 5px;
-  font-size: var(--caption-1---regular);
-  border: 1px solid var(--white--2);
+  font-size: var(--caption--1--regular);
+  border: 1px solid rgb(var(--white--2));
 }
 </style>

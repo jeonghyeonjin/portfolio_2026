@@ -38,22 +38,22 @@ defineExpose({
 
 .name-line {
   font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
-  font-size: var(--hero-title-1);
+  font-size: var(--hero--1);
   font-weight: 700;
-  color: var(--gray--1);
+  color: rgb(var(--gray--1));
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
 @media (max-width: 1439px) {
   .name-line {
-    font-size: var(--hero-title-2);
+    font-size: var(--hero--2);
   }
 }
 
 @media (max-width: 799px) {
   .name-line {
-    font-size: var(--hero-title-3);
+    font-size: var(--hero--3);
   }
 }
 </style>

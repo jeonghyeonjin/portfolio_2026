@@ -17,11 +17,33 @@ import { getMobileBreakpoint } from '@/utils/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// 상수
+const ANIMATION_DURATION_SHORT = 0.15
+const ANIMATION_DURATION_MEDIUM = 0.3
+const ANIMATION_DURATION_LONG = 0.6
+const ANIMATION_DELAY = 0.15
+const EASE_OUT = 'power2.out'
+const EASE_IN = 'power2.in'
+const BLUR_AMOUNT_LARGE = '40px'
+const BLUR_AMOUNT_MEDIUM = '30px'
+const TRANSFORM_Y_UP_LARGE = '-10%'
+const TRANSFORM_Y_UP_SMALL = '-5%'
+const ORIGINAL_FIRST_LINE_TEXT = 'Jeong'
+const ORIGINAL_SECOND_LINE_TEXT = 'Hyeon-jin'
+const SCROLL_TRIGGER_START = 'top 95%'
+const SCROLL_TRIGGER_END = 'top center'
+const SCROLL_TRIGGER_SCRUB = 1
+const MOBILE_SCROLL_START_HEADER = 'bottom 90%'
+const MOBILE_SCROLL_START_BADGE = 'bottom 80%'
+const MOBILE_DISTANCE_MULTIPLIER = 1
+
+// Refs
 const portfolioHeaderRef = ref(null)
 const availableBadgeRef = ref(null)
 const roleTitleRef = ref(null)
 const nameTitleRef = ref(null)
 
+// 애니메이션 인스턴스
 let badgeAnimation = null
 let roleAnimation = null
 let nameAnimation = null
@@ -35,9 +57,30 @@ let mobileHeaderAnimation = null
 let mobileBadgeAnimation = null
 let mobileRoleAnimation = null
 
+// ScrollTrigger 인스턴스
+let skillsScrollTrigger = null
+let worksScrollTrigger = null
+let resizeHandler = null
+let resizeTimeout = null
+
+// 유틸리티 함수
 const isMobile = () => {
   const mobileBreakpoint = getMobileBreakpoint()
   return window.innerWidth <= mobileBreakpoint
+}
+
+// 애니메이션 정리 헬퍼
+const killNameTextAnimations = (firstLine, secondLine) => {
+  if (nameTextTimeline) {
+    nameTextTimeline.kill()
+    nameTextTimeline = null
+  }
+  if (nameTextRestoreAnimation) {
+    nameTextRestoreAnimation.kill()
+    nameTextRestoreAnimation = null
+  }
+  if (firstLine) gsap.killTweensOf(firstLine)
+  if (secondLine) gsap.killTweensOf(secondLine)
 }
 
 // NameTitle 텍스트를 변경하는 함수
@@ -48,18 +91,7 @@ const changeNameText = (newText) => {
   const secondLine = nameTitleRef.value.secondLineRef
 
   // 진행 중인 모든 애니메이션 중단
-  if (nameTextTimeline) {
-    nameTextTimeline.kill()
-    nameTextTimeline = null
-  }
-  if (nameTextRestoreAnimation) {
-    nameTextRestoreAnimation.kill()
-    nameTextRestoreAnimation = null
-  }
-
-  // 모든 진행 중인 애니메이션 kill
-  gsap.killTweensOf(firstLine)
-  gsap.killTweensOf(secondLine)
+  killNameTextAnimations(firstLine, secondLine)
 
   // 첫 번째 줄과 두 번째 줄을 동시에 숨기기
   nameTextTimeline = gsap.timeline({
@@ -73,8 +105,8 @@ const changeNameText = (newText) => {
         // 초기 상태 설정 (blur와 transform)
         gsap.set(firstLine, {
           opacity: 0,
-          filter: 'blur(40px)',
-          y: '-10%',
+          filter: `blur(${BLUR_AMOUNT_LARGE})`,
+          y: TRANSFORM_Y_UP_LARGE,
         })
 
         // 첫 번째 줄 페이드인 + blur + transform 애니메이션
@@ -82,7 +114,7 @@ const changeNameText = (newText) => {
           opacity: 1,
           filter: 'blur(0px)',
           y: '0%',
-          duration: 0.15,
+          duration: ANIMATION_DURATION_SHORT,
         })
       }
       nameTextTimeline = null
@@ -94,7 +126,7 @@ const changeNameText = (newText) => {
     firstLine,
     {
       opacity: 0,
-      duration: 0.15,
+      duration: ANIMATION_DURATION_SHORT,
     },
     0,
   )
@@ -102,7 +134,7 @@ const changeNameText = (newText) => {
     secondLine,
     {
       opacity: 0,
-      duration: 0.15,
+      duration: ANIMATION_DURATION_SHORT,
     },
     0,
   )
@@ -116,36 +148,25 @@ const restoreNameText = () => {
   const secondLine = nameTitleRef.value.secondLineRef
 
   // 진행 중인 모든 애니메이션 중단
-  if (nameTextTimeline) {
-    nameTextTimeline.kill()
-    nameTextTimeline = null
-  }
-  if (nameTextRestoreAnimation) {
-    nameTextRestoreAnimation.kill()
-    nameTextRestoreAnimation = null
-  }
-
-  // 모든 요소의 진행 중인 애니메이션 kill
-  gsap.killTweensOf(firstLine)
-  gsap.killTweensOf(secondLine)
+  killNameTextAnimations(firstLine, secondLine)
 
   // 첫 번째 줄을 숨기고 원래 내용으로 복원
   nameTextRestoreAnimation = gsap.to(firstLine, {
     opacity: 0,
-    duration: 0.15,
-    ease: 'power2.in',
+    duration: ANIMATION_DURATION_SHORT,
+    ease: EASE_IN,
     onComplete: () => {
       if (firstLine && secondLine) {
         // 원래 텍스트로 복원
-        firstLine.textContent = 'Jeong'
-        secondLine.textContent = 'Hyeon-jin'
+        firstLine.textContent = ORIGINAL_FIRST_LINE_TEXT
+        secondLine.textContent = ORIGINAL_SECOND_LINE_TEXT
         secondLine.style.display = 'block'
 
         // 초기 상태 설정 (blur와 transform)
         gsap.set([firstLine, secondLine], {
           opacity: 0,
-          filter: 'blur(30px)',
-          y: '-5%',
+          filter: `blur(${BLUR_AMOUNT_MEDIUM})`,
+          y: TRANSFORM_Y_UP_SMALL,
         })
 
         // 첫 번째 줄과 두 번째 줄을 동시에 페이드인
@@ -162,8 +183,8 @@ const restoreNameText = () => {
             opacity: 1,
             filter: 'blur(0px)',
             y: '0%',
-            duration: 0.15,
-            ease: 'power2.out',
+            duration: ANIMATION_DURATION_SHORT,
+            ease: EASE_OUT,
           },
           0,
         )
@@ -173,8 +194,8 @@ const restoreNameText = () => {
             opacity: 1,
             filter: 'blur(0px)',
             y: '0%',
-            duration: 0.15,
-            ease: 'power2.out',
+            duration: ANIMATION_DURATION_SHORT,
+            ease: EASE_OUT,
           },
           0,
         )
@@ -183,9 +204,219 @@ const restoreNameText = () => {
   })
 }
 
-onMounted(() => {
-  // 모바일에서 주소표시줄/하단 메뉴 변화로 인한 스크롤 이슈 해결
-  ScrollTrigger.normalizeScroll(true)
+// 애니메이션 정리 헬퍼
+const killAllAnimations = () => {
+  if (badgeAnimation) badgeAnimation.kill()
+  if (roleAnimation) roleAnimation.kill()
+  if (nameAnimation) nameAnimation.kill()
+  if (headerAnimation) headerAnimation.kill()
+}
+
+// 모바일 헤더 복원 애니메이션
+const restoreMobileHeader = () => {
+  if (!portfolioHeaderRef.value) return
+
+  const currentOpacity = gsap.getProperty(portfolioHeaderRef.value, 'opacity')
+  if (currentOpacity >= 1) {
+    isRestoring = false
+    return
+  }
+
+  // 헤더 컨테이너는 opacity만 적용 (blur/transform 없음)
+  headerAnimation = gsap.to(portfolioHeaderRef.value, {
+    opacity: 1,
+    duration: ANIMATION_DURATION_MEDIUM,
+    ease: EASE_OUT,
+  })
+
+  // AvailableBadge와 RoleTitle은 opacity만 복원 (blur/transform 없음)
+  if (availableBadgeRef.value?.$el) {
+    availableBadgeRef.value.$el.style.display = 'inline-flex'
+    badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
+      opacity: 1,
+      duration: ANIMATION_DURATION_MEDIUM,
+      ease: EASE_OUT,
+    })
+  }
+
+  if (roleTitleRef.value?.$el) {
+    roleAnimation = gsap.to(roleTitleRef.value.$el, {
+      opacity: 1,
+      duration: ANIMATION_DURATION_MEDIUM,
+      ease: EASE_OUT,
+    })
+  }
+}
+
+// 모바일 NameTitle 텍스트 복원
+const restoreMobileNameText = () => {
+  if (!nameTitleRef.value?.firstLineRef || !nameTitleRef.value?.secondLineRef) {
+    restoreNameText()
+    isRestoring = false
+    return
+  }
+
+  const firstLine = nameTitleRef.value.firstLineRef
+  const secondLine = nameTitleRef.value.secondLineRef
+
+  killNameTextAnimations(firstLine, secondLine)
+
+  // 이미 원래 텍스트인지 확인
+  const isAlreadyRestored =
+    firstLine.textContent === ORIGINAL_FIRST_LINE_TEXT &&
+    secondLine.textContent === ORIGINAL_SECOND_LINE_TEXT
+
+  // 텍스트가 변경되어야 하는 경우만 변경
+  if (!isAlreadyRestored) {
+    firstLine.textContent = ORIGINAL_FIRST_LINE_TEXT
+    secondLine.textContent = ORIGINAL_SECOND_LINE_TEXT
+    secondLine.style.display = 'block'
+  }
+
+  // blur와 transform 효과는 항상 적용
+  gsap.set([firstLine, secondLine], {
+    opacity: 0,
+    filter: `blur(${BLUR_AMOUNT_LARGE})`,
+    y: TRANSFORM_Y_UP_LARGE,
+  })
+
+  // 첫 번째 줄과 두 번째 줄을 동시에 페이드인
+  nameTextTimeline = gsap.timeline({
+    onComplete: () => {
+      nameTextTimeline = null
+      isRestoring = false
+    },
+  })
+
+  nameTextTimeline.to(
+    firstLine,
+    {
+      opacity: 1,
+      filter: 'blur(0px)',
+      y: '0%',
+      duration: ANIMATION_DURATION_MEDIUM,
+      ease: EASE_OUT,
+    },
+    0,
+  )
+  nameTextTimeline.to(
+    secondLine,
+    {
+      opacity: 1,
+      filter: 'blur(0px)',
+      y: '0%',
+      duration: ANIMATION_DURATION_MEDIUM,
+      ease: EASE_OUT,
+    },
+    0,
+  )
+}
+
+// 데스크톱/태블릿 헤더 복원 애니메이션
+const restoreDesktopHeader = () => {
+  // AvailableBadge 복원 (딜레이 추가)
+  if (availableBadgeRef.value?.$el) {
+    availableBadgeRef.value.$el.style.display = 'inline-flex'
+    badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
+      opacity: 1,
+      duration: ANIMATION_DURATION_LONG,
+      delay: ANIMATION_DELAY,
+      ease: EASE_OUT,
+    })
+  }
+
+  // RoleTitle 복원 (딜레이 추가)
+  if (roleTitleRef.value?.$el) {
+    roleAnimation = gsap.to(roleTitleRef.value.$el, {
+      opacity: 1,
+      duration: ANIMATION_DURATION_LONG,
+      delay: ANIMATION_DELAY,
+      ease: EASE_OUT,
+    })
+  }
+
+  // NameTitle은 딜레이 없이 바로 복원
+  if (nameTitleRef.value?.$el) {
+    nameAnimation = gsap.to(nameTitleRef.value.$el, {
+      opacity: 1,
+      duration: ANIMATION_DURATION_SHORT,
+      ease: EASE_OUT,
+    })
+  }
+
+  // NameTitle 텍스트 복원
+  restoreNameText()
+}
+
+// 모바일 헤더 애니메이션 정리
+const killMobileAnimations = () => {
+  if (mobileHeaderAnimation) {
+    mobileHeaderAnimation.kill()
+    mobileHeaderAnimation = null
+  }
+  if (mobileBadgeAnimation) {
+    mobileBadgeAnimation.kill()
+    mobileBadgeAnimation = null
+  }
+  if (mobileRoleAnimation) {
+    mobileRoleAnimation.kill()
+    mobileRoleAnimation = null
+  }
+  if (portfolioHeaderRef.value) {
+    gsap.killTweensOf(portfolioHeaderRef.value)
+  }
+  if (availableBadgeRef.value?.$el) {
+    gsap.killTweensOf(availableBadgeRef.value.$el)
+  }
+  if (roleTitleRef.value?.$el) {
+    gsap.killTweensOf(roleTitleRef.value.$el)
+  }
+}
+
+// ScrollTrigger 정리
+const cleanupScrollTriggers = () => {
+  if (skillsScrollTrigger) {
+    skillsScrollTrigger.kill()
+    skillsScrollTrigger = null
+  }
+  if (worksScrollTrigger) {
+    worksScrollTrigger.kill()
+    worksScrollTrigger = null
+  }
+}
+
+// 정리 헬퍼 함수
+const cleanupAnimations = () => {
+  killAllAnimations()
+  killMobileAnimations()
+  if (nameTextTimeline) nameTextTimeline.kill()
+  if (nameTextRestoreAnimation) nameTextRestoreAnimation.kill()
+}
+
+const cleanupTweens = () => {
+  if (nameTitleRef.value?.firstLineRef) {
+    gsap.killTweensOf(nameTitleRef.value.firstLineRef)
+  }
+  if (nameTitleRef.value?.secondLineRef) {
+    gsap.killTweensOf(nameTitleRef.value.secondLineRef)
+  }
+  if (portfolioHeaderRef.value) {
+    gsap.killTweensOf(portfolioHeaderRef.value)
+  }
+  if (availableBadgeRef.value?.$el) {
+    gsap.killTweensOf(availableBadgeRef.value.$el)
+  }
+  if (roleTitleRef.value?.$el) {
+    gsap.killTweensOf(roleTitleRef.value.$el)
+  }
+}
+
+// 헤더 초기화 함수
+const initializeHeader = () => {
+  // 기존 애니메이션 및 ScrollTrigger 정리
+  cleanupAnimations()
+  cleanupTweens()
+  cleanupScrollTriggers()
 
   const heroSection = document.querySelector('.hero-section')
   const skillsSection = document.querySelector('.skills-section')
@@ -200,198 +431,55 @@ onMounted(() => {
     isRestoring = true
 
     // 진행 중인 애니메이션 중단
-    if (badgeAnimation) badgeAnimation.kill()
-    if (roleAnimation) roleAnimation.kill()
-    if (nameAnimation) nameAnimation.kill()
-    if (headerAnimation) headerAnimation.kill()
+    killAllAnimations()
 
     // 모바일에서만 전체 헤더 표시 (AvailableBadge와 RoleTitle은 blur/transform 없이)
     if (isMobile() && portfolioHeaderRef.value) {
-      // 헤더가 이미 보이는 상태면 애니메이션 생략
-      const currentOpacity = gsap.getProperty(portfolioHeaderRef.value, 'opacity')
-      if (currentOpacity < 1) {
-        // 헤더 컨테이너는 opacity만 적용 (blur/transform 없음)
-        headerAnimation = gsap.to(portfolioHeaderRef.value, {
-          opacity: 1,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-
-        // AvailableBadge와 RoleTitle은 opacity만 복원 (blur/transform 없음)
-        if (availableBadgeRef.value?.$el) {
-          availableBadgeRef.value.$el.style.display = 'inline-flex'
-          badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
-            opacity: 1,
-            duration: 0.3,
-            ease: 'power2.out',
-          })
-        }
-
-        if (roleTitleRef.value?.$el) {
-          roleAnimation = gsap.to(roleTitleRef.value.$el, {
-            opacity: 1,
-            duration: 0.3,
-            ease: 'power2.out',
-          })
-        }
-
-        // NameTitle 텍스트 복원 (blur와 transform 효과 포함)
-        // 모바일에서는 깜빡임 방지를 위해 직접 복원
-        if (nameTitleRef.value?.firstLineRef && nameTitleRef.value?.secondLineRef) {
-          const firstLine = nameTitleRef.value.firstLineRef
-          const secondLine = nameTitleRef.value.secondLineRef
-
-          // 진행 중인 모든 애니메이션 중단
-          if (nameTextTimeline) {
-            nameTextTimeline.kill()
-            nameTextTimeline = null
-          }
-          if (nameTextRestoreAnimation) {
-            nameTextRestoreAnimation.kill()
-            nameTextRestoreAnimation = null
-          }
-          gsap.killTweensOf(firstLine)
-          gsap.killTweensOf(secondLine)
-
-          // 이미 원래 텍스트인지 확인
-          const isAlreadyRestored =
-            firstLine.textContent === 'Jeong' && secondLine.textContent === 'Hyeon-jin'
-
-          // 텍스트가 변경되어야 하는 경우만 변경
-          if (!isAlreadyRestored) {
-            firstLine.textContent = 'Jeong'
-            secondLine.textContent = 'Hyeon-jin'
-            secondLine.style.display = 'block'
-          }
-
-          // blur와 transform 효과는 항상 적용
-          // 초기 상태 설정 (blur와 transform)
-          gsap.set([firstLine, secondLine], {
-            opacity: 0,
-            filter: 'blur(40px)',
-            y: '-10%',
-          })
-
-          // 첫 번째 줄과 두 번째 줄을 동시에 페이드인
-          nameTextTimeline = gsap.timeline({
-            onComplete: () => {
-              nameTextTimeline = null
-              isRestoring = false
-            },
-          })
-
-          nameTextTimeline.to(
-            firstLine,
-            {
-              opacity: 1,
-              filter: 'blur(0px)',
-              y: '0%',
-              duration: 0.3,
-              ease: 'power2.out',
-            },
-            0,
-          )
-          nameTextTimeline.to(
-            secondLine,
-            {
-              opacity: 1,
-              filter: 'blur(0px)',
-              y: '0%',
-              duration: 0.3,
-              ease: 'power2.out',
-            },
-            0,
-          )
-        } else {
-          restoreNameText()
-          isRestoring = false
-        }
-      } else {
-        // 헤더가 이미 보이는 상태면 플래그만 해제
-        isRestoring = false
-      }
+      restoreMobileHeader()
+      restoreMobileNameText()
       return // 모바일에서는 여기서 종료
     }
 
     // 데스크톱/태블릿에서는 기존 동작 유지
-    // AvailableBadge 복원 (딜레이 추가)
-    if (availableBadgeRef.value?.$el) {
-      availableBadgeRef.value.$el.style.display = 'inline-flex'
-      badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
-        opacity: 1,
-        duration: 0.6,
-        delay: 0.15,
-        ease: 'power2.out',
-      })
-    }
-
-    // RoleTitle 복원 (딜레이 추가)
-    if (roleTitleRef.value?.$el) {
-      roleAnimation = gsap.to(roleTitleRef.value.$el, {
-        opacity: 1,
-        duration: 0.6,
-        delay: 0.15,
-        ease: 'power2.out',
-      })
-    }
-
-    // NameTitle은 딜레이 없이 바로 복원
-    if (nameTitleRef.value?.$el) {
-      nameAnimation = gsap.to(nameTitleRef.value.$el, {
-        opacity: 1,
-        duration: 0.15,
-        ease: 'power2.out',
-      })
-    }
-
-    // NameTitle 텍스트 복원
-    restoreNameText()
+    restoreDesktopHeader()
     isRestoring = false
   }
 
-  // 숨기는 함수 (Skills 섹션에 진입할 때)
-  const hideState = () => {
-    // 진행 중인 애니메이션 중단
-    if (badgeAnimation) badgeAnimation.kill()
-    if (roleAnimation) roleAnimation.kill()
-    if (nameAnimation) nameAnimation.kill()
-    if (headerAnimation) headerAnimation.kill()
-
-    // 모바일에서만 전체 헤더 숨기기 (AvailableBadge와 RoleTitle은 blur/transform 없이)
-    if (isMobile() && portfolioHeaderRef.value) {
-      // AvailableBadge와 RoleTitle은 opacity만 변경 (blur/transform 없음)
-      if (availableBadgeRef.value?.$el) {
-        badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-      }
-
-      if (roleTitleRef.value?.$el) {
-        roleAnimation = gsap.to(roleTitleRef.value.$el, {
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-      }
-
-      // 헤더 컨테이너는 opacity만 적용 (blur/transform 없음)
-      headerAnimation = gsap.to(portfolioHeaderRef.value, {
+  // 모바일 헤더 숨기기 애니메이션
+  const hideMobileHeader = () => {
+    // AvailableBadge와 RoleTitle은 opacity만 변경 (blur/transform 없음)
+    if (availableBadgeRef.value?.$el) {
+      badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
         opacity: 0,
-        duration: 0.3,
-        ease: 'power2.out',
+        duration: ANIMATION_DURATION_MEDIUM,
+        ease: EASE_OUT,
       })
-      return // 모바일에서는 여기서 종료
     }
 
-    // 데스크톱/태블릿에서는 기존 동작 유지
+    if (roleTitleRef.value?.$el) {
+      roleAnimation = gsap.to(roleTitleRef.value.$el, {
+        opacity: 0,
+        duration: ANIMATION_DURATION_MEDIUM,
+        ease: EASE_OUT,
+      })
+    }
+
+    // 헤더 컨테이너는 opacity만 적용 (blur/transform 없음)
+    headerAnimation = gsap.to(portfolioHeaderRef.value, {
+      opacity: 0,
+      duration: ANIMATION_DURATION_MEDIUM,
+      ease: EASE_OUT,
+    })
+  }
+
+  // 데스크톱/태블릿 헤더 숨기기 애니메이션
+  const hideDesktopHeader = () => {
     // AvailableBadge 숨기기
     if (availableBadgeRef.value?.$el) {
       badgeAnimation = gsap.to(availableBadgeRef.value.$el, {
         opacity: 0,
         duration: 0,
-        ease: 'power2.out',
+        ease: EASE_OUT,
         onComplete: () => {
           if (availableBadgeRef.value?.$el) {
             availableBadgeRef.value.$el.style.display = 'none'
@@ -404,38 +492,31 @@ onMounted(() => {
     if (roleTitleRef.value?.$el) {
       roleAnimation = gsap.to(roleTitleRef.value.$el, {
         opacity: 0,
-        duration: 0.15,
-        ease: 'power2.out',
+        duration: ANIMATION_DURATION_SHORT,
+        ease: EASE_OUT,
       })
     }
 
     // NameTitle은 그대로 유지 (텍스트는 changeNameText로 변경됨)
   }
 
-  // 모바일에서 헤더 애니메이션을 gsap.to() + scrollTrigger 방식으로 설정
-  if (isMobile() && portfolioHeaderRef.value) {
-    // 기존 애니메이션 kill
-    if (mobileHeaderAnimation) {
-      mobileHeaderAnimation.kill()
-      mobileHeaderAnimation = null
-    }
-    if (mobileBadgeAnimation) {
-      mobileBadgeAnimation.kill()
-      mobileBadgeAnimation = null
-    }
-    if (mobileRoleAnimation) {
-      mobileRoleAnimation.kill()
-      mobileRoleAnimation = null
-    }
-    gsap.killTweensOf(portfolioHeaderRef.value)
-    if (availableBadgeRef.value?.$el) {
-      gsap.killTweensOf(availableBadgeRef.value.$el)
-    }
-    if (roleTitleRef.value?.$el) {
-      gsap.killTweensOf(roleTitleRef.value.$el)
+  // 숨기는 함수 (Skills 섹션에 진입할 때)
+  const hideState = () => {
+    // 진행 중인 애니메이션 중단
+    killAllAnimations()
+
+    // 모바일에서만 전체 헤더 숨기기 (AvailableBadge와 RoleTitle은 blur/transform 없이)
+    if (isMobile() && portfolioHeaderRef.value) {
+      hideMobileHeader()
+      return // 모바일에서는 여기서 종료
     }
 
-    // 초기 상태 설정
+    // 데스크톱/태블릿에서는 기존 동작 유지
+    hideDesktopHeader()
+  }
+
+  // 모바일 헤더 초기 상태 설정
+  const setMobileHeaderInitialState = () => {
     gsap.set(portfolioHeaderRef.value, {
       opacity: 1,
       filter: 'blur(0px)',
@@ -456,76 +537,83 @@ onMounted(() => {
         y: '0%',
       })
     }
+  }
 
-    // Hero 섹션의 bottom 지점을 기준으로 헤더 숨기기/보이기
-    // Hero 섹션의 bottom 지점에서 Skills 섹션의 top 90% 지점까지 헤더를 숨김
-    const setupMobileHeaderAnimation = () => {
-      // Skills 섹션의 top 90% 지점 계산
-      const skillsTop = skillsSection.offsetTop
-      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight
-      // Skills 섹션의 top 90% 지점까지의 거리 계산
-      const distance = skillsTop - heroBottom + window.innerHeight * 1
+  // 모바일 헤더 ScrollTrigger 애니메이션 설정
+  const setupMobileHeaderScrollAnimation = () => {
+    // Skills 섹션의 top 90% 지점 계산
+    const skillsTop = skillsSection.offsetTop
+    const heroBottom = heroSection.offsetTop + heroSection.offsetHeight
+    // Skills 섹션의 top 90% 지점까지의 거리 계산
+    const distance = skillsTop - heroBottom + window.innerHeight * MOBILE_DISTANCE_MULTIPLIER
 
-      mobileHeaderAnimation = gsap.to(portfolioHeaderRef.value, {
+    mobileHeaderAnimation = gsap.to(portfolioHeaderRef.value, {
+      opacity: 0,
+      filter: `blur(${BLUR_AMOUNT_LARGE})`,
+      y: TRANSFORM_Y_UP_LARGE,
+      ease: EASE_OUT,
+      scrollTrigger: {
+        trigger: heroSection,
+        start: MOBILE_SCROLL_START_HEADER,
+        end: `+=${distance}`,
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    })
+
+    if (availableBadgeRef.value?.$el) {
+      mobileBadgeAnimation = gsap.to(availableBadgeRef.value.$el, {
         opacity: 0,
-        filter: 'blur(40px)',
-        y: '-10%',
-        ease: 'power2.out',
+        filter: `blur(${BLUR_AMOUNT_LARGE})`,
+        y: TRANSFORM_Y_UP_LARGE,
+        ease: EASE_OUT,
         scrollTrigger: {
           trigger: heroSection,
-          start: 'bottom 90%',
+          start: MOBILE_SCROLL_START_BADGE,
           end: `+=${distance}`,
           scrub: true,
           invalidateOnRefresh: true,
         },
       })
-
-      if (availableBadgeRef.value?.$el) {
-        mobileBadgeAnimation = gsap.to(availableBadgeRef.value.$el, {
-          opacity: 0,
-          filter: 'blur(40px)',
-          y: '-10%',
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: heroSection,
-            start: 'bottom 80%',
-            end: `+=${distance}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        })
-      }
-
-      if (roleTitleRef.value?.$el) {
-        mobileRoleAnimation = gsap.to(roleTitleRef.value.$el, {
-          opacity: 0,
-          filter: 'blur(40px)',
-          y: '-10%',
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: heroSection,
-            start: 'bottom 90%',
-            end: `+=${distance}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        })
-      }
     }
 
-    setupMobileHeaderAnimation()
+    if (roleTitleRef.value?.$el) {
+      mobileRoleAnimation = gsap.to(roleTitleRef.value.$el, {
+        opacity: 0,
+        filter: `blur(${BLUR_AMOUNT_LARGE})`,
+        y: TRANSFORM_Y_UP_LARGE,
+        ease: EASE_OUT,
+        scrollTrigger: {
+          trigger: heroSection,
+          start: MOBILE_SCROLL_START_HEADER,
+          end: `+=${distance}`,
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      })
+    }
+  }
 
-    // Hero 섹션의 bottom 지점 이전에서는 헤더 보이기
-    // 역방향 스크롤 시 자동으로 처리됨 (scrub: true)
+  // 모바일에서 헤더 애니메이션을 gsap.to() + scrollTrigger 방식으로 설정
+  if (isMobile() && portfolioHeaderRef.value) {
+    killMobileAnimations()
+    setMobileHeaderInitialState()
+    setupMobileHeaderScrollAnimation()
+  }
+
+  // Skills 섹션이 보이는지 확인
+  const isSkillsSectionVisible = () => {
+    const skillsRect = skillsSection.getBoundingClientRect()
+    return skillsRect.top < window.innerHeight && skillsRect.bottom > 0
   }
 
   // Skills 섹션 ScrollTrigger (데스크톱/태블릿용)
   if (!isMobile()) {
-    ScrollTrigger.create({
+    skillsScrollTrigger = ScrollTrigger.create({
       trigger: skillsSection,
-      start: 'top 95%',
-      end: 'top center',
-      scrub: 1,
+      start: SCROLL_TRIGGER_START,
+      end: SCROLL_TRIGGER_END,
+      scrub: SCROLL_TRIGGER_SCRUB,
       onEnter: () => {
         hideState()
         changeNameText('Skills')
@@ -538,11 +626,11 @@ onMounted(() => {
 
   // Works 섹션 ScrollTrigger (데스크톱/태블릿용)
   if (!isMobile()) {
-    ScrollTrigger.create({
+    worksScrollTrigger = ScrollTrigger.create({
       trigger: worksSection,
-      start: 'top 95%',
-      end: 'top center',
-      scrub: 1,
+      start: SCROLL_TRIGGER_START,
+      end: SCROLL_TRIGGER_END,
+      scrub: SCROLL_TRIGGER_SCRUB,
       onEnter: () => {
         // Works 섹션에 진입할 때도 hideState 호출 (이미 Skills에서 숨겨졌을 수 있음)
         hideState()
@@ -550,10 +638,7 @@ onMounted(() => {
       },
       onLeaveBack: () => {
         // Works 섹션을 벗어날 때, Skills 섹션이 아직 보이면 "Skills"로, 아니면 원래 상태로
-        const skillsRect = skillsSection.getBoundingClientRect()
-        const isSkillsVisible = skillsRect.top < window.innerHeight && skillsRect.bottom > 0
-
-        if (isSkillsVisible) {
+        if (isSkillsSectionVisible()) {
           // Skills 섹션이 보이면 "Skills"로 변경
           changeNameText('Skills')
         } else {
@@ -563,23 +648,37 @@ onMounted(() => {
       },
     })
   }
+
+  // ScrollTrigger refresh
+  ScrollTrigger.refresh()
+}
+
+// 리사이즈 핸들러 (디바운싱 적용)
+const handleResize = () => {
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+  }
+
+  resizeTimeout = setTimeout(() => {
+    // ScrollTrigger refresh 후 재초기화
+    ScrollTrigger.refresh()
+    initializeHeader()
+  }, 150)
+}
+
+onMounted(() => {
+  // 모바일에서 주소표시줄/하단 메뉴 변화로 인한 스크롤 이슈 해결
+  ScrollTrigger.normalizeScroll(true)
+
+  // 초기화
+  initializeHeader()
+
+  // 리사이즈 이벤트 리스너 등록
+  resizeHandler = handleResize
+  window.addEventListener('resize', resizeHandler)
 })
 
-onUnmounted(() => {
-  if (badgeAnimation) badgeAnimation.kill()
-  if (roleAnimation) roleAnimation.kill()
-  if (nameAnimation) nameAnimation.kill()
-  if (headerAnimation) headerAnimation.kill()
-  if (mobileHeaderAnimation) mobileHeaderAnimation.kill()
-  if (mobileBadgeAnimation) mobileBadgeAnimation.kill()
-  if (mobileRoleAnimation) mobileRoleAnimation.kill()
-  if (nameTextTimeline) nameTextTimeline.kill()
-  if (nameTextRestoreAnimation) nameTextRestoreAnimation.kill()
-  if (nameTitleRef.value?.firstLineRef) gsap.killTweensOf(nameTitleRef.value.firstLineRef)
-  if (nameTitleRef.value?.secondLineRef) gsap.killTweensOf(nameTitleRef.value.secondLineRef)
-  if (portfolioHeaderRef.value) gsap.killTweensOf(portfolioHeaderRef.value)
-  if (availableBadgeRef.value?.$el) gsap.killTweensOf(availableBadgeRef.value.$el)
-  if (roleTitleRef.value?.$el) gsap.killTweensOf(roleTitleRef.value.$el)
+const cleanupEventListeners = () => {
   if (heroCheckTimeout) {
     clearTimeout(heroCheckTimeout)
     heroCheckTimeout = null
@@ -588,6 +687,21 @@ onUnmounted(() => {
     window.removeEventListener('scroll', heroCheckHandler)
     ScrollTrigger.removeEventListener('scrollEnd', heroCheckHandler)
   }
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
+  }
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
+}
+
+onUnmounted(() => {
+  cleanupAnimations()
+  cleanupTweens()
+  cleanupEventListeners()
+  cleanupScrollTriggers()
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
   // normalizeScroll 정리
   ScrollTrigger.normalizeScroll(false)

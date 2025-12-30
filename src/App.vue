@@ -24,6 +24,6 @@ import WorksSection from './components/WorksSection.vue'
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--white--1);
+  background-color: rgb(var(--white--1));
 }
 </style>

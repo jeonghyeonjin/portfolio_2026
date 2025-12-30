@@ -31,7 +31,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
-import { getTabletBreakpoint } from '@/utils/breakpoints'
+import { getTabletBreakpoint, getMobileBreakpoint } from '@/utils/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
 
@@ -41,14 +41,74 @@ const heroBgSvgRef = ref(null)
 const heroBgPathRef = ref(null)
 let heroBgSvgAnimation = null
 let heroBgPathAnimation = null
+let resizeObserver = null
 
 const isTablet = () => {
   const tabletBreakpoint = getTabletBreakpoint()
   return window.innerWidth <= tabletBreakpoint
 }
 
+const isMobile = () => {
+  const mobileBreakpoint = getMobileBreakpoint()
+  return window.innerWidth <= mobileBreakpoint
+}
+
+// 모바일에서 실제 뷰포트 높이를 계산하여 설정
+const setMobileViewportHeight = () => {
+  if (!heroSectionRef.value) return
+
+  if (isMobile()) {
+    // 모바일에서는 실제 보이는 뷰포트 높이 사용
+    const actualHeight = window.innerHeight
+    heroSectionRef.value.style.height = `${actualHeight - 40}px`
+  } else {
+    // 데스크톱/태블릿에서는 CSS 변수 제거하여 기본값 사용
+    heroSectionRef.value.style.height = ''
+  }
+}
+
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
+
+  // 모바일 뷰포트 높이 설정
+  setMobileViewportHeight()
+
+  // 리사이즈 및 스크롤 이벤트로 뷰포트 높이 업데이트 (주소 표시줄 변화 대응)
+  const handleResize = () => {
+    setMobileViewportHeight()
+  }
+
+  // 초기 설정 후 약간의 지연을 두고 다시 설정 (주소 표시줄이 숨겨진 후)
+  setTimeout(() => {
+    setMobileViewportHeight()
+  }, 100)
+
+  window.addEventListener('resize', handleResize)
+  window.addEventListener('orientationchange', handleResize)
+
+  // 스크롤 시에도 업데이트 (주소 표시줄이 나타나거나 사라질 때)
+  let scrollTimeout = null
+  const handleScroll = () => {
+    if (scrollTimeout) clearTimeout(scrollTimeout)
+    scrollTimeout = setTimeout(() => {
+      setMobileViewportHeight()
+    }, 150)
+  }
+
+  if (isMobile()) {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+  }
+
+  resizeObserver = {
+    cleanup: () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('orientationchange', handleResize)
+      if (isMobile()) {
+        window.removeEventListener('scroll', handleScroll)
+      }
+      if (scrollTimeout) clearTimeout(scrollTimeout)
+    },
+  }
 
   const tablet = isTablet()
 
@@ -115,6 +175,10 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.cleanup()
+    resizeObserver = null
+  }
   if (heroBgSvgAnimation) {
     heroBgSvgAnimation.kill()
     heroBgSvgAnimation = null
@@ -138,12 +202,12 @@ onUnmounted(() => {
 
 .hero-section {
   width: calc(100vw - 40px);
-  height: calc(100vh - 40px);
-  /* height: 100vh;
-  width: 100vw; */
+  /* 모바일에서는 dvh 사용, fallback으로 vh */
+  height: calc(100dvh - 40px);
+  height: calc(100vh - 40px); /* fallback for older browsers */
   display: flex;
   align-items: center;
-  background-color: var(--white--2);
+  background-color: rgb(var(--white--2));
   margin: 20px;
   border-radius: 20px;
   position: relative;
@@ -271,7 +335,7 @@ onUnmounted(() => {
 }
 
 .hero-bg-svg :deep(path) {
-  fill: var(--white--1) !important;
+  fill: rgb(var(--white--1)) !important;
 }
 
 /* Tablet: --tablet */

@@ -81,7 +81,7 @@ body {
     'Segoe UI Emoji',
     'Segoe UI Symbol',
     sans-serif;
-  font-size: var(--body-2---normal----regular);
+  font-size: var(--body--2--normal--regular);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

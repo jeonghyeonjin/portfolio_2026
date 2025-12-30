@@ -17,10 +17,10 @@ defineProps({
 .skill-chip {
   display: inline-block;
   padding: 8px 16px;
-  background-color: var(--gray--1);
-  color: var(--white--1);
+  background-color: rgb(var(--gray--1));
+  color: rgb(var(--white--1));
   border-radius: 12px;
-  font-size: var(--body-1---normal----regular);
+  font-size: var(--body--1--normal--regular);
   font-weight: 400;
   white-space: nowrap;
 }

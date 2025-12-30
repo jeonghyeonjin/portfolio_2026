@@ -13,15 +13,15 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background-color: rgba(var(--green----normal-rgb), 0.1);
+  background-color: rgba(var(--green--normal), 0.1);
   border-radius: 20px;
-  font-size: var(--body-1---normal----regular);
+  font-size: var(--body--1--normal--regular);
 }
 
 .badge-dot {
   width: 8px;
   height: 8px;
-  background-color: var(--green----dark);
+  background-color: rgb(var(--green--dark));
   border-radius: 12px;
   flex-shrink: 0;
   animation: blink 1.5s ease-in-out infinite;
@@ -38,7 +38,7 @@
 }
 
 .badge-text {
-  color: var(--green----dark);
+  color: rgb(var(--green--dark));
   font-weight: 600;
 }
 </style>

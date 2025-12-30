@@ -17,11 +17,11 @@
 
 .role-line {
   font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
-  font-size: var(--headline-2---medium);
+  font-size: var(--headline--2--medium);
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--gray--0);
+  color: rgb(var(--gray--0));
   line-height: 1.412;
 }
 </style>

@@ -71,80 +71,102 @@ import { getMobileBreakpoint } from '@/utils/breakpoints'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
+// 상수
+const SCROLL_DURATION = 1.2
+const SCROLL_EASE = 'power2.inOut'
+const TRIGGER_START = 'top 95%'
+const TRIGGER_END = 'top center'
+const TRIGGER_SCRUB = 1
+const TRIGGER_POINT_RATIO = 0.95
+const ANIMATION_DURATION = 0.8
+const ANIMATION_EASE = 'power3.out'
+const MENU_ANIMATION_DURATION = 0.6
+const MENU_STAGGER = 0.15
+const MENU_ANIMATION_EASE = 'power2.out'
+const HAMBURGER_DELAY = 0.3
+
+// 섹션 정의
+const SECTION_IDS = ['skills', 'works', 'experiences', 'about']
+
+// Refs
 const logoContainerRef = ref(null)
 const menuListRef = ref(null)
 const hamburgerButtonRef = ref(null)
 const activeSection = ref('')
 
-const sections = [
-  { id: 'skills', element: null },
-  { id: 'works', element: null },
-  { id: 'experiences', element: null },
-  { id: 'about', element: null },
-]
-
+// 상태
+const sections = SECTION_IDS.map((id) => ({ id, element: null }))
 let scrollTriggers = []
+let resizeHandler = null
 
+// 유틸리티 함수
+const isMobile = () => {
+  const mobileBreakpoint = getMobileBreakpoint()
+  return window.innerWidth <= mobileBreakpoint
+}
+
+// 섹션 요소 찾기
+const findSections = () => {
+  sections.forEach((section) => {
+    const element = document.getElementById(section.id)
+    if (element) {
+      section.element = element
+    }
+  })
+}
+
+// 섹션으로 스크롤
 const scrollToSection = (sectionId) => {
   const section = sections.find((s) => s.id === sectionId)
-  if (section && section.element) {
-    // skills 섹션의 경우, 섹션 하단이 화면 하단에 오도록
-    if (sectionId === 'skills') {
-      const rect = section.element.getBoundingClientRect()
-      const elementTop = rect.top + window.scrollY
-      const elementHeight = rect.height
-      const windowHeight = window.innerHeight
-      // 섹션 하단이 화면 하단에 오도록 스크롤 위치 계산
-      const targetScrollY = elementTop + elementHeight - windowHeight
+  if (!section?.element) return
 
-      gsap.to(window, {
-        duration: 1.2,
-        scrollTo: {
-          y: targetScrollY,
-        },
-        ease: 'power2.inOut',
-      })
-    } else {
-      // 다른 섹션은 기존대로 상단이 화면 상단에 오도록
-      gsap.to(window, {
-        duration: 1.2,
-        scrollTo: {
-          y: section.element,
-          offsetY: 0,
-        },
-        ease: 'power2.inOut',
-      })
-    }
+  // skills 섹션은 하단이 화면 하단에 오도록 스크롤
+  if (sectionId === 'skills') {
+    const rect = section.element.getBoundingClientRect()
+    const elementTop = rect.top + window.scrollY
+    const elementHeight = rect.height
+    const windowHeight = window.innerHeight
+    const targetScrollY = elementTop + elementHeight - windowHeight
+
+    gsap.to(window, {
+      duration: SCROLL_DURATION,
+      scrollTo: {
+        y: targetScrollY,
+      },
+      ease: SCROLL_EASE,
+    })
+  } else {
+    // 다른 섹션은 상단이 화면 상단에 오도록 스크롤
+    gsap.to(window, {
+      duration: SCROLL_DURATION,
+      scrollTo: {
+        y: section.element,
+        offsetY: 0,
+      },
+      ease: SCROLL_EASE,
+    })
   }
 }
 
-// ScrollTrigger 타이밍과 동일한 기준으로 초기 active 섹션 설정
+// 활성 섹션 업데이트
 const updateActiveSection = () => {
-  // ScrollTrigger가 설정된 후 각 트리거의 상태를 확인
   if (scrollTriggers.length === 0) return
 
-  // 역순으로 확인하여 가장 아래에 있는 활성화된 섹션 찾기
+  // ScrollTrigger 상태로 확인
   for (let i = scrollTriggers.length - 1; i >= 0; i--) {
     const trigger = scrollTriggers[i]
-    // ScrollTrigger의 progress가 0보다 크면 활성화된 상태
-    // 또는 isActive가 true이면 활성화된 상태
-    if (trigger && (trigger.progress > 0 || trigger.isActive)) {
-      if (trigger.sectionId) {
-        activeSection.value = trigger.sectionId
-        return
-      }
+    if (trigger?.sectionId && (trigger.progress > 0 || trigger.isActive)) {
+      activeSection.value = trigger.sectionId
+      return
     }
   }
 
-  // ScrollTrigger 상태로 확인이 안 되면 직접 계산
-  const viewportHeight = window.innerHeight
-  const triggerPoint = viewportHeight * 0.95
-
+  // 직접 계산 (fallback)
+  const triggerPoint = window.innerHeight * TRIGGER_POINT_RATIO
   for (let i = sections.length - 1; i >= 0; i--) {
     const section = sections[i]
     if (section.element) {
       const rect = section.element.getBoundingClientRect()
-      // 섹션의 top이 triggerPoint(95%)를 지났는지 확인
       if (rect.top <= triggerPoint) {
         activeSection.value = section.id
         return
@@ -152,140 +174,155 @@ const updateActiveSection = () => {
     }
   }
 
-  // 아무 섹션도 활성화되지 않으면 빈 문자열 (Hero 섹션)
   activeSection.value = ''
 }
 
+// 이전 섹션이 보이는지 확인
+const isPreviousSectionVisible = (index) => {
+  if (index <= 0) return false
+  const prevSection = sections[index - 1]
+  if (!prevSection?.element) return false
+
+  const rect = prevSection.element.getBoundingClientRect()
+  return rect.top < window.innerHeight && rect.bottom > 0
+}
+
+// ScrollTrigger 설정
 const setupScrollTriggers = () => {
-  // 기존 ScrollTrigger 제거
+  // 기존 트리거 제거
   scrollTriggers.forEach((trigger) => trigger.kill())
   scrollTriggers = []
 
-  // PortfolioHeader와 동일한 타이밍으로 설정
   sections.forEach((section, index) => {
-    if (section.element) {
-      const trigger = ScrollTrigger.create({
-        trigger: section.element,
-        start: 'top 95%',
-        end: 'top center',
-        scrub: 1,
-        onEnter: () => {
-          activeSection.value = section.id
-        },
-        onLeaveBack: () => {
-          // 이전 섹션이 있는지 확인
-          if (index > 0) {
-            const prevSection = sections[index - 1]
-            if (prevSection.element) {
-              const rect = prevSection.element.getBoundingClientRect()
-              const isPrevVisible = rect.top < window.innerHeight && rect.bottom > 0
+    if (!section.element) return
 
-              if (isPrevVisible) {
-                // 이전 섹션이 보이면 이전 섹션으로 설정
-                activeSection.value = prevSection.id
-                return
-              }
-            }
-          }
-          // 이전 섹션이 없거나 보이지 않으면 빈 문자열 (Hero 섹션)
+    const trigger = ScrollTrigger.create({
+      trigger: section.element,
+      start: TRIGGER_START,
+      end: TRIGGER_END,
+      scrub: TRIGGER_SCRUB,
+      onEnter: () => {
+        activeSection.value = section.id
+      },
+      onLeaveBack: () => {
+        if (isPreviousSectionVisible(index)) {
+          activeSection.value = sections[index - 1].id
+        } else {
           activeSection.value = ''
-        },
-      })
-      // 트리거에 섹션 정보 저장
-      trigger.sectionId = section.id
-      trigger.sectionIndex = index
-      scrollTriggers.push(trigger)
-    }
+        }
+      },
+    })
+
+    trigger.sectionId = section.id
+    trigger.sectionIndex = index
+    scrollTriggers.push(trigger)
   })
 }
 
-onMounted(() => {
-  // 섹션 요소들 찾기
-  sections.forEach((section) => {
-    const element = document.getElementById(section.id)
-    if (element) {
-      section.element = element
-    }
-  })
-
-  // ScrollTrigger로 active 섹션 감지 (PortfolioHeader와 동일한 타이밍)
+// 리사이즈 핸들러
+const handleResize = () => {
   setupScrollTriggers()
-
-  // ScrollTrigger refresh 후 초기 상태 설정 (약간의 딜레이로 DOM 업데이트 대기)
   ScrollTrigger.refresh()
+}
+
+// 데스크톱/태블릿 애니메이션
+const setupDesktopAnimations = () => {
+  // 메뉴 아이템 초기 상태
+  if (menuListRef.value) {
+    const menuItems = menuListRef.value.querySelectorAll('.menu-item')
+    gsap.set(menuItems, {
+      opacity: 0,
+      x: -10,
+    })
+  }
+
+  // 로고 애니메이션
+  if (logoContainerRef.value) {
+    gsap.from(logoContainerRef.value, {
+      opacity: 0,
+      scale: 0.8,
+      duration: ANIMATION_DURATION,
+      ease: ANIMATION_EASE,
+      onComplete: () => {
+        // 메뉴 아이템 순차 애니메이션
+        if (menuListRef.value) {
+          const menuItems = menuListRef.value.querySelectorAll('.menu-item')
+          gsap.to(menuItems, {
+            opacity: 1,
+            x: 0,
+            duration: MENU_ANIMATION_DURATION,
+            stagger: MENU_STAGGER,
+            ease: MENU_ANIMATION_EASE,
+          })
+        }
+      },
+    })
+  }
+}
+
+// 모바일 애니메이션
+const setupMobileAnimations = () => {
+  // 로고 애니메이션
+  if (logoContainerRef.value) {
+    gsap.from(logoContainerRef.value, {
+      opacity: 0,
+      scale: 0.8,
+      duration: ANIMATION_DURATION,
+      ease: ANIMATION_EASE,
+    })
+  }
+
+  // 햄버거 버튼 애니메이션
+  if (hamburgerButtonRef.value) {
+    gsap.from(hamburgerButtonRef.value, {
+      opacity: 0,
+      scale: 0.8,
+      duration: ANIMATION_DURATION,
+      delay: HAMBURGER_DELAY,
+      ease: ANIMATION_EASE,
+    })
+  }
+}
+
+// 초기화
+const initialize = () => {
+  findSections()
+  setupScrollTriggers()
+  ScrollTrigger.refresh()
+
+  // 초기 활성 섹션 설정
   setTimeout(() => {
     updateActiveSection()
   }, 0)
 
-  // 리사이즈 시 ScrollTrigger 재설정
-  window.addEventListener('resize', () => {
-    setupScrollTriggers()
-    ScrollTrigger.refresh()
-  })
-
-  // 화면 크기 확인
-  const mobileBreakpoint = getMobileBreakpoint()
-  const isMobile = window.innerWidth <= mobileBreakpoint
-
-  if (!isMobile) {
-    // 데스크톱/태블릿: 초기 상태 설정 - 메뉴 아이템들을 숨김
-    if (menuListRef.value) {
-      const menuItems = menuListRef.value.querySelectorAll('.menu-item')
-      gsap.set(menuItems, {
-        opacity: 0,
-        x: -10,
-      })
-    }
-
-    // 로고 애니메이션
-    if (logoContainerRef.value) {
-      gsap.from(logoContainerRef.value, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.8,
-        ease: 'power3.out',
-        onComplete: () => {
-          // 로고 애니메이션 완료 후 메뉴 아이템들 순차적으로 나타나기
-          if (menuListRef.value) {
-            const menuItems = menuListRef.value.querySelectorAll('.menu-item')
-            gsap.to(menuItems, {
-              opacity: 1,
-              x: 0,
-              duration: 0.6,
-              stagger: 0.15,
-              ease: 'power2.out',
-            })
-          }
-        },
-      })
-    }
+  // 애니메이션 설정
+  if (isMobile()) {
+    setupMobileAnimations()
   } else {
-    // 모바일: 로고와 햄버거 버튼만 애니메이션
-    if (logoContainerRef.value) {
-      gsap.from(logoContainerRef.value, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.8,
-        ease: 'power3.out',
-      })
-    }
-
-    if (hamburgerButtonRef.value) {
-      gsap.from(hamburgerButtonRef.value, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.8,
-        delay: 0.3,
-        ease: 'power3.out',
-      })
-    }
+    setupDesktopAnimations()
   }
+}
+
+onMounted(() => {
+  initialize()
+
+  // 리사이즈 이벤트 리스너
+  resizeHandler = handleResize
+  window.addEventListener('resize', resizeHandler)
 })
 
 onUnmounted(() => {
+  // ScrollTrigger 정리
   scrollTriggers.forEach((trigger) => trigger.kill())
   scrollTriggers = []
-  window.removeEventListener('resize', setupScrollTriggers)
+
+  // 이벤트 리스너 제거
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
+  }
+
+  // 모든 ScrollTrigger 제거
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 </script>
@@ -355,7 +392,7 @@ onUnmounted(() => {
 
 .menu-item {
   font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
-  font-size: var(--body-1---normal----regular);
+  font-size: var(--body--1--normal--regular);
   font-weight: 400;
   color: rgba(50, 50, 50, 0.8);
   cursor: pointer;
@@ -369,11 +406,11 @@ onUnmounted(() => {
 }
 
 .menu-item:hover {
-  color: var(--gray--1);
+  color: rgb(var(--gray--1));
 }
 
 .menu-item.active {
-  color: var(--gray--1);
+  color: rgb(var(--gray--1));
   background-color: rgba(255, 255, 255, 0.6);
   border-radius: 6px;
 }
@@ -384,13 +421,13 @@ onUnmounted(() => {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: var(--gray--5s);
+  color: rgb(var(--gray--5s));
   transition: color 0.3s ease;
   will-change: opacity, transform;
 }
 
 .hamburger-button:hover {
-  color: var(--gray--1);
+  color: rgb(var(--gray--1));
 }
 
 .hamburger-button svg {

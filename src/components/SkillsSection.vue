@@ -210,9 +210,9 @@ const getSkillGroupImage = (type) => {
 
 .skills-title-text {
   font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
-  font-size: var(--display-1---bold);
+  font-size: var(--display--1--bold);
   font-weight: 700;
-  fill: var(--gray--1);
+  fill: rgb(var(--gray--1));
   letter-spacing: -0.02em;
 }
 
@@ -263,19 +263,19 @@ const getSkillGroupImage = (type) => {
 }
 
 .skill-card-title {
-  font-size: var(--title-2---medium);
+  font-size: var(--title--2--medium);
   font-weight: 500;
   margin: 0;
   letter-spacing: -0.02em;
-  color: var(--gray--1);
+  color: rgb(var(--gray--1));
   grid-column: 1;
   grid-row: 1;
 }
 
 .skill-card-description {
-  font-size: var(--body-1---normal----regular);
+  font-size: var(--body--1--normal--regular);
   line-height: 1.6;
-  color: var(--gray--5s);
+  color: rgb(var(--gray--5s));
   margin: 0;
   grid-column: 1;
   grid-row: 2;
@@ -304,7 +304,7 @@ const getSkillGroupImage = (type) => {
   }
 
   .skills-title-text {
-    font-size: var(--display-2---bold);
+    font-size: var(--display--2--bold);
   }
 
   .skill-card-developer {
@@ -327,7 +327,7 @@ const getSkillGroupImage = (type) => {
   }
 
   .skill-card-title {
-    font-size: var(--title-3---medium);
+    font-size: var(--title--3--medium);
   }
 }
 
@@ -350,7 +350,7 @@ const getSkillGroupImage = (type) => {
   }
 
   .skills-title-text {
-    font-size: var(--title-1---bold);
+    font-size: var(--title--1--bold);
   }
 
   .skill-card-developer {
@@ -374,11 +374,11 @@ const getSkillGroupImage = (type) => {
   }
 
   .skill-card-title {
-    font-size: var(--heading-1---medium);
+    font-size: var(--heading--1--medium);
   }
 
   .skill-card-description {
-    font-size: var(--body-2---normal----regular);
+    font-size: var(--body--2--normal--regular);
   }
 
   .skill-card-header {
