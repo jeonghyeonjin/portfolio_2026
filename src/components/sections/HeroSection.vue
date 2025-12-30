@@ -4,7 +4,12 @@
       <div class="hero-grid-item hero-grid-item-empty"></div>
       <div class="hero-grid-item hero-grid-item-image">
         <div class="hero-image-container">
-          <img src="@/assets/hero.png" alt="Hero" class="hero-image" ref="heroImageRef" />
+          <img
+            src="@/assets/images/hero/hero.png"
+            alt="Hero"
+            class="hero-image"
+            ref="heroImageRef"
+          />
           <svg
             class="hero-bg-svg"
             viewBox="0 0 715 806"
@@ -167,7 +172,7 @@ onMounted(() => {
         morphSVG: getRandomShape,
         repeat: -1,
         repeatRefresh: !tablet, // 태블릿에서는 false로 설정하여 성능 최적화
-        duration: tablet ? 1.5 : 0.5, // 태블릿에서는 더 느리게
+        duration: tablet ? 1.5 : 0, // 태블릿에서는 더 느리게
         ease: 'power1.inOut',
       })
     }
@@ -198,7 +203,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .hero-section {
   width: calc(100vw - 40px);

@@ -23,7 +23,7 @@ defineExpose({
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .name-title {
   display: flex;

@@ -85,7 +85,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import SkillChip from './common/SkillChip.vue'
+import SkillChip from '../common/SkillChip.vue'
 import { getTabletBreakpoint, getMobileBreakpoint } from '@/utils/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -176,13 +176,13 @@ onUnmounted(() => {
 
 const getSkillGroupImage = (type) => {
   const suffix = isMobileOrTablet.value ? '_sm' : '_md'
-  return new URL(`../assets/img/skill_group/Skill_img_group_${type}${suffix}.png`, import.meta.url)
+  return new URL(`../../assets/images/skills/Skill_img_group_${type}${suffix}.png`, import.meta.url)
     .href
 }
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .skills-section {
   width: 100%;

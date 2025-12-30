@@ -2,7 +2,7 @@
   <nav class="navigation">
     <div class="nav-left">
       <div class="logo-container" ref="logoContainerRef">
-        <img src="@/assets/logo.png" alt="Logo" class="logo" />
+        <img src="@/assets/images/logo.png" alt="Logo" class="logo" />
       </div>
     </div>
     <div class="nav-center">
@@ -66,7 +66,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import ShortcutHint from './common/ShortcutHint.vue'
+import ShortcutHint from '../common/ShortcutHint.vue'
 import { getMobileBreakpoint } from '@/utils/breakpoints'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
@@ -328,7 +328,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .navigation {
   position: fixed;

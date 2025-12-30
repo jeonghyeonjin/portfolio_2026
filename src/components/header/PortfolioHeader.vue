@@ -709,7 +709,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .portfolio-header {
   position: fixed;

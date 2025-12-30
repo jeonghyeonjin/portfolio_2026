@@ -138,7 +138,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import '@/assets/breakpoints.css';
+@import '@/assets/styles/breakpoints.css';
 
 .works-section {
   width: 100%;

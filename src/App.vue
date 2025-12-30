@@ -1,9 +1,9 @@
 <script setup>
-import PortfolioHeader from './components/PortfolioHeader.vue'
-import SiteNavigation from './components/SiteNavigation.vue'
-import HeroSection from './components/HeroSection.vue'
-import SkillsSection from './components/SkillsSection.vue'
-import WorksSection from './components/WorksSection.vue'
+import PortfolioHeader from './components/header/PortfolioHeader.vue'
+import SiteNavigation from './components/navigation/SiteNavigation.vue'
+import HeroSection from './components/sections/HeroSection.vue'
+import SkillsSection from './components/sections/SkillsSection.vue'
+import WorksSection from './components/sections/WorksSection.vue'
 </script>
 
 <template>
