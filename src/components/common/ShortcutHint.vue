@@ -9,20 +9,10 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps({
-  keys: {
-    type: [String, Array],
-    required: true,
-    validator: (value) => {
-      if (typeof value === 'string') return true
-      if (Array.isArray(value)) return value.every((v) => typeof v === 'string')
-      return false
-    },
-  },
-  active: {
-    type: Boolean,
-    default: false,
-  },
+// Vue 3.5 props destructuring with defaults
+const { keys, active = false } = defineProps({
+  keys: [String, Array],
+  active: Boolean,
 })
 
 // 수정자 키 목록
@@ -32,14 +22,14 @@ const modifierKeys = ['cmd', 'ctrl', 'alt', 'shift', 'meta', 'option', 'control'
 const parsedKeys = computed(() => {
   let keysArray = []
 
-  if (typeof props.keys === 'string') {
+  if (typeof keys === 'string') {
     // 문자열인 경우 쉼표로 분리
-    keysArray = props.keys
+    keysArray = keys
       .split(',')
       .map((key) => key.trim())
       .filter((key) => key.length > 0)
-  } else if (Array.isArray(props.keys)) {
-    keysArray = props.keys.map((key) => String(key).trim()).filter((key) => key.length > 0)
+  } else if (Array.isArray(keys)) {
+    keysArray = keys.map((key) => String(key).trim()).filter((key) => key.length > 0)
   }
 
   // 수정자 키를 앞으로 정렬
@@ -83,7 +73,8 @@ const parsedKeys = computed(() => {
   height: 20px;
   padding: 0 6px;
   border-radius: 5px;
-  font-size: var(--caption--1--regular);
+  font-size: var(--caption--1);
+  font-weight: var(--font-weight--regular);
   border: 1px solid rgb(var(--white--2));
 }
 </style>

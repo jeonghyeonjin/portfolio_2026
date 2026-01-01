@@ -1,7 +1,9 @@
 <template>
   <div class="role-title">
-    <div class="role-line">FRONTEND DEVELOPER</div>
-    <div class="role-line">UI / UX DESIGNER</div>
+    <div class="role-wrapper">
+      <div class="role-line">FRONTEND DEVELOPER</div>
+      <div class="role-line">UI / UX DESIGNER</div>
+    </div>
   </div>
 </template>
 
@@ -15,10 +17,17 @@
   margin-top: 16px;
 }
 
+.role-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
 .role-line {
   font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
-  font-size: var(--headline--2--medium);
-  font-weight: 500;
+  font-size: var(--headline--2);
+  font-weight: var(--font-weight--medium);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgb(var(--gray--0));

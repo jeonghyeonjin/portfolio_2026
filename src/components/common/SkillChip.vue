@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-defineProps({
+const { label } = defineProps({
   label: {
     type: String,
     required: true,
@@ -20,8 +20,8 @@ defineProps({
   background-color: rgb(var(--gray--1));
   color: rgb(var(--white--1));
   border-radius: 12px;
-  font-size: var(--body--1--normal--regular);
-  font-weight: 400;
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--regular);
   white-space: nowrap;
 }
 </style>

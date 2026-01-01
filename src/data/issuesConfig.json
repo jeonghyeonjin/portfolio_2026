@@ -1,0 +1,101 @@
+{
+  "contrast-badge": {
+    "id": "contrast-badge",
+    "title": "배지 시인성",
+    "subtitle": "Component Visibility",
+    "difficulty": "Basic",
+    "problem": "상태 표시 배지의 텍스트 색상이 흐릿하여(#ccc) 상태를 인지하기 어렵습니다.",
+    "solution": "브랜드 컬러인 Green을 적용하여 상태(Available)를 명확히 전달합니다.",
+    "impact": "상태 인지 속도 0.5s 단축",
+    "category": "UI 디자인",
+    "code": ".badge-text {\n  color: rgb(var(--green--normal));\n  font-weight: 500;\n}"
+  },
+  "hero-bg-animation": {
+    "id": "hero-bg-animation",
+    "title": "SVG 애니메이션 최적화",
+    "subtitle": "GPU Acceleration",
+    "difficulty": "Intermediate",
+    "problem": "배경 SVG의 morphing 애니메이션이 메인 스레드를 차단하여 스크롤 시 프레임 드랍이 발생합니다. will-change와 GPU 가속이 적용되지 않아 성능 저하가 있습니다.",
+    "solution": "will-change 속성 추가 및 transform: translate3d(0,0,0)로 GPU 가속 활성화. ScrollTrigger 애니메이션에 passive 옵션 적용.",
+    "impact": "60fps 유지 • 스크롤 성능 40% 향상",
+    "category": "성능",
+    "code": ".hero-bg-svg {\n  will-change: transform, filter;\n  transform: translate3d(0, 0, 0);\n}\n\ngsap.to(heroBgSvgRef.value, {\n  filter: 'blur(100px)',\n  scrollTrigger: {\n    trigger: heroSectionRef.value,\n    start: 'top top',\n    end: 'bottom top',\n    scrub: true,\n  },\n});"
+  },
+  "modal-focus-trap": {
+    "id": "modal-focus-trap",
+    "title": "키보드 포커스 트랩",
+    "subtitle": "Accessibility",
+    "difficulty": "Advanced",
+    "problem": "모달이 열린 상태에서도 탭(Tab) 키로 배경의 요소로 이동할 수 있어 키보드 사용자에게 혼란을 줍니다.",
+    "solution": "모달 내부에서만 포커스가 순환하도록 Focus Trap을 구현하여 웹 접근성(WCAG)을 준수합니다.",
+    "impact": "WCAG 2.1 준수 • 키보드 사용자 경험 개선",
+    "category": "접근성",
+    "code": "import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'\n\nconst { activate, deactivate } = useFocusTrap(modalRef)\n\nwatch(isOpen, (val) => {\n  if (val) activate()\n  else deactivate()\n})"
+  },
+  "header-scroll-perf": {
+    "id": "header-scroll-perf",
+    "title": "스크롤 이벤트 최적화",
+    "subtitle": "Performance",
+    "difficulty": "Intermediate",
+    "problem": "스크롤 이벤트 리스너가 메인 스레드에서 빈번하게 실행되어 렌더링 성능을 저하시킵니다.",
+    "solution": "passive 옵션을 사용하여 스크롤 성능을 개선하고, requestAnimationFrame으로 시각적 업데이트를 제한합니다.",
+    "impact": "스크롤 Jank 제거 • 메인 스레드 부하 감소",
+    "category": "성능",
+    "code": "// Passive event listeners improve scrolling performance\nwindow.addEventListener('scroll', onScroll, { passive: true });\n\n// Use requestAnimationFrame for visual updates\nlet ticking = false;\nfunction onScroll() {\n  if (!ticking) {\n    window.requestAnimationFrame(() => {\n      updateHeader();\n      ticking = false;\n    });\n    ticking = true;\n  }\n}"
+  },
+  "hero-image-decoding": {
+    "id": "hero-image-decoding",
+    "title": "이미지 디코딩 전략",
+    "subtitle": "Rendering Performance",
+    "difficulty": "Advanced",
+    "problem": "고해상도 Hero 이미지가 동기적으로 디코딩되어 초기 렌더링 시 메인 스레드를 차단합니다.",
+    "solution": "img 태그에 decoding=\"async\" 속성을 추가하여 이미지 디코딩을 백그라운드에서 처리하도록 변경합니다.",
+    "impact": "TBT(Total Blocking Time) 300ms 감소",
+    "category": "성능",
+    "code": "<img\n  src=\"hero.png\"\n  alt=\"Hero\"\n  decoding=\"async\"\n  fetchpriority=\"high\"\n  width=\"800\"\n  height=\"600\"\n/>"
+  },
+  "search-debounce": {
+    "id": "search-debounce",
+    "title": "검색 입력 최적화",
+    "subtitle": "Performance Pattern",
+    "difficulty": "Intermediate",
+    "problem": "검색어 입력 이벤트가 발생할 때마다 필터링 로직이 즉시 실행되어, 빠른 타이핑 시 불필요한 연산으로 메인 스레드를 차단합니다.",
+    "solution": "Debounce 패턴을 적용하여 사용자의 입력이 멈춘 후(300ms)에만 로직을 처리하도록 개선하여 성능을 최적화합니다.",
+    "impact": "불필요한 연산 80% 감소 • 입력 반응성 향상",
+    "category": "성능",
+    "code": "import { debounce } from 'lodash-es'\n\n// 검색 입력 핸들러에 디바운스 적용\nconst handleSearch = debounce((query) => {\n  performSearch(query)\n}, 300)\n\n// 입력 이벤트 바인딩\n<input @input=\"handleSearch\" />"
+  },
+  "search-keyboard-nav": {
+    "id": "search-keyboard-nav",
+    "title": "검색 키보드 네비게이션",
+    "subtitle": "Accessibility",
+    "difficulty": "Intermediate",
+    "problem": "검색 결과를 선택할 때 마우스에만 의존하여 키보드 사용자가 결과를 탐색하거나 선택할 수 없습니다. 엔터 키와 방향키로 결과를 탐색하는 기능이 없어 접근성이 떨어집니다.",
+    "solution": "키보드 이벤트 핸들러를 추가하여 방향키(↑↓)로 결과를 탐색하고, 엔터 키로 선택하며, ESC 키로 검색을 닫을 수 있도록 구현합니다.",
+    "impact": "WCAG 2.1 준수 • 키보드 사용자 경험 개선",
+    "category": "접근성",
+    "code": "<input\n  @keydown.esc=\"handleSearchEsc\"\n  @keydown.enter=\"handleEnter\"\n  @keydown.down.prevent=\"navigateDown\"\n  @keydown.up.prevent=\"navigateUp\"\n/>\n\n// 핸들러 구현\nconst handleEnter = () => {\n  if (filteredWorks.value[selectedIndex.value]) {\n    selectWork(filteredWorks.value[selectedIndex.value].id)\n  }\n}\n\nconst navigateDown = () => {\n  selectedIndex.value = Math.min(selectedIndex.value + 1, filteredWorks.value.length - 1)\n}\n\nconst navigateUp = () => {\n  selectedIndex.value = Math.max(selectedIndex.value - 1, 0)\n}"
+  },
+  "search-shortcut": {
+    "id": "search-shortcut",
+    "title": "검색 단축키 기능",
+    "subtitle": "UX Enhancement",
+    "difficulty": "Basic",
+    "problem": "작업물에 검색 기능을 추가하면 사용자의 경험을 향상 시킬 수 있습니다. 예를 들어, 이전에 눈여겨 보았던 프로젝트를 추가적인 탐색 없이도 쉽게 찾을 수 있습니다.",
+    "solution": "검색 UI를 추가합니다. 또한 '/' 키를 누르면 검색창이 열리도록 키보드 이벤트 리스너를 추가하고, 메뉴에 단축키 힌트를 표시하여 사용자가 쉽게 검색 기능을 발견하고 사용할 수 있도록 합니다.",
+    "impact": "사용자 경험 향상 • 검색 접근성 향상 • 키보드 워크플로우 개선",
+    "category": "UX",
+    "code": "// '/' 키로 검색창 열기\nconst handleKeydown = (event) => {\n  if (event.key === '/') {\n    // input이나 textarea에 포커스가 있으면 무시\n    if (\n      event.target.tagName === 'INPUT' ||\n      event.target.tagName === 'TEXTAREA' ||\n      event.target.isContentEditable\n    ) {\n      return\n    }\n\n    event.preventDefault()\n    openSearch()\n  }\n}\n\nwindow.addEventListener('keydown', handleKeydown)\n\n// 메뉴에 단축키 힌트 표시\n<ShortcutHint :keys=\"'/'\" :active=\"activeSection === 'work'\" />"
+  },
+  "work-modal-perf": {
+    "id": "work-modal-perf",
+    "title": "모달 전환 애니메이션 최적화",
+    "subtitle": "Animation Performance",
+    "difficulty": "Advanced",
+    "problem": "Work 모달의 원형 확산 애니메이션이 메인 스레드에서 동기적으로 실행되어, 애니메이션 중 다른 UI 업데이트가 차단되고 프레임 드랍이 발생합니다.",
+    "solution": "GSAP 애니메이션에 `force3D: true` 옵션을 추가하여 GPU 가속을 강제하고, `will-change` 속성을 미리 선언하여 브라우저가 레이어를 최적화하도록 합니다.",
+    "impact": "애니메이션 부드러움 2배 향상 • 프레임 드랍 제거",
+    "category": "성능",
+    "code": "// GSAP 애니메이션 최적화\ntl.to(circleRevealRef.value, {\n  scale: targetScale,\n  duration: 0.5,\n  ease: 'power2.inOut',\n  force3D: true, // GPU 가속 강제\n})\n\n// CSS 최적화\n.circle-reveal {\n  will-change: transform;\n  transform: translateZ(0);\n}"
+  }
+}

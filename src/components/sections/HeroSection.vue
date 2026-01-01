@@ -1,33 +1,66 @@
 <template>
   <section class="hero-section" ref="heroSectionRef">
-    <div class="hero-grid">
-      <div class="hero-grid-item hero-grid-item-empty"></div>
-      <div class="hero-grid-item hero-grid-item-image">
-        <div class="hero-image-container">
-          <img
-            src="@/assets/images/hero/hero.png"
-            alt="Hero"
-            class="hero-image"
-            ref="heroImageRef"
-          />
-          <svg
-            class="hero-bg-svg"
-            viewBox="0 0 715 806"
-            xmlns="http://www.w3.org/2000/svg"
-            ref="heroBgSvgRef"
-          >
-            <path
-              ref="heroBgPathRef"
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M392.206 0.607399C483.425 4.94157 579.379 38.8412 635.075 109.419C686.573 174.677 651.971 267.339 666.681 348.422C678.507 413.609 722.644 471.433 712.629 536.908C701.534 609.446 666.16 678.669 608.895 726.214C548.918 776.01 469.479 817.851 392.206 802.941C317.31 788.489 293.979 693.714 229.99 653.104C159.976 608.67 37.9131 633.022 5.91028 557.779C-25.4405 484.069 77.1598 419.319 97.7018 342.076C120.456 256.512 73.1635 153.143 131.509 85.4931C191.956 15.4065 298.403 -3.8495 392.206 0.607399Z"
-              class="hero-bg-path"
-              fill="rgb(250, 189, 47)"
-            />
-          </svg>
+    <div class="hero-section-container">
+      <div class="hero-grid">
+        <div class="hero-grid-item hero-grid-item-empty"></div>
+        <div class="hero-grid-item hero-grid-item-image">
+          <div class="hero-image-container">
+            <div class="hero-image-wrapper">
+              <img
+                src="@/assets/images/hero/hero.png"
+                alt="정현진 포트폴리오 메인 이미지"
+                class="hero-image"
+                ref="heroImageRef"
+                :decoding="isFixed('hero-image-decoding') ? 'async' : 'sync'"
+              />
+              <Transition name="issue-marker">
+                <div
+                  v-if="!isFixed('hero-image-decoding') && isMarkersReady"
+                  class="issue-marker-wrapper"
+                  style="top: 10%; right: 10%"
+                  @click.stop="openIssue('hero-image-decoding')"
+                >
+                  <IssueMarker />
+                </div>
+              </Transition>
+            </div>
+            <div class="hero-bg-container" aria-hidden="true">
+              <svg
+                class="hero-bg-svg"
+                :class="{ 'is-optimized': isFixed('hero-bg-animation') }"
+                viewBox="-10 -5 200 195"
+                xmlns="http://www.w3.org/2000/svg"
+                ref="heroBgSvgRef"
+                aria-hidden="true"
+              >
+                <path
+                  ref="heroBgPathRef"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M194.77,84.25c1.45-25-3.92-53.49-21-66.79S128,5.88,98.37,8.47s-60,6-76.79,23.35S1.52,80.51,8.35,106.8s23.63,47.68,44,61.57,44.38,20.41,65.69,16.49,40.07-18.39,53.54-36.27a116.17,116.17,0,0,0,23.15-64.34Z"
+                  class="hero-bg-path"
+                  fill="rgb(250, 189, 47)"
+                />
+              </svg>
+            </div>
+            <Transition name="issue-marker">
+              <div
+                v-if="!isFixed('hero-bg-animation') && isMarkersReady"
+                class="issue-marker-wrapper"
+                style="top: 20%; right: 20%; z-index: 10"
+                @click.stop="openIssue('hero-bg-animation')"
+              >
+                <IssueMarker />
+              </div>
+            </Transition>
+          </div>
         </div>
       </div>
     </div>
+
+    <Teleport to="body">
+      <SolutionModal />
+    </Teleport>
   </section>
 </template>
 
@@ -36,158 +69,104 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
-import { getTabletBreakpoint, getMobileBreakpoint } from '@/utils/breakpoints'
+import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import { useResponsive } from '@/composables/useResponsive'
+import { useMobileViewport } from '@/composables/useMobileViewport'
+import IssueMarker from '@/components/broken/IssueMarker.vue'
+import SolutionModal from '@/components/broken/SolutionModal.vue'
+import heroShapes from '@/data/heroShapes.json'
 
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
+
+const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
+const { isMobile, isTablet } = useResponsive()
 
 const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
 const heroBgSvgRef = ref(null)
 const heroBgPathRef = ref(null)
-let heroBgSvgAnimation = null
 let heroBgPathAnimation = null
-let resizeObserver = null
 
-const isTablet = () => {
-  const tabletBreakpoint = getTabletBreakpoint()
-  return window.innerWidth <= tabletBreakpoint
-}
-
-const isMobile = () => {
-  const mobileBreakpoint = getMobileBreakpoint()
-  return window.innerWidth <= mobileBreakpoint
-}
-
-// 모바일에서 실제 뷰포트 높이를 계산하여 설정
-const setMobileViewportHeight = () => {
-  if (!heroSectionRef.value) return
-
-  if (isMobile()) {
-    // 모바일에서는 실제 보이는 뷰포트 높이 사용
-    const actualHeight = window.innerHeight
-    heroSectionRef.value.style.height = `${actualHeight - 40}px`
-  } else {
-    // 데스크톱/태블릿에서는 CSS 변수 제거하여 기본값 사용
-    heroSectionRef.value.style.height = ''
-  }
-}
+// 모바일 뷰포트 높이 관리
+const { setupListeners, cleanup: cleanupViewport } = useMobileViewport({
+  elementRef: heroSectionRef,
+  isMobile,
+  offset: 40,
+})
 
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
 
   // 모바일 뷰포트 높이 설정
-  setMobileViewportHeight()
+  setupListeners()
 
-  // 리사이즈 및 스크롤 이벤트로 뷰포트 높이 업데이트 (주소 표시줄 변화 대응)
-  const handleResize = () => {
-    setMobileViewportHeight()
-  }
-
-  // 초기 설정 후 약간의 지연을 두고 다시 설정 (주소 표시줄이 숨겨진 후)
-  setTimeout(() => {
-    setMobileViewportHeight()
-  }, 100)
-
-  window.addEventListener('resize', handleResize)
-  window.addEventListener('orientationchange', handleResize)
-
-  // 스크롤 시에도 업데이트 (주소 표시줄이 나타나거나 사라질 때)
-  let scrollTimeout = null
-  const handleScroll = () => {
-    if (scrollTimeout) clearTimeout(scrollTimeout)
-    scrollTimeout = setTimeout(() => {
-      setMobileViewportHeight()
-    }, 150)
-  }
-
-  if (isMobile()) {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-  }
-
-  resizeObserver = {
-    cleanup: () => {
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('orientationchange', handleResize)
-      if (isMobile()) {
-        window.removeEventListener('scroll', handleScroll)
-      }
-      if (scrollTimeout) clearTimeout(scrollTimeout)
+  // 페이지 로딩 시 hero-image 등장 애니메이션 (아래에서 위로)
+  gsap.fromTo(
+    heroImageRef.value,
+    {
+      y: 60,
+      opacity: 0,
     },
-  }
-
-  const tablet = isTablet()
-
-  gsap.to(heroImageRef.value, {
-    scrollTrigger: {
-      trigger: heroSectionRef.value,
-      start: 'top top',
-      end: 'center top',
-      scrub: true,
+    {
+      y: 0,
+      opacity: 1,
+      duration: 1.2,
+      ease: 'power3.out',
+      delay: 0.3,
     },
-    // x: '200%',
-    // scale: 1.5,
-    autoAlpha: 0,
-    ease: 'power2.in',
-  })
+  )
 
-  // hero-bg-svg 스크롤 애니메이션 (blur) - 태블릿에서는 제거하여 성능 최적화
-  if (!tablet) {
+  // 페이지 로딩 시 hero-bg-svg 등장 애니메이션 (아래에서 위로, hero-image보다 늦게)
+  if (heroBgSvgRef.value) {
+    // 초기 상태를 즉시 설정
+    gsap.set(heroBgSvgRef.value, {
+      y: 60,
+      opacity: 0,
+    })
+
     gsap.to(heroBgSvgRef.value, {
-      filter: 'blur(100px)',
-      scrollTrigger: {
-        trigger: heroSectionRef.value,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
+      y: 0,
+      opacity: 1,
+      duration: 1.2,
+      ease: 'power3.out',
+      delay: 1,
+      onComplete: () => {
+        // 등장 애니메이션 완료 후 morphSVG random 포인트 애니메이션 시작
+        if (heroBgSvgRef.value && heroBgPathRef.value) {
+          // 랜덤하게 shape를 선택하는 함수 생성
+          const getRandomShape = gsap.utils.random(heroShapes, true)
+
+          // morphing 애니메이션 - random 포인트로 계속 변경
+          heroBgPathAnimation = gsap.to(heroBgPathRef.value, {
+            morphSVG: getRandomShape,
+            repeat: -1,
+            repeatRefresh: true, // 매 반복마다 새로운 랜덤 포인트 선택
+            duration: isTablet.value ? 10 : 10,
+            ease: 'power2.inOut',
+          })
+        }
       },
     })
   }
 
-  // hero-bg-svg 부드러운 움직임 애니메이션 (무한 반복) - 태블릿에서는 간소화
-  if (heroBgSvgRef.value) {
-    heroBgSvgAnimation = gsap.to(heroBgSvgRef.value, {
-      x: tablet ? '+=15' : '+=30',
-      y: tablet ? '+=10' : '+=20',
-      rotation: tablet ? 5 : 10,
-      scale: tablet ? 1.05 : 1.1,
-      duration: tablet ? 15 : 10,
-      ease: 'power2.inOut',
-      repeat: -1,
-      yoyo: true,
-    })
-  }
-
-  // hero-bg-path morphing 애니메이션 - 태블릿에서는 간소화
-  if (heroBgSvgRef.value && heroBgPathRef.value) {
-    // hero-bg-svg 내의 모든 path 요소들의 d 속성을 배열로 가져오기
-    const shapes = gsap.utils.toArray('path', heroBgSvgRef.value).map((el) => el.getAttribute('d'))
-
-    // path가 하나 이상 있을 때만 애니메이션 적용
-    if (shapes.length > 0) {
-      // 랜덤하게 path를 선택하는 함수
-      const getRandomShape = gsap.utils.random(shapes, true)
-
-      // morphing 애니메이션 - 태블릿에서는 repeatRefresh 제거하고 duration 증가
-      heroBgPathAnimation = gsap.to(heroBgPathRef.value, {
-        morphSVG: getRandomShape,
-        repeat: -1,
-        repeatRefresh: !tablet, // 태블릿에서는 false로 설정하여 성능 최적화
-        duration: tablet ? 1.5 : 0, // 태블릿에서는 더 느리게
-        ease: 'power1.inOut',
-      })
-    }
-  }
+  // hero-bg-svg 스크롤 애니메이션 (blur)
+  // if (!tablet) {
+  gsap.to(heroBgSvgRef.value, {
+    filter: 'blur(100px)',
+    scrollTrigger: {
+      trigger: heroSectionRef.value,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+    },
+  })
+  // }
 })
 
 onUnmounted(() => {
-  if (resizeObserver) {
-    resizeObserver.cleanup()
-    resizeObserver = null
-  }
-  if (heroBgSvgAnimation) {
-    heroBgSvgAnimation.kill()
-    heroBgSvgAnimation = null
-  }
+  // 모바일 뷰포트 리스너 정리
+  cleanupViewport()
+
   if (heroBgPathAnimation) {
     heroBgPathAnimation.kill()
     heroBgPathAnimation = null
@@ -204,28 +183,38 @@ onUnmounted(() => {
 
 <style scoped>
 @import '@/assets/styles/breakpoints.css';
+@import '@/assets/styles/issue-marker.css';
 
 .hero-section {
-  width: calc(100vw - 40px);
+  width: 100%;
   /* 모바일에서는 dvh 사용, fallback으로 vh */
-  height: calc(100dvh - 40px);
-  height: calc(100vh - 40px); /* fallback for older browsers */
+  height: 100dvh;
+  height: 100vh; /* fallback for older browsers */
   display: flex;
   align-items: center;
-  background-color: rgb(var(--white--2));
-  margin: 20px;
-  border-radius: 20px;
   position: relative;
+  padding: 10px;
   overflow: hidden;
 }
 
-.hero-section::after {
+.hero-section-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background-color: rgb(var(--white--2));
+}
+
+.hero-section-container::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   height: 70%;
+  border-radius: 20px;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.2) 0%,
@@ -302,7 +291,7 @@ onUnmounted(() => {
 .hero-grid-item-image {
   grid-column: 2 / 4;
   padding: 40px 80px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-image-container {
@@ -314,6 +303,32 @@ onUnmounted(() => {
   justify-content: center;
 }
 
+.is-interactive {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.is-interactive::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 2px dashed rgba(var(--red--normal), 0.3);
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.is-interactive:hover::after {
+  opacity: 1;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .hero-image {
   position: relative;
   width: 100%;
@@ -322,21 +337,37 @@ onUnmounted(() => {
   display: block;
   will-change: transform, opacity;
   z-index: 2;
+  pointer-events: none;
+}
+
+.hero-bg-container {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-bg-svg {
-  position: absolute;
+  position: relative;
   width: 80%;
   height: auto;
   max-width: 1000px;
   display: block;
-  z-index: 1;
-  top: -15%;
-  left: 10%;
   pointer-events: none;
+}
+
+.hero-bg-svg.is-optimized {
   will-change: transform, filter;
   transform: translate3d(0, 0, 0); /* GPU 가속 활성화 */
-  /* opacity: 0.2; */
 }
 
 .hero-bg-svg :deep(path) {

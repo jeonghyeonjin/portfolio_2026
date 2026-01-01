@@ -1,10 +1,26 @@
-/* Color palette - RGB values */
+/* Color palette - RGB values
+ *
+ * WCAG 2.1 Color Contrast Guidelines (WCAG 1.4.3):
+ * - Normal text (< 18pt / 14pt bold): minimum 4.5:1 contrast ratio (Level AA)
+ * - Large text (≥ 18pt / 14pt bold): minimum 3:1 contrast ratio (Level AA)
+ * - UI components and graphics: minimum 3:1 contrast ratio (Level AA)
+ *
+ * Common color combinations to verify:
+ * 1. rgb(var(--gray--1)) on rgb(var(--white--1)) - Main text
+ * 2. rgb(var(--gray--2)) on rgb(var(--white--1)) - Secondary text
+ * 3. rgba(var(--gray--2), 0.8) on rgba(255, 255, 255, 0.35) - Navigation menu
+ * 4. rgba(var(--gray--5s), 0.6) on transparent - Icon buttons
+ *
+ * Tools for verification:
+ * - WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+ * - Chrome DevTools Lighthouse
+ */
 :root {
-  /* Color styles */
-  --gray--0: 29, 32, 33;
+  /* Grayscale palette */
+  --gray--0: 29, 32, 33; /* Darkest gray */
   --gray--0s: 50, 48, 47;
-  --gray--1: 40, 40, 40;
-  --gray--2: 60, 56, 54;
+  --gray--1: 40, 40, 40; /* Primary text color - HIGH contrast with white backgrounds */
+  --gray--2: 60, 56, 54; /* Secondary text color */
   --gray--3: 80, 73, 69;
   --gray--4: 102, 92, 84;
   --gray--5: 124, 111, 100;
@@ -17,6 +33,8 @@
   --gray--10s: 242, 229, 188;
   --gray--11: 251, 241, 199;
   --gray--12: 249, 245, 215;
+
+  /* Semantic colors */
   --red--dark: 157, 0, 6;
   --red--normal: 204, 36, 29;
   --red--light: 251, 73, 52;
@@ -38,8 +56,10 @@
   --orange--dark: 175, 58, 3;
   --orange--normal: 214, 93, 14;
   --orange--light: 254, 128, 25;
-  --white--0: 255, 255, 255;
-  --white--1: 238, 238, 238;
-  --white--2: 221, 221, 221;
-  --white--3: 204, 204, 204;
+
+  /* Neutral backgrounds */
+  --white--0: 255, 255, 255; /* Pure white */
+  --white--1: 238, 238, 238; /* Light background - main app background */
+  --white--2: 221, 221, 221; /* Lighter gray background */
+  --white--3: 204, 204, 204; /* Medium gray background */
 }

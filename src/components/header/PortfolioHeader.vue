@@ -3,6 +3,16 @@
     <AvailableBadge ref="availableBadgeRef" />
     <RoleTitle ref="roleTitleRef" />
     <NameTitle ref="nameTitleRef" />
+    <Transition name="issue-marker">
+      <div
+        v-if="!isFixed('header-scroll-perf') && isMarkersReady"
+        class="issue-marker-wrapper high-z"
+        style="top: -20px; left: -20px"
+        @click="openIssue('header-scroll-perf')"
+      >
+        <IssueMarker />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -13,9 +23,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AvailableBadge from './AvailableBadge.vue'
 import RoleTitle from './RoleTitle.vue'
 import NameTitle from './NameTitle.vue'
-import { getMobileBreakpoint } from '@/utils/breakpoints'
+import IssueMarker from '@/components/broken/IssueMarker.vue'
+import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import { useResponsive } from '@/composables/useResponsive'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
+const { isMobile } = useResponsive()
 
 // 상수
 const ANIMATION_DURATION_SHORT = 0.15
@@ -23,7 +38,6 @@ const ANIMATION_DURATION_MEDIUM = 0.3
 const ANIMATION_DURATION_LONG = 0.6
 const ANIMATION_DELAY = 0.15
 const EASE_OUT = 'power2.out'
-const EASE_IN = 'power2.in'
 const BLUR_AMOUNT_LARGE = '40px'
 const BLUR_AMOUNT_MEDIUM = '30px'
 const TRANSFORM_Y_UP_LARGE = '-10%'
@@ -48,8 +62,6 @@ let badgeAnimation = null
 let roleAnimation = null
 let nameAnimation = null
 let headerAnimation = null
-let nameTextTimeline = null
-let nameTextRestoreAnimation = null
 let heroCheckHandler = null
 let heroCheckTimeout = null
 let isRestoring = false
@@ -58,149 +70,36 @@ let mobileBadgeAnimation = null
 let mobileRoleAnimation = null
 
 // ScrollTrigger 인스턴스
-let skillsScrollTrigger = null
-let worksScrollTrigger = null
+let skillScrollTrigger = null
+let workScrollTrigger = null
+let experienceScrollTrigger = null
 let resizeHandler = null
 let resizeTimeout = null
 
-// 유틸리티 함수
-const isMobile = () => {
-  const mobileBreakpoint = getMobileBreakpoint()
-  return window.innerWidth <= mobileBreakpoint
-}
-
-// 애니메이션 정리 헬퍼
-const killNameTextAnimations = (firstLine, secondLine) => {
-  if (nameTextTimeline) {
-    nameTextTimeline.kill()
-    nameTextTimeline = null
-  }
-  if (nameTextRestoreAnimation) {
-    nameTextRestoreAnimation.kill()
-    nameTextRestoreAnimation = null
-  }
-  if (firstLine) gsap.killTweensOf(firstLine)
-  if (secondLine) gsap.killTweensOf(secondLine)
-}
-
-// NameTitle 텍스트를 변경하는 함수
+// NameTitle 텍스트를 변경하는 함수 (NameTitle의 imperative API 사용)
 const changeNameText = (newText) => {
-  if (!nameTitleRef.value?.firstLineRef || !nameTitleRef.value?.secondLineRef) return
+  if (!nameTitleRef.value?.changeText) return
 
-  const firstLine = nameTitleRef.value.firstLineRef
-  const secondLine = nameTitleRef.value.secondLineRef
-
-  // 진행 중인 모든 애니메이션 중단
-  killNameTextAnimations(firstLine, secondLine)
-
-  // 첫 번째 줄과 두 번째 줄을 동시에 숨기기
-  nameTextTimeline = gsap.timeline({
-    onComplete: () => {
-      // 두 줄이 모두 숨겨진 후 내용 변경
-      if (firstLine && secondLine) {
-        // 첫 번째 줄에 새 텍스트 설정, 두 번째 줄 숨기기
-        firstLine.textContent = newText
-        secondLine.style.display = 'none'
-
-        // 초기 상태 설정 (blur와 transform)
-        gsap.set(firstLine, {
-          opacity: 0,
-          filter: `blur(${BLUR_AMOUNT_LARGE})`,
-          y: TRANSFORM_Y_UP_LARGE,
-        })
-
-        // 첫 번째 줄 페이드인 + blur + transform 애니메이션
-        gsap.to(firstLine, {
-          opacity: 1,
-          filter: 'blur(0px)',
-          y: '0%',
-          duration: ANIMATION_DURATION_SHORT,
-        })
-      }
-      nameTextTimeline = null
-    },
+  // NameTitle의 changeText 메서드 사용
+  nameTitleRef.value.changeText(newText, {
+    hideSecondLine: true,
+    blurAmount: BLUR_AMOUNT_LARGE,
+    transformY: TRANSFORM_Y_UP_LARGE,
+    duration: ANIMATION_DURATION_SHORT,
   })
-
-  // 첫 번째 줄과 두 번째 줄 동시에 숨기기
-  nameTextTimeline.to(
-    firstLine,
-    {
-      opacity: 0,
-      duration: ANIMATION_DURATION_SHORT,
-    },
-    0,
-  )
-  nameTextTimeline.to(
-    secondLine,
-    {
-      opacity: 0,
-      duration: ANIMATION_DURATION_SHORT,
-    },
-    0,
-  )
 }
 
-// NameTitle 원래 상태로 복원하는 함수
+// NameTitle 원래 상태로 복원하는 함수 (NameTitle의 imperative API 사용)
 const restoreNameText = () => {
-  if (!nameTitleRef.value?.firstLineRef || !nameTitleRef.value?.secondLineRef) return
+  if (!nameTitleRef.value?.restore) return
 
-  const firstLine = nameTitleRef.value.firstLineRef
-  const secondLine = nameTitleRef.value.secondLineRef
-
-  // 진행 중인 모든 애니메이션 중단
-  killNameTextAnimations(firstLine, secondLine)
-
-  // 첫 번째 줄을 숨기고 원래 내용으로 복원
-  nameTextRestoreAnimation = gsap.to(firstLine, {
-    opacity: 0,
+  // NameTitle의 restore 메서드 사용
+  nameTitleRef.value.restore({
+    firstName: ORIGINAL_FIRST_LINE_TEXT,
+    secondName: ORIGINAL_SECOND_LINE_TEXT,
+    blurAmount: BLUR_AMOUNT_MEDIUM,
+    transformY: TRANSFORM_Y_UP_SMALL,
     duration: ANIMATION_DURATION_SHORT,
-    ease: EASE_IN,
-    onComplete: () => {
-      if (firstLine && secondLine) {
-        // 원래 텍스트로 복원
-        firstLine.textContent = ORIGINAL_FIRST_LINE_TEXT
-        secondLine.textContent = ORIGINAL_SECOND_LINE_TEXT
-        secondLine.style.display = 'block'
-
-        // 초기 상태 설정 (blur와 transform)
-        gsap.set([firstLine, secondLine], {
-          opacity: 0,
-          filter: `blur(${BLUR_AMOUNT_MEDIUM})`,
-          y: TRANSFORM_Y_UP_SMALL,
-        })
-
-        // 첫 번째 줄과 두 번째 줄을 동시에 페이드인
-        nameTextTimeline = gsap.timeline({
-          onComplete: () => {
-            nameTextTimeline = null
-            nameTextRestoreAnimation = null
-          },
-        })
-
-        nameTextTimeline.to(
-          firstLine,
-          {
-            opacity: 1,
-            filter: 'blur(0px)',
-            y: '0%',
-            duration: ANIMATION_DURATION_SHORT,
-            ease: EASE_OUT,
-          },
-          0,
-        )
-        nameTextTimeline.to(
-          secondLine,
-          {
-            opacity: 1,
-            filter: 'blur(0px)',
-            y: '0%',
-            duration: ANIMATION_DURATION_SHORT,
-            ease: EASE_OUT,
-          },
-          0,
-        )
-      }
-    },
   })
 }
 
@@ -250,66 +149,21 @@ const restoreMobileHeader = () => {
 
 // 모바일 NameTitle 텍스트 복원
 const restoreMobileNameText = () => {
-  if (!nameTitleRef.value?.firstLineRef || !nameTitleRef.value?.secondLineRef) {
-    restoreNameText()
+  if (!nameTitleRef.value?.restore) {
     isRestoring = false
     return
   }
 
-  const firstLine = nameTitleRef.value.firstLineRef
-  const secondLine = nameTitleRef.value.secondLineRef
-
-  killNameTextAnimations(firstLine, secondLine)
-
-  // 이미 원래 텍스트인지 확인
-  const isAlreadyRestored =
-    firstLine.textContent === ORIGINAL_FIRST_LINE_TEXT &&
-    secondLine.textContent === ORIGINAL_SECOND_LINE_TEXT
-
-  // 텍스트가 변경되어야 하는 경우만 변경
-  if (!isAlreadyRestored) {
-    firstLine.textContent = ORIGINAL_FIRST_LINE_TEXT
-    secondLine.textContent = ORIGINAL_SECOND_LINE_TEXT
-    secondLine.style.display = 'block'
-  }
-
-  // blur와 transform 효과는 항상 적용
-  gsap.set([firstLine, secondLine], {
-    opacity: 0,
-    filter: `blur(${BLUR_AMOUNT_LARGE})`,
-    y: TRANSFORM_Y_UP_LARGE,
+  // NameTitle의 restore 메서드 사용 (모바일용 설정)
+  nameTitleRef.value.restore({
+    firstName: ORIGINAL_FIRST_LINE_TEXT,
+    secondName: ORIGINAL_SECOND_LINE_TEXT,
+    blurAmount: BLUR_AMOUNT_LARGE,
+    transformY: TRANSFORM_Y_UP_LARGE,
+    duration: ANIMATION_DURATION_MEDIUM,
   })
 
-  // 첫 번째 줄과 두 번째 줄을 동시에 페이드인
-  nameTextTimeline = gsap.timeline({
-    onComplete: () => {
-      nameTextTimeline = null
-      isRestoring = false
-    },
-  })
-
-  nameTextTimeline.to(
-    firstLine,
-    {
-      opacity: 1,
-      filter: 'blur(0px)',
-      y: '0%',
-      duration: ANIMATION_DURATION_MEDIUM,
-      ease: EASE_OUT,
-    },
-    0,
-  )
-  nameTextTimeline.to(
-    secondLine,
-    {
-      opacity: 1,
-      filter: 'blur(0px)',
-      y: '0%',
-      duration: ANIMATION_DURATION_MEDIUM,
-      ease: EASE_OUT,
-    },
-    0,
-  )
+  isRestoring = false
 }
 
 // 데스크톱/태블릿 헤더 복원 애니메이션
@@ -375,13 +229,17 @@ const killMobileAnimations = () => {
 
 // ScrollTrigger 정리
 const cleanupScrollTriggers = () => {
-  if (skillsScrollTrigger) {
-    skillsScrollTrigger.kill()
-    skillsScrollTrigger = null
+  if (skillScrollTrigger) {
+    skillScrollTrigger.kill()
+    skillScrollTrigger = null
   }
-  if (worksScrollTrigger) {
-    worksScrollTrigger.kill()
-    worksScrollTrigger = null
+  if (workScrollTrigger) {
+    workScrollTrigger.kill()
+    workScrollTrigger = null
+  }
+  if (experienceScrollTrigger) {
+    experienceScrollTrigger.kill()
+    experienceScrollTrigger = null
   }
 }
 
@@ -389,17 +247,10 @@ const cleanupScrollTriggers = () => {
 const cleanupAnimations = () => {
   killAllAnimations()
   killMobileAnimations()
-  if (nameTextTimeline) nameTextTimeline.kill()
-  if (nameTextRestoreAnimation) nameTextRestoreAnimation.kill()
 }
 
 const cleanupTweens = () => {
-  if (nameTitleRef.value?.firstLineRef) {
-    gsap.killTweensOf(nameTitleRef.value.firstLineRef)
-  }
-  if (nameTitleRef.value?.secondLineRef) {
-    gsap.killTweensOf(nameTitleRef.value.secondLineRef)
-  }
+  // NameTitle은 자체적으로 애니메이션 관리
   if (portfolioHeaderRef.value) {
     gsap.killTweensOf(portfolioHeaderRef.value)
   }
@@ -419,12 +270,14 @@ const initializeHeader = () => {
   cleanupScrollTriggers()
 
   const heroSection = document.querySelector('.hero-section')
-  const skillsSection = document.querySelector('.skills-section')
-  const worksSection = document.querySelector('.works-section')
+  const skillSection = document.querySelector('.skill-section')
+  const workSection = document.querySelector('.work-section')
+  const experienceSection = document.querySelector('.experience-section')
 
-  if (!heroSection || !skillsSection || !worksSection || !nameTitleRef.value) return
+  if (!heroSection || !skillSection || !workSection || !experienceSection || !nameTitleRef.value)
+    return
 
-  // 원래 상태로 복원하는 함수 (Skills 섹션을 벗어날 때)
+  // 원래 상태로 복원하는 함수 (Skill 섹션을 벗어날 때)
   const restoreOriginalState = () => {
     // 중복 실행 방지
     if (isRestoring) return
@@ -434,7 +287,7 @@ const initializeHeader = () => {
     killAllAnimations()
 
     // 모바일에서만 전체 헤더 표시 (AvailableBadge와 RoleTitle은 blur/transform 없이)
-    if (isMobile() && portfolioHeaderRef.value) {
+    if (isMobile.value && portfolioHeaderRef.value) {
       restoreMobileHeader()
       restoreMobileNameText()
       return // 모바일에서는 여기서 종료
@@ -500,13 +353,13 @@ const initializeHeader = () => {
     // NameTitle은 그대로 유지 (텍스트는 changeNameText로 변경됨)
   }
 
-  // 숨기는 함수 (Skills 섹션에 진입할 때)
+  // 숨기는 함수 (Skill 섹션에 진입할 때)
   const hideState = () => {
     // 진행 중인 애니메이션 중단
     killAllAnimations()
 
     // 모바일에서만 전체 헤더 숨기기 (AvailableBadge와 RoleTitle은 blur/transform 없이)
-    if (isMobile() && portfolioHeaderRef.value) {
+    if (isMobile.value && portfolioHeaderRef.value) {
       hideMobileHeader()
       return // 모바일에서는 여기서 종료
     }
@@ -541,11 +394,11 @@ const initializeHeader = () => {
 
   // 모바일 헤더 ScrollTrigger 애니메이션 설정
   const setupMobileHeaderScrollAnimation = () => {
-    // Skills 섹션의 top 90% 지점 계산
-    const skillsTop = skillsSection.offsetTop
+    // Skill 섹션의 top 90% 지점 계산
+    const skillTop = skillSection.offsetTop
     const heroBottom = heroSection.offsetTop + heroSection.offsetHeight
-    // Skills 섹션의 top 90% 지점까지의 거리 계산
-    const distance = skillsTop - heroBottom + window.innerHeight * MOBILE_DISTANCE_MULTIPLIER
+    // Skill 섹션의 top 90% 지점까지의 거리 계산
+    const distance = skillTop - heroBottom + window.innerHeight * MOBILE_DISTANCE_MULTIPLIER
 
     mobileHeaderAnimation = gsap.to(portfolioHeaderRef.value, {
       opacity: 0,
@@ -595,28 +448,28 @@ const initializeHeader = () => {
   }
 
   // 모바일에서 헤더 애니메이션을 gsap.to() + scrollTrigger 방식으로 설정
-  if (isMobile() && portfolioHeaderRef.value) {
+  if (isMobile.value && portfolioHeaderRef.value) {
     killMobileAnimations()
     setMobileHeaderInitialState()
     setupMobileHeaderScrollAnimation()
   }
 
-  // Skills 섹션이 보이는지 확인
-  const isSkillsSectionVisible = () => {
-    const skillsRect = skillsSection.getBoundingClientRect()
-    return skillsRect.top < window.innerHeight && skillsRect.bottom > 0
+  // Skill 섹션이 보이는지 확인
+  const isSkillSectionVisible = () => {
+    const skillRect = skillSection.getBoundingClientRect()
+    return skillRect.top < window.innerHeight && skillRect.bottom > 0
   }
 
-  // Skills 섹션 ScrollTrigger (데스크톱/태블릿용)
-  if (!isMobile()) {
-    skillsScrollTrigger = ScrollTrigger.create({
-      trigger: skillsSection,
+  // Skill 섹션 ScrollTrigger (데스크톱/태블릿용)
+  if (!isMobile.value) {
+    skillScrollTrigger = ScrollTrigger.create({
+      trigger: skillSection,
       start: SCROLL_TRIGGER_START,
       end: SCROLL_TRIGGER_END,
       scrub: SCROLL_TRIGGER_SCRUB,
       onEnter: () => {
         hideState()
-        changeNameText('Skills')
+        changeNameText('Skill')
       },
       onLeaveBack: () => {
         restoreOriginalState()
@@ -624,25 +477,52 @@ const initializeHeader = () => {
     })
   }
 
-  // Works 섹션 ScrollTrigger (데스크톱/태블릿용)
-  if (!isMobile()) {
-    worksScrollTrigger = ScrollTrigger.create({
-      trigger: worksSection,
+  // Work 섹션 ScrollTrigger (데스크톱/태블릿용)
+  if (!isMobile.value) {
+    workScrollTrigger = ScrollTrigger.create({
+      trigger: workSection,
       start: SCROLL_TRIGGER_START,
       end: SCROLL_TRIGGER_END,
       scrub: SCROLL_TRIGGER_SCRUB,
       onEnter: () => {
-        // Works 섹션에 진입할 때도 hideState 호출 (이미 Skills에서 숨겨졌을 수 있음)
+        // Work 섹션에 진입할 때도 hideState 호출 (이미 Skill에서 숨겨졌을 수 있음)
         hideState()
-        changeNameText('Works')
+        changeNameText('Work')
       },
       onLeaveBack: () => {
-        // Works 섹션을 벗어날 때, Skills 섹션이 아직 보이면 "Skills"로, 아니면 원래 상태로
-        if (isSkillsSectionVisible()) {
-          // Skills 섹션이 보이면 "Skills"로 변경
-          changeNameText('Skills')
+        // Work 섹션을 벗어날 때, Skill 섹션이 아직 보이면 "Skill"로, 아니면 원래 상태로
+        if (isSkillSectionVisible()) {
+          // Skill 섹션이 보이면 "Skill"로 변경
+          changeNameText('Skill')
         } else {
-          // Skills 섹션도 벗어났으면 복원
+          // Skill 섹션도 벗어났으면 복원
+          restoreOriginalState()
+        }
+      },
+    })
+  }
+
+  // Experience 섹션 ScrollTrigger (데스크톱/태블릿용)
+  if (!isMobile.value) {
+    experienceScrollTrigger = ScrollTrigger.create({
+      trigger: experienceSection,
+      start: SCROLL_TRIGGER_START,
+      end: SCROLL_TRIGGER_END,
+      scrub: SCROLL_TRIGGER_SCRUB,
+      onEnter: () => {
+        hideState()
+        changeNameText('EXP.')
+      },
+      onLeaveBack: () => {
+        // Experience 섹션을 벗어날 때, 이전 섹션 확인
+        const workRect = workSection.getBoundingClientRect()
+        const isWorkSectionVisible = workRect.top < window.innerHeight && workRect.bottom > 0
+
+        if (isWorkSectionVisible) {
+          changeNameText('Work')
+        } else if (isSkillSectionVisible()) {
+          changeNameText('Skill')
+        } else {
           restoreOriginalState()
         }
       },
@@ -710,12 +590,13 @@ onUnmounted(() => {
 
 <style scoped>
 @import '@/assets/styles/breakpoints.css';
+@import '@/assets/styles/issue-marker.css';
 
 .portfolio-header {
   position: fixed;
   left: 60px;
   bottom: 60px;
-  z-index: 10000;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

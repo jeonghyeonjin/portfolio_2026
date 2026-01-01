@@ -1,0 +1,42 @@
+/* Issue Marker 공통 스타일 */
+.issue-marker-wrapper {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* 특정 위치에서 z-index가 더 높아야 하는 경우 */
+.issue-marker-wrapper.high-z {
+  z-index: 100;
+}
+
+/* Transition 애니메이션 */
+.issue-marker-enter-active,
+.issue-marker-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.issue-marker-enter-from {
+  transform: translateY(10px) scale(0.8);
+  opacity: 0;
+}
+
+.issue-marker-enter-to {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.issue-marker-leave-from {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.issue-marker-leave-to {
+  transform: translateY(-10px) scale(0.8);
+  opacity: 0;
+}
