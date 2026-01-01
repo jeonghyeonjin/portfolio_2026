@@ -12,6 +12,16 @@
           />
         </svg>
       </IconButton>
+      <Transition name="issue-marker">
+        <div
+          v-if="!isFixed('work-modal-lazy-load') && isMarkersReady"
+          class="issue-marker-wrapper"
+          style="position: fixed; top: 100px; right: 40px; z-index: 10001"
+          @click.stop="openIssue('work-modal-lazy-load')"
+        >
+          <IssueMarker />
+        </div>
+      </Transition>
       <component :is="workComponent" v-if="workComponent" />
     </div>
   </div>
@@ -20,6 +30,11 @@
 <script setup>
 import { shallowRef, ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
+import IconButton from '@/components/common/IconButton.vue'
+import IssueMarker from '@/components/broken/IssueMarker.vue'
+import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+
+const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 
 const props = defineProps({
   workId: {
@@ -68,6 +83,7 @@ onMounted(() => {
 
 <style scoped>
 @import '@/assets/styles/breakpoints.css';
+@import '@/assets/styles/issue-marker.css';
 
 .work-modal-overlay {
   position: fixed;

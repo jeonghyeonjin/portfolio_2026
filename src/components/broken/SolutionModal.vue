@@ -339,7 +339,7 @@ const trapFocus = (modalEl) => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  z-index: 2000;
+  z-index: 10002;
   backdrop-filter: blur(4px);
 }
 
