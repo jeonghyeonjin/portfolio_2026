@@ -20,7 +20,7 @@ const { label } = defineProps({
   background-color: rgb(var(--gray--1));
   color: rgb(var(--white--1));
   border-radius: 12px;
-  font-size: var(--body--1--normal);
+  font-size: var(--body--2--normal);
   font-weight: var(--font-weight--regular);
   white-space: nowrap;
 }

@@ -33,10 +33,29 @@
           @click="(e) => openWorkModal(work.id, e)"
           @keydown.enter="(e) => openWorkModal(work.id, e)"
           @keydown.space.prevent="(e) => openWorkModal(work.id, e)"
+          @mouseenter="(e) => handleWorkHover(e, work.id, true)"
+          @mouseleave="(e) => handleWorkHover(e, work.id, false)"
         >
-          <div class="work-image-placeholder" aria-hidden="true"></div>
-          <h3 class="work-title">{{ work.title }}</h3>
-          <p class="work-description">{{ work.description }}</p>
+          <div class="work-image-container" aria-hidden="true">
+            <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
+              <source :src="work.videoSources.webm" type="video/webm" />
+              <source :src="work.videoSources.mp4" type="video/mp4" />
+            </video>
+            <div v-else class="work-image-placeholder"></div>
+            <div class="work-overlay"></div>
+            <div v-if="work.chips && work.chips.length > 0" class="work-chips-container">
+              <WorkChip
+                v-for="(chip, index) in work.chips"
+                :key="`${work.id}-${index}`"
+                :label="chip.label"
+                :variant="chip.variant"
+              />
+            </div>
+            <div class="work-info">
+              <h3 class="work-info-title">{{ work.title }}</h3>
+              <p class="work-info-description">{{ work.description }}</p>
+            </div>
+          </div>
           <Transition name="issue-marker">
             <div
               v-if="index === 0 && !isFixed('work-modal-perf') && isMarkersReady"
@@ -57,15 +76,15 @@
       :class="{ 'is-optimized': isFixed('work-modal-perf') }"
     ></div>
     <!-- Work Modal -->
-    <Teleport to="body">
-      <WorkModal
-        ref="workModalRef"
-        v-if="activeWorkId"
-        :work-id="activeWorkId"
-        :is-visible="isModalVisible"
-        @close="closeWorkModal"
-      />
-    </Teleport>
+    <!-- <Teleport to="body"> -->
+    <WorkModal
+      ref="workModalRef"
+      v-if="activeWorkId"
+      :work-id="activeWorkId"
+      :is-visible="isModalVisible"
+      @close="closeWorkModal"
+    />
+    <!-- </Teleport> -->
   </section>
 </template>
 
@@ -74,9 +93,11 @@ import { ref, inject, onMounted, onUnmounted, nextTick } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import WorkModal from './works/WorkModal.vue'
+import WorkChip from '@/components/common/WorkChip.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import { useResponsive } from '@/composables/useResponsive'
+import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
 import worksData from '@/data/works.json'
 import {
   getCircleStartPosition,
@@ -89,6 +110,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 const { isMobile } = useResponsive()
+const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
 
 // provide/inject로 works 데이터 및 콜백 공유
 const setWorksData = inject('setWorksData')
@@ -106,48 +128,7 @@ const workItemRefs = ref({})
 let currentCircleScale = null
 
 const IS_VISIBLE_CLASS = 'is-visible'
-
-// 스크롤바 너비 계산
-const getScrollbarWidth = () => {
-  const outer = document.createElement('div')
-  outer.style.visibility = 'hidden'
-  outer.style.overflow = 'scroll'
-  outer.style.msOverflowStyle = 'scrollbar'
-  document.body.appendChild(outer)
-
-  const inner = document.createElement('div')
-  outer.appendChild(inner)
-
-  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth
-
-  outer.parentNode?.removeChild(outer)
-
-  return scrollbarWidth
-}
-
-// body 스크롤 잠금 (스크롤바 너비 보정)
-const lockBodyScroll = () => {
-  const scrollbarWidth = getScrollbarWidth()
-  document.body.style.overflow = 'hidden'
-  if (scrollbarWidth > 0) {
-    // body에 paddingRight 추가 및 배경색 설정
-    document.body.style.paddingRight = `${scrollbarWidth}px`
-    // App.vue와 동일한 배경색 설정
-    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--white--1').trim()
-    document.body.style.backgroundColor = `rgb(${bgColor})`
-
-    // CSS 변수로 스크롤바 너비 저장 (SiteNavigation에서 사용)
-    document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`)
-  }
-}
-
-// body 스크롤 해제
-const unlockBodyScroll = () => {
-  document.body.style.overflow = ''
-  document.body.style.paddingRight = ''
-  document.body.style.backgroundColor = ''
-  document.documentElement.style.removeProperty('--scrollbar-width')
-}
+const WORK_MODAL_ID = 'work-modal'
 
 // work-item ref 설정
 const setWorkItemRef = (el, workId) => {
@@ -201,6 +182,104 @@ const setupScrollTrigger = () => {
   }
 }
 
+// Work 아이템 호버 핸들러
+const handleWorkHover = (_event, workId, isEntering) => {
+  const workItem = workItemRefs.value[workId]
+  if (!workItem) return
+
+  const overlay = workItem.querySelector('.work-overlay')
+  const chipsContainer = workItem.querySelector('.work-chips-container')
+  const chips = chipsContainer ? chipsContainer.querySelectorAll('.work-chip') : []
+  const info = workItem.querySelector('.work-info')
+  const title = workItem.querySelector('.work-info-title')
+  const description = workItem.querySelector('.work-info-description')
+
+  if (isEntering) {
+    // Hover 진입
+    gsap.to(overlay, {
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+
+    // 칩들 순차적으로 등장
+    if (chips.length > 0) {
+      chips.forEach((chip, index) => {
+        gsap.fromTo(
+          chip,
+          { scale: 0.8, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.3,
+            delay: index * 0.05,
+            ease: 'back.out(1.7)',
+          },
+        )
+      })
+    }
+
+    gsap.to(info, {
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+    gsap.fromTo(
+      title,
+      { y: 20, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        delay: 0.1,
+        ease: 'power2.out',
+      },
+    )
+    gsap.fromTo(
+      description,
+      { y: 20, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        delay: 0.15,
+        ease: 'power2.out',
+      },
+    )
+  } else {
+    // Hover 종료 - 모든 애니메이션 kill 후 초기 상태로 복원
+    gsap.killTweensOf([overlay, ...chips, info, title, description])
+
+    gsap.to(overlay, {
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in',
+    })
+
+    if (chips.length > 0) {
+      gsap.to(chips, {
+        scale: 0.8,
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+      })
+    }
+
+    gsap.to(info, {
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in',
+    })
+    // 텍스트 위치도 초기화
+    gsap.to([title, description], {
+      y: 20,
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in',
+    })
+  }
+}
+
 // 해시에서 work ID 추출
 const getWorkIdFromHash = () => {
   const hash = window.location.hash
@@ -237,7 +316,7 @@ const openWorkModal = async (workId, event = null) => {
   activeWorkId.value = workId
   isModalVisible.value = false
   setWorkHash(workId)
-  lockBodyScroll()
+  lockBodyScroll(WORK_MODAL_ID)
 
   // DOM이 업데이트될 때까지 대기
   await nextTick()
@@ -281,7 +360,7 @@ const closeWorkModal = () => {
       activeWorkId.value = null
       isModalVisible.value = false
       setWorkHash(null)
-      unlockBodyScroll()
+      unlockBodyScroll(WORK_MODAL_ID)
       currentCircleScale = null
     },
   })
@@ -295,7 +374,7 @@ const handleHashChange = () => {
     if (activeWorkId.value !== workId) {
       activeWorkId.value = workId
       isModalVisible.value = true
-      lockBodyScroll()
+      lockBodyScroll(WORK_MODAL_ID)
       const modalEl = workModalRef.value?.$el
       if (modalEl) {
         modalEl.classList.add(IS_VISIBLE_CLASS)
@@ -317,20 +396,31 @@ const handleEscKey = (event) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   setupScrollTrigger()
-
-  // 초기 해시 확인
-  const initialWorkId = getWorkIdFromHash()
-  if (initialWorkId) {
-    activeWorkId.value = initialWorkId
-    isModalVisible.value = true
-    lockBodyScroll()
-  }
 
   // 원형 요소 초기 숨김
   if (circleRevealRef.value) {
     gsap.set(circleRevealRef.value, { autoAlpha: 0 })
+  }
+
+  // 초기 해시 확인 (새로고침 또는 직접 URL 접근)
+  const initialWorkId = getWorkIdFromHash()
+  if (initialWorkId) {
+    activeWorkId.value = initialWorkId
+    isModalVisible.value = true
+    lockBodyScroll(WORK_MODAL_ID)
+
+    // DOM이 준비될 때까지 대기
+    await nextTick()
+    await nextTick()
+
+    // 모달 요소에 즉시 표시 클래스 적용
+    const modalEl = workModalRef.value?.$el
+    if (modalEl) {
+      modalEl.classList.add(IS_VISIBLE_CLASS)
+      gsap.set(modalEl, { autoAlpha: 1 })
+    }
   }
 
   // 해시 변경 감지
@@ -386,7 +476,7 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleEscKey)
 
   // body 스크롤 해제
-  unlockBodyScroll()
+  unlockBodyScroll(WORK_MODAL_ID)
 
   // 원형 요소 정리
   if (circleRevealRef.value) {
@@ -419,7 +509,7 @@ onUnmounted(() => {
 
 .work-container {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1.5fr;
+  grid-template-columns: 1fr 3fr;
   grid-template-rows: auto;
   gap: 40px;
   width: 100%;
@@ -445,46 +535,91 @@ onUnmounted(() => {
 }
 
 .work-grid {
-  grid-column: 2 / 4;
+  grid-column: 2;
   grid-row: 1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
 }
 
 .work-item {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   cursor: pointer;
-  transition: opacity 0.2s ease;
   position: relative;
 }
 
-.work-item:hover {
-  opacity: 0.8;
+.work-image-container {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
 }
 
 .work-image-placeholder {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   background-color: rgb(var(--gray--5s));
-  border-radius: 8px;
 }
 
-.work-title {
-  font-size: var(--headline--1);
-  font-weight: var(--font-weight--medium);
-  font-weight: 500;
-  color: rgb(var(--gray--1));
-  margin: 0;
+.work-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
 }
 
-.work-description {
+.work-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--gray--0), 0.85);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.work-chips-container {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.work-chips-container :deep(.work-chip) {
+  opacity: 0;
+}
+
+.work-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+}
+
+.work-info-title {
+  font-size: var(--display--2);
+  font-weight: var(--font-weight--bold);
+  color: rgb(var(--white--0));
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.work-info-description {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);
   line-height: 1.6;
-  color: rgb(var(--gray--1));
+  color: rgb(var(--white--3));
   margin: 0;
 }
 
@@ -515,12 +650,8 @@ onUnmounted(() => {
     gap: 30px;
   }
 
-  .work-title {
-    margin-bottom: 40px;
-  }
-
   .work-title-text {
-    font-size: var(--display--2);
+    font-size: var(--display--1);
     font-weight: var(--font-weight--bold);
   }
 
@@ -544,7 +675,6 @@ onUnmounted(() => {
   }
 
   .work-title {
-    margin-bottom: 30px;
     grid-column: 1;
     grid-row: 1;
   }

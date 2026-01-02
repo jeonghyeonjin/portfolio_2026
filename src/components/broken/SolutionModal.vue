@@ -151,17 +151,20 @@
 <script setup>
 import { computed, watch, onUnmounted, ref, nextTick } from 'vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
 import IssueMarker from './IssueMarker.vue'
 import CommonButton from '@/components/common/CommonButton.vue'
 import BaseBadge from '@/components/common/BaseBadge.vue'
 
 const { activeIssue, getIssue, closeIssue, fixIssue, isFixed, openIssue, isMarkersReady } =
   useBrokenPortfolio()
+const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
 
 const solutionModalRef = ref(null)
 const isOpen = computed(() => !!activeIssue.value)
 const issue = computed(() => (activeIssue.value ? getIssue(activeIssue.value) : {}))
 
+const SOLUTION_MODAL_ID = 'solution-modal'
 let previousActiveElement = null
 let focusTrapCleanup = null
 
@@ -175,61 +178,9 @@ const issueDifficulty = computed(() => {
   return map[issue.value.difficulty] || issue.value.difficulty
 })
 
-let scrollY = 0
-
-// 스크롤바 너비 계산
-const getScrollbarWidth = () => {
-  const outer = document.createElement('div')
-  outer.style.visibility = 'hidden'
-  outer.style.overflow = 'scroll'
-  outer.style.msOverflowStyle = 'scrollbar'
-  document.body.appendChild(outer)
-
-  const inner = document.createElement('div')
-  outer.appendChild(inner)
-
-  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth
-
-  outer.parentNode?.removeChild(outer)
-
-  return scrollbarWidth
-}
-
-// body 스크롤 잠금 (스크롤바 너비 보정)
-const lockBodyScroll = () => {
-  const scrollbarWidth = getScrollbarWidth()
-  scrollY = window.scrollY
-  document.body.style.position = 'fixed'
-  document.body.style.top = `-${scrollY}px`
-  document.body.style.width = '100%'
-  document.body.style.overflow = 'hidden'
-  if (scrollbarWidth > 0) {
-    document.body.style.paddingRight = `${scrollbarWidth}px`
-    // App.vue와 동일한 배경색 설정
-    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--white--1').trim()
-    document.body.style.backgroundColor = `rgb(${bgColor})`
-    // CSS 변수로 스크롤바 너비 저장
-    document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`)
-  }
-  document.documentElement.style.overflow = 'hidden'
-}
-
-// body 스크롤 해제
-const unlockBodyScroll = () => {
-  document.body.style.position = ''
-  document.body.style.top = ''
-  document.body.style.width = ''
-  document.body.style.overflow = ''
-  document.body.style.paddingRight = ''
-  document.body.style.backgroundColor = ''
-  document.documentElement.style.removeProperty('--scrollbar-width')
-  document.documentElement.style.overflow = ''
-  window.scrollTo(0, scrollY)
-}
-
 watch(isOpen, async (open) => {
   if (open) {
-    lockBodyScroll()
+    lockBodyScroll(SOLUTION_MODAL_ID)
     // 포커스 트랩 적용 (이슈가 해결된 경우에만)
     if (isFixed('modal-focus-trap')) {
       await nextTick()
@@ -237,7 +188,7 @@ watch(isOpen, async (open) => {
       focusTrapCleanup = trapFocus(solutionModalRef.value)
     }
   } else {
-    unlockBodyScroll()
+    unlockBodyScroll(SOLUTION_MODAL_ID)
     // 포커스 트랩 정리
     if (focusTrapCleanup) {
       focusTrapCleanup()
@@ -252,7 +203,7 @@ watch(isOpen, async (open) => {
 })
 
 onUnmounted(() => {
-  unlockBodyScroll()
+  unlockBodyScroll(SOLUTION_MODAL_ID)
   // 포커스 트랩 정리
   if (focusTrapCleanup) {
     focusTrapCleanup()

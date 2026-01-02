@@ -23,12 +23,7 @@
       </svg>
       <!-- Developer Section -->
       <article ref="developerCardRef" class="skill-card skill-card-developer">
-        <img
-          :src="skillGroupImages.developer"
-          alt=""
-          class="skill-card-bg"
-          aria-hidden="true"
-        />
+        <img :src="skillGroupImages.developer" alt="" class="skill-card-bg" aria-hidden="true" />
         <div class="skill-card-content">
           <div class="skill-card-header">
             <h3 class="skill-card-title">Developer</h3>
@@ -45,12 +40,7 @@
 
       <!-- Designer Section -->
       <article ref="designerCardRef" class="skill-card skill-card-designer">
-        <img
-          :src="skillGroupImages.designer"
-          alt=""
-          class="skill-card-bg"
-          aria-hidden="true"
-        />
+        <img :src="skillGroupImages.designer" alt="" class="skill-card-bg" aria-hidden="true" />
         <div class="skill-card-content">
           <div class="skill-card-header">
             <h3 class="skill-card-title">Designer</h3>

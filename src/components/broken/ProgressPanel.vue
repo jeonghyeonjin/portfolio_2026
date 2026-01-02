@@ -294,9 +294,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 8px 12px;
+  padding: 8px 6px 8px 16px;
   border-radius: 8px;
   transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .button-icon {
@@ -304,7 +307,7 @@ onUnmounted(() => {
   height: 20px;
   display: block;
   flex-shrink: 0;
-  color: rgb(var(--gray--5s));
+  color: rgb(var(--gray--2));
   fill: currentColor;
   margin-right: 6px;
   transition: color 0.2s ease;
@@ -320,19 +323,19 @@ onUnmounted(() => {
 .button-count-current {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--medium);
-  color: rgb(var(--blue--normal));
+  color: rgb(var(--green--normal));
 }
 
 .button-count-separator {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--medium);
-  color: rgb(var(--gray--5s));
+  color: rgb(var(--gray--2));
 }
 
 .button-count-total {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--medium);
-  color: rgb(var(--gray--5s));
+  color: rgb(var(--gray--2));
 }
 
 /* 설명 판넬 */

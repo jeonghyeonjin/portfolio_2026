@@ -1,22 +1,52 @@
 [
   {
     "id": 1,
-    "title": "Master Forge Pixel art",
-    "description": "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter."
+    "title": "Shadow",
+    "description": "AI meeting transcription app",
+    "chips": [
+      { "label": "Work", "variant": "work" },
+      { "label": "Dev", "variant": "dev" },
+      { "label": "Design", "variant": "design" },
+      { "label": "AI", "variant": "ai" }
+    ]
   },
   {
     "id": 2,
-    "title": "E-Commerce Platform",
-    "description": "Full-stack e-commerce solution with real-time inventory management and payment integration."
+    "title": "Master Forge Pixel art",
+    "description": "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter",
+    "chips": [
+      { "label": "Side", "variant": "side" },
+      { "label": "Design", "variant": "design" }
+    ]
   },
   {
     "id": 3,
-    "title": "Portfolio Website",
-    "description": "Modern, responsive portfolio website with interactive animations and optimized performance."
+    "title": "Keebbear",
+    "description": "Comprehensive Platform for Keyboard Lovers",
+    "videoSources": {
+      "mp4": "/portfolio_2026/videos/keebbear_1.mp4",
+      "webm": "/portfolio_2026/videos/keebbear_1.webm"
+    },
+    "chips": [
+      { "label": "Side", "variant": "side" },
+      { "label": "WIP", "variant": "wip" },
+      { "label": "Dev", "variant": "dev" },
+      { "label": "Design", "variant": "design" }
+    ]
   },
   {
     "id": 4,
-    "title": "Task Management App",
-    "description": "Collaborative task management application with real-time updates and team features."
+    "title": "Tape",
+    "description": "Collaborative workspace",
+    "chips": [
+      { "label": "Work", "variant": "work" },
+      { "label": "Dev", "variant": "dev" }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Test project",
+    "description": "Test project",
+    "chips": [{ "label": "Test", "variant": "default" }]
   }
 ]

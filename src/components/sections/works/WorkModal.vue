@@ -1,6 +1,6 @@
 <template>
-  <div ref="modalOverlayRef" class="work-modal-overlay" @click.self="handleClose">
-    <div class="work-modal-container">
+  <div ref="modalOverlayRef" class="work-modal-overlay" @click.self="handleClose" @wheel.stop>
+    <div class="work-modal-container" @wheel.stop>
       <IconButton size="large" class="work-modal-close" aria-label="닫기" @click="handleClose">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
