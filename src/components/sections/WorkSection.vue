@@ -41,6 +41,12 @@
               <source :src="work.videoSources.webm" type="video/webm" />
               <source :src="work.videoSources.mp4" type="video/mp4" />
             </video>
+            <img
+              v-else-if="work.thumbnail"
+              :src="getThumbnailUrl(work.thumbnail)"
+              :alt="`${work.title} 대표 이미지`"
+              class="work-image"
+            />
             <div v-else class="work-image-placeholder"></div>
             <div class="work-overlay"></div>
             <div v-if="work.chips && work.chips.length > 0" class="work-chips-container">
@@ -60,7 +66,7 @@
             <div
               v-if="index === 0 && !isFixed('work-modal-perf') && isMarkersReady"
               class="issue-marker-wrapper"
-              style="top: 10px; right: 10px"
+              style="top: 20px; right: 20px"
               @click.stop="openIssue('work-modal-perf')"
             >
               <IssueMarker />
@@ -139,6 +145,17 @@ const setWorkItemRef = (el, workId) => {
 
 // 외부 데이터를 불러와서 Object.freeze로 최적화
 const works = Object.freeze(worksData.map((work) => Object.freeze(work)))
+
+// 썸네일 URL 처리 함수
+const getThumbnailUrl = (thumbnailPath) => {
+  if (!thumbnailPath) return null
+  try {
+    // 상대 경로를 new URL()로 처리 (Vite가 빌드 시 올바른 경로로 변환)
+    return new URL(thumbnailPath, import.meta.url).href
+  } catch {
+    return thumbnailPath
+  }
+}
 
 const setupScrollTrigger = () => {
   if (!workTitleRef.value || !workSectionRef.value) return
@@ -562,6 +579,13 @@ onUnmounted(() => {
 }
 
 .work-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.work-image {
   width: 100%;
   height: 100%;
   object-fit: cover;

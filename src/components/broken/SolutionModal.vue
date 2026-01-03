@@ -126,9 +126,7 @@
             </svg>
             코드
           </div>
-          <div class="code-block">
-            <pre><code>{{ issue.code }}</code></pre>
-          </div>
+          <CodeBlock>{{ issue.code }}</CodeBlock>
         </div>
       </div>
 
@@ -155,6 +153,7 @@ import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
 import IssueMarker from './IssueMarker.vue'
 import CommonButton from '@/components/common/CommonButton.vue'
 import BaseBadge from '@/components/common/BaseBadge.vue'
+import CodeBlock from '@/components/common/CodeBlock.vue'
 
 const { activeIssue, getIssue, closeIssue, fixIssue, isFixed, openIssue, isMarkersReady } =
   useBrokenPortfolio()
@@ -400,26 +399,6 @@ const trapFocus = (modalEl) => {
   font-weight: var(--font-weight--medium);
   color: rgb(var(--yellow--dark));
   margin: 0;
-}
-
-.code-block {
-  background: rgb(var(--gray--1));
-  border-radius: 12px;
-  padding: 16px;
-  overflow-y: auto;
-  overflow-x: auto;
-  max-height: 280px;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-.code-block pre {
-  margin: 0;
-  font-size: var(--body--1--normal);
-  color: #e2e8f0;
-  font-family: 'JetBrains Mono', monospace;
-  line-height: 1.6;
-  white-space: pre-wrap;
 }
 
 .modal-footer {

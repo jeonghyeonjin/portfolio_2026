@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Shadow",
     "description": "AI meeting transcription app",
+    "thumbnail": "../../assets/images/works/shadow/shadow_thumbnail2.png",
     "chips": [
       { "label": "Work", "variant": "work" },
       { "label": "Dev", "variant": "dev" },
@@ -14,6 +15,7 @@
     "id": 2,
     "title": "Master Forge Pixel art",
     "description": "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter",
+    "thumbnail": "../../assets/images/works/master-forge/m4g_pin.png",
     "chips": [
       { "label": "Side", "variant": "side" },
       { "label": "Design", "variant": "design" }
@@ -23,6 +25,7 @@
     "id": 3,
     "title": "Keebbear",
     "description": "Comprehensive Platform for Keyboard Lovers",
+    "thumbnail": null,
     "videoSources": {
       "mp4": "/portfolio_2026/videos/keebbear_1.mp4",
       "webm": "/portfolio_2026/videos/keebbear_1.webm"
@@ -38,15 +41,18 @@
     "id": 4,
     "title": "Tape",
     "description": "Collaborative workspace",
+    "thumbnail": "../../assets/images/works/tape/tape_thumbnail.png",
     "chips": [
       { "label": "Work", "variant": "work" },
-      { "label": "Dev", "variant": "dev" }
+      { "label": "Dev", "variant": "dev" },
+      { "label": "Design", "variant": "design" }
     ]
   },
   {
     "id": 5,
     "title": "Test project",
     "description": "Test project",
+    "thumbnail": null,
     "chips": [{ "label": "Test", "variant": "default" }]
   }
 ]

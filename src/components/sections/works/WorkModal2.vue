@@ -1,109 +1,889 @@
 <template>
   <div class="work-modal-content">
-    <div class="work-modal-header">
-      <h1 class="work-modal-title">Master Forge Piexl art</h1>
-      <p class="work-modal-subtitle">
-        Designed for the Master Forge keyboard's pin and sticker design contest
-        on Kickstarter.
-      </p>
-    </div>
     <div class="work-modal-body">
-      <!-- 여기에 각 work의 상세 내용을 추가하세요 -->
-      <div class="work-modal-placeholder">
-        <p>Work 2 상세 내용이 여기에 표시됩니다.</p>
+      <!-- Grid Container -->
+      <div class="container" ref="containerRef">
+        <div class="grid-container" ref="gridContainerRef">
+          <div class="grid" ref="gridRef">
+            <div
+              v-for="(slide, index) in slides"
+              :key="index"
+              class="grid-item"
+              :class="{ target: index === activeIndex }"
+              :data-index="index"
+              ref="gridItemsRef"
+              @click="handleGridItemClick(index)"
+            >
+              <div class="grid-item-img" :style="{ backgroundImage: `url(${slide.image})` }"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Layers -->
+      <div class="slider-image" ref="sliderImageRef"></div>
+      <div class="slider-image-bg" ref="sliderImageBgRef"></div>
+      <div class="slider-image-next" ref="sliderImageNextRef"></div>
+      <div class="transition-overlay" ref="transitionOverlayRef"></div>
+
+      <!-- Content -->
+      <div class="content" ref="contentRef">
+        <h1 class="content-title">
+          <span ref="contentTitleSpanRef">{{ currentSlide.title }}</span>
+        </h1>
+        <div class="content-paragraph" ref="contentParagraphRef">
+          <div class="description-line">{{ currentSlide.description.en }}</div>
+          <div class="description-line">{{ currentSlide.description.ko }}</div>
+        </div>
+      </div>
+
+      <!-- Thumbnails -->
+      <div class="thumbnails" ref="thumbnailsRef">
+        <div
+          v-for="(slide, index) in slides"
+          :key="`thumb-${index}`"
+          class="thumbnail"
+          :class="{ active: index === activeIndex }"
+          :data-index="index"
+          @click="handleThumbnailClick(index)"
+          ref="thumbnailItemsRef"
+        >
+          <div class="thumbnail-img" :style="{ backgroundImage: `url(${slide.image})` }"></div>
+        </div>
+      </div>
+
+      <!-- Switch Buttons -->
+      <div class="switch" ref="switchRef">
+        <button
+          class="switch-button switch-button-grid"
+          :class="{ 'switch-button-current': currentMode === 'grid' }"
+          @click="toggleView('grid')"
+        >
+          <span class="indicator-dot"></span>
+          GRID
+        </button>
+        <button
+          class="switch-button switch-button-slider"
+          :class="{ 'switch-button-current': currentMode === 'slider' }"
+          @click="toggleView('slider')"
+        >
+          <span class="indicator-dot"></span>
+          SLIDER
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-// Work 2의 상세 내용을 여기에 구현하세요
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
+import { Flip } from 'gsap/all'
+import imgHero from '@/assets/images/works/master-forge/20241120_214422.jpg'
+import imgHeroWide from '@/assets/images/works/master-forge/20241120_214422_1.jpg'
+import imgPin from '@/assets/images/works/master-forge/m4g_pin.png'
+import imgMockup from '@/assets/images/works/master-forge/m4g_pin_mockup.png'
+import imgSticker from '@/assets/images/works/master-forge/m4g_sticker.png'
+
+gsap.registerPlugin(Flip)
+
+// Refs
+const containerRef = ref(null)
+const gridContainerRef = ref(null)
+const gridRef = ref(null)
+const gridItemsRef = ref([])
+const sliderImageRef = ref(null)
+const sliderImageBgRef = ref(null)
+const sliderImageNextRef = ref(null)
+const transitionOverlayRef = ref(null)
+const contentRef = ref(null)
+const contentTitleSpanRef = ref(null)
+const contentParagraphRef = ref(null)
+const thumbnailsRef = ref(null)
+const thumbnailItemsRef = ref([])
+const switchRef = ref(null)
+
+// State
+const currentMode = ref('grid')
+const isAnimating = ref(false)
+const activeIndex = ref(0)
+const previousIndex = ref(0)
+const slideDirection = ref('right')
+const viewportWidth = ref(window.innerWidth)
+const viewportHeight = ref(window.innerHeight)
+
+// Computed
+const isLandscape = computed(() => viewportWidth.value > viewportHeight.value)
+const heroImage = computed(() => (isLandscape.value ? imgHeroWide : imgHero))
+
+// Data
+const slides = computed(() => [
+  {
+    image: heroImage.value,
+    title: 'MASTER FORGE',
+    description: {
+      en: "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
+      ko: 'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
+    },
+  },
+  {
+    image: imgPin,
+    title: 'PIN DESIGN',
+    description: {
+      en: 'A pin design expressing Master Forge keyboard identity through pixel art. Captures a retro sensibility and brand identity.',
+      ko: 'Master Forge 키보드의 아이덴티티를 픽셀 아트로 표현한 핀 디자인입니다. 레트로한 감성과 브랜드의 정체성을 담았습니다.',
+    },
+  },
+  {
+    image: imgMockup,
+    title: 'MOCKUP',
+    description: {
+      en: 'A mockup visualizing how it would look when produced as an actual product.',
+      ko: '실제 제품으로 제작되었을 때의 모습을 시각화한 목업입니다.',
+    },
+  },
+  {
+    image: imgSticker,
+    title: 'STICKER',
+    description: {
+      en: 'A sticker design that can be attached to various keyboards and accessories. Made in a cute style and infused with the charm of stickers.',
+      ko: '키보드와 다양한 액세서리에 부착할 수 있는 스티커 디자인입니다. 귀여운 스타일로 제작하고 스티커만의 매력을 살렸습니다.',
+    },
+  },
+])
+
+const currentSlide = computed(() => slides.value[activeIndex.value])
+
+// Viewport resize handler
+const handleResize = () => {
+  viewportWidth.value = window.innerWidth
+  viewportHeight.value = window.innerHeight
+}
+
+// Timing constants (in seconds)
+const TIMING = {
+  BASE: 0.512,
+  SHORTEST: 0.256,
+  SHORT: 0.384,
+  LONG: 0.768,
+  STAGGER_TINY: 0.032,
+  STAGGER_SMALL: 0.064,
+  STAGGER_MED: 0.128,
+}
+
+// Ease constants (Standard GSAP eases since CustomEase is premium)
+const EASES = {
+  MAIN: 'power3.out',
+  SIDE: 'power2.out',
+  NATURAL: 'expo.out',
+}
+
+// Methods
+const getGridItemByIndex = (index) => {
+  return gridItemsRef.value[index]
+}
+
+const toggleView = async (mode) => {
+  if (isAnimating.value || currentMode.value === mode) return
+  isAnimating.value = true
+  currentMode.value = mode
+
+  if (mode === 'slider') {
+    await showSliderView()
+  } else {
+    await showGridView()
+  }
+  isAnimating.value = false
+}
+
+const showSliderView = () => {
+  return new Promise((resolve) => {
+    const activeItem = getGridItemByIndex(activeIndex.value)
+    const activeItemRect = activeItem.getBoundingClientRect()
+    const activeImageUrl = slides.value[activeIndex.value].image
+
+    // Set slider image
+    sliderImageRef.value.style.backgroundImage = `url(${activeImageUrl})`
+    sliderImageBgRef.value.style.backgroundImage = `url(${activeImageUrl})`
+
+    // Position slider image over active item
+    gsap.set(sliderImageRef.value, {
+      width: activeItemRect.width,
+      height: activeItemRect.height,
+      x: activeItemRect.left,
+      y: activeItemRect.top,
+      opacity: 1,
+      visibility: 'visible',
+      borderRadius: '0px',
+    })
+
+    // STEP 1: Expand height to 100vh using FLIP
+    const heightState = Flip.getState(sliderImageRef.value)
+
+    gsap.set(sliderImageRef.value, {
+      height: '100vh',
+      y: 0,
+      width: activeItemRect.width,
+      x: activeItemRect.left,
+    })
+
+    Flip.from(heightState, {
+      duration: TIMING.BASE,
+      ease: EASES.MAIN,
+      onComplete: () => {
+        // STEP 2: Expand width to 100vw using FLIP
+        const widthState = Flip.getState(sliderImageRef.value)
+
+        gsap.set(sliderImageRef.value, {
+          width: '100vw',
+          x: 0,
+        })
+
+        Flip.from(widthState, {
+          duration: TIMING.BASE,
+          ease: EASES.MAIN,
+          onComplete: () => {
+            // Hide grid
+            gsap.to(gridRef.value, {
+              opacity: 0,
+              duration: TIMING.SHORTEST,
+              ease: 'power2.inOut',
+            })
+
+            // Show content
+            const contentTl = gsap.timeline({
+              onComplete: resolve,
+            })
+
+            contentTl.to(
+              contentRef.value,
+              {
+                opacity: 1,
+                duration: TIMING.SHORT,
+                ease: EASES.MAIN,
+              },
+              0,
+            )
+
+            contentTl.to(
+              contentTitleSpanRef.value,
+              {
+                y: 0,
+                duration: TIMING.BASE,
+                ease: EASES.SIDE,
+              },
+              TIMING.STAGGER_TINY,
+            )
+
+            contentTl.to(
+              contentParagraphRef.value,
+              {
+                opacity: 1,
+                duration: TIMING.BASE,
+                ease: EASES.MAIN,
+              },
+              TIMING.STAGGER_SMALL,
+            )
+
+            contentTl.to(
+              thumbnailItemsRef.value,
+              {
+                opacity: 1,
+                y: 0,
+                duration: TIMING.SHORT,
+                stagger: TIMING.STAGGER_TINY,
+                ease: EASES.SIDE,
+              },
+              TIMING.STAGGER_MED,
+            )
+          },
+        })
+      },
+    })
+  })
+}
+
+const showGridView = () => {
+  return new Promise((resolve) => {
+    const activeItem = getGridItemByIndex(activeIndex.value)
+    const activeItemRect = activeItem.getBoundingClientRect()
+
+    const contentTl = gsap.timeline({
+      onComplete: () => {
+        // Show grid
+        gsap.to(gridRef.value, {
+          opacity: 1,
+          duration: TIMING.SHORTEST,
+          ease: 'power2.inOut',
+        })
+
+        gsap.set([sliderImageNextRef.value, sliderImageBgRef.value, transitionOverlayRef.value], {
+          opacity: 0,
+          visibility: 'hidden',
+        })
+
+        // STEP 1: Shrink width using FLIP
+        const widthState = Flip.getState(sliderImageRef.value)
+
+        gsap.set(sliderImageRef.value, {
+          width: activeItemRect.width,
+          x: activeItemRect.left,
+          height: '100vh',
+          y: 0,
+        })
+
+        Flip.from(widthState, {
+          duration: TIMING.BASE,
+          ease: EASES.MAIN,
+          onComplete: () => {
+            // STEP 2: Shrink height using FLIP
+            const heightState = Flip.getState(sliderImageRef.value)
+
+            gsap.set(sliderImageRef.value, {
+              height: activeItemRect.height,
+              y: activeItemRect.top,
+            })
+
+            Flip.from(heightState, {
+              duration: TIMING.BASE,
+              ease: EASES.MAIN,
+              onComplete: () => {
+                gsap.to(sliderImageRef.value, {
+                  opacity: 0,
+                  duration: TIMING.SHORTEST,
+                  ease: 'power2.inOut',
+                  onComplete: () => {
+                    sliderImageRef.value.style.visibility = 'hidden'
+                    resolve()
+                  },
+                })
+              },
+            })
+          },
+        })
+      },
+    })
+
+    // Hide UI elements
+    contentTl.to(
+      thumbnailItemsRef.value,
+      {
+        opacity: 0,
+        y: 20,
+        duration: TIMING.SHORT,
+        stagger: -TIMING.STAGGER_TINY,
+        ease: EASES.SIDE,
+      },
+      0,
+    )
+
+    contentTl.to(
+      contentParagraphRef.value,
+      {
+        opacity: 0,
+        duration: TIMING.SHORT,
+        ease: EASES.MAIN,
+      },
+      TIMING.STAGGER_TINY,
+    )
+
+    contentTl.to(
+      contentTitleSpanRef.value,
+      {
+        y: '100%',
+        duration: TIMING.SHORT,
+        ease: EASES.SIDE,
+      },
+      TIMING.STAGGER_SMALL,
+    )
+
+    contentTl.to(
+      contentRef.value,
+      {
+        opacity: 0,
+        duration: TIMING.SHORT,
+        ease: EASES.MAIN,
+      },
+      TIMING.STAGGER_MED,
+    )
+  })
+}
+
+const transitionToSlide = (index) => {
+  if (isAnimating.value || index === activeIndex.value) return
+  isAnimating.value = true
+
+  slideDirection.value = index > activeIndex.value ? 'right' : 'left'
+  previousIndex.value = activeIndex.value
+
+  const newImageUrl = slides.value[index].image
+  const xOffset = slideDirection.value === 'right' ? '100%' : '-100%'
+
+  // Setup transition elements
+  sliderImageNextRef.value.style.backgroundImage = `none`
+  sliderImageBgRef.value.style.backgroundImage = `url(${newImageUrl})`
+
+  gsap.set([sliderImageNextRef.value, sliderImageBgRef.value], {
+    visibility: 'visible',
+  })
+
+  gsap.set(sliderImageNextRef.value, {
+    x: xOffset,
+    y: 0,
+    opacity: 1,
+    width: '100vw',
+    height: '100vh',
+  })
+
+  gsap.set(sliderImageBgRef.value, {
+    x: xOffset,
+    y: 0,
+    opacity: 1,
+    width: '100vw',
+    height: '100vh',
+    scale: 1,
+  })
+
+  const masterTl = gsap.timeline({
+    onComplete: () => {
+      // Update main slider image
+      sliderImageRef.value.style.backgroundImage = `url(${newImageUrl})`
+
+      gsap.set([sliderImageNextRef.value, sliderImageBgRef.value, transitionOverlayRef.value], {
+        opacity: 0,
+        x: 0,
+        y: 0,
+        visibility: 'hidden',
+      })
+
+      gsap.set(sliderImageRef.value, {
+        x: 0,
+        opacity: 1,
+      })
+
+      activeIndex.value = index
+
+      // Show content
+      const showTl = gsap.timeline({
+        onComplete: () => {
+          isAnimating.value = false
+        },
+      })
+
+      showTl.to(
+        contentTitleSpanRef.value,
+        {
+          y: 0,
+          duration: TIMING.BASE,
+          ease: EASES.SIDE,
+        },
+        0,
+      )
+
+      showTl.to(
+        contentParagraphRef.value,
+        {
+          opacity: 1,
+          duration: TIMING.BASE,
+          ease: EASES.MAIN,
+        },
+        TIMING.STAGGER_SMALL,
+      )
+    },
+  })
+
+  // Hide current content
+  masterTl.to(
+    contentParagraphRef.value,
+    {
+      opacity: 0,
+      duration: TIMING.SHORT,
+      ease: EASES.MAIN,
+    },
+    0,
+  )
+
+  masterTl.to(
+    contentTitleSpanRef.value,
+    {
+      y: '100%',
+      duration: TIMING.SHORT,
+      ease: EASES.SIDE,
+    },
+    TIMING.STAGGER_TINY,
+  )
+
+  // Flash effect
+  masterTl.to(
+    transitionOverlayRef.value,
+    {
+      opacity: 0.15,
+      duration: TIMING.SHORTEST,
+      ease: 'power1.in',
+    },
+    TIMING.STAGGER_SMALL,
+  )
+
+  masterTl.to(
+    transitionOverlayRef.value,
+    {
+      opacity: 0,
+      duration: TIMING.SHORT,
+      ease: 'power1.out',
+    },
+    TIMING.STAGGER_MED,
+  )
+
+  // Slide animations
+  masterTl.to(
+    sliderImageRef.value,
+    {
+      x: slideDirection.value === 'right' ? '-35%' : '35%',
+      opacity: 1,
+      duration: TIMING.LONG,
+      ease: EASES.MAIN,
+    },
+    0,
+  )
+
+  masterTl.to(
+    sliderImageBgRef.value,
+    {
+      x: '0%',
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: TIMING.LONG,
+      ease: EASES.SIDE,
+    },
+    TIMING.STAGGER_TINY,
+  )
+
+  masterTl.to(
+    sliderImageNextRef.value,
+    {
+      x: 0,
+      opacity: 1,
+      duration: TIMING.LONG,
+      ease: EASES.SIDE,
+    },
+    TIMING.STAGGER_SMALL,
+  )
+}
+
+const handleThumbnailClick = (index) => {
+  if (currentMode.value !== 'slider' || isAnimating.value) return
+  transitionToSlide(index)
+}
+
+const handleGridItemClick = (index) => {
+  if (currentMode.value === 'grid' && !isAnimating.value) {
+    activeIndex.value = index
+    toggleView('slider')
+  }
+}
+
+// Keyboard navigation
+const handleKeydown = (e) => {
+  if (currentMode.value !== 'slider' || isAnimating.value) return
+
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    const nextIndex = (activeIndex.value + 1) % slides.value.length
+    transitionToSlide(nextIndex)
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    const prevIndex = (activeIndex.value - 1 + slides.value.length) % slides.value.length
+    transitionToSlide(prevIndex)
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+  window.addEventListener('resize', handleResize)
+  handleResize() // 초기 뷰포트 크기 설정
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>
-@import '@/assets/styles/breakpoints.css';
-
 .work-modal-content {
   width: 100%;
-  min-height: 100vh;
-  padding: 120px 40px;
-}
-
-.work-modal-header {
-  max-width: 1200px;
-  margin: 0 auto 60px;
-}
-
-.work-modal-title {
-  font-size: var(--display--1);
-  font-weight: var(--font-weight--bold);
-  font-weight: 700;
-  color: rgb(var(--gray--1));
-  margin: 0 0 20px 0;
-  letter-spacing: -0.02em;
-}
-
-.work-modal-subtitle {
-  font-size: var(--body--1--normal);
-  font-weight: var(--font-weight--regular);
-  line-height: 1.6;
-  color: rgb(var(--gray--1));
-  margin: 0;
+  height: 100vh;
+  padding: 0;
+  background-color: #111;
+  color: #f0f0f0;
+  overflow: hidden;
 }
 
 .work-modal-body {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.work-modal-placeholder {
+  position: relative;
   width: 100%;
-  min-height: 400px;
-  background-color: rgb(var(--gray--5s) / 0.2);
-  border-radius: 8px;
+  height: 100%;
+}
+
+/* Grid layout */
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.grid-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.grid-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.grid-item:hover {
+  opacity: 0.9;
+}
+
+.grid-item-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Slide layers */
+.slider-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  z-index: 80;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.slider-image-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  z-index: 85;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.slider-image-next {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 95;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+/* Content */
+.content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  padding: 10% 10%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(var(--gray--3));
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.content-title {
+  text-align: left;
+  font-size: var(--hero--1);
+  color: rgb(var(--white--1));
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  font-weight: var(--font-weight--bold);
+}
+
+.content-title span {
+  display: inline-block;
+  transform: translateY(100%);
+  background-color: rgb(var(--gray--0));
+}
+
+.content-paragraph {
+  text-align: left;
   font-size: var(--body--1--normal);
-  font-weight: var(--font-weight--regular);
+  color: rgb(var(--white--1));
+  max-width: 600px;
+  line-height: 1.3;
+  margin-bottom: 10%;
+  opacity: 0;
+  background-color: rgb(var(--gray--0));
 }
 
-/* Tablet: --tablet */
-@media (--tablet) {
-  .work-modal-content {
-    padding: 60px 30px;
-  }
-
-  .work-modal-header {
-    margin-bottom: 40px;
-  }
-
-  .work-modal-title {
-    font-size: var(--display--2);
-    font-weight: var(--font-weight--bold);
-  }
+.description-line {
+  display: block;
 }
 
-/* Mobile: --mobile */
-@media (--mobile) {
-  .work-modal-content {
-    padding: 80px 20px 40px;
+.description-line:not(:last-child) {
+  margin-bottom: 0.5em;
+}
+
+/* Thumbnails */
+.thumbnails {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: border 0.3s ease;
+}
+
+.thumbnail-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.thumbnail:hover {
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.thumbnail.active {
+  border: 2px solid #fff;
+}
+
+/* Switch */
+.switch {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  background: #222;
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.switch-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.switch-button-current {
+  color: #f0f0f0;
+}
+
+.indicator-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.switch-button-grid .indicator-dot {
+  left: -8px;
+}
+
+.switch-button-slider .indicator-dot {
+  right: -8px;
+}
+
+.switch-button:hover .indicator-dot,
+.switch-button-current .indicator-dot {
+  opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
   }
 
-  .work-modal-header {
-    margin-bottom: 30px;
+  .content-title {
+    font-size: 3rem;
   }
 
-  .work-modal-title {
-    font-size: var(--title--1);
-    font-weight: var(--font-weight--bold);
+  .content-paragraph {
+    margin-bottom: 20%;
   }
 
-  .work-modal-subtitle {
-    font-size: var(--body--2--normal);
-    font-weight: var(--font-weight--regular);
+  .thumbnails {
+    display: none;
   }
 }
 </style>
-

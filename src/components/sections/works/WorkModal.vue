@@ -16,7 +16,7 @@
         <div
           v-if="!isFixed('work-modal-lazy-load') && isMarkersReady"
           class="issue-marker-wrapper"
-          style="position: fixed; top: 100px; right: 40px; z-index: 10001"
+          style="position: fixed; top: 40px; left: 40px; z-index: 10001"
           @click.stop="openIssue('work-modal-lazy-load')"
         >
           <IssueMarker />
@@ -116,6 +116,13 @@ onMounted(() => {
   top: 40px;
   right: 40px;
   z-index: 10000;
+  background-color: rgba(var(--white--1), 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.work-modal-close:hover {
+  background-color: rgba(var(--white--0), 1);
+  box-shadow: 0 4px 12px rgba(var(--gray--0), 0.3);
 }
 
 /* Tablet: --tablet */
