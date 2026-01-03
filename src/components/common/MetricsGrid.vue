@@ -28,11 +28,7 @@ defineProps({
 }
 
 .metric-item {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--gray--5), 0.03) 0%,
-    rgba(var(--gray--4), 0.08) 100%
-  );
+  background: linear-gradient(135deg, rgba(var(--white--1), 0.8) 0%, rgba(var(--white--2), 1) 100%);
   border: 1px solid rgba(var(--gray--4), 0.2);
   border-radius: 12px;
   padding: 24px;

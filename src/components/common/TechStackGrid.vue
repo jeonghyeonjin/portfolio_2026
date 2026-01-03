@@ -41,14 +41,11 @@ const formatStackItems = (items) => {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
   margin-top: 30px;
+  /* background-color: var(--white--0); */
 }
 
 .tech-stack-item {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--gray--5), 0.02) 0%,
-    rgba(var(--gray--2), 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(var(--white--1), 0.8) 0%, rgba(var(--white--2), 1) 100%);
   border: 1px solid rgba(var(--gray--4), 0.2);
   border-radius: 12px;
   padding: 24px;

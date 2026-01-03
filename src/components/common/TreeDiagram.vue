@@ -85,7 +85,7 @@ const displayContent = computed(() => {
 
 .tree-diagram {
   font-size: var(--body--2--normal);
-  background: linear-gradient(135deg, rgba(var(--white--2), 0.3) 0%, rgba(var(--white--2), 1) 100%);
+  background: linear-gradient(135deg, rgba(var(--white--1), 0.8) 0%, rgba(var(--white--2), 1) 100%);
   border: 1px solid rgba(var(--gray--4), 0.25);
   border-radius: 12px;
   padding: 24px;

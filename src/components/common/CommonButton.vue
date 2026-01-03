@@ -15,7 +15,11 @@
 
 <script setup>
 // Vue 3.5 props destructuring with defaults
-const { variant = 'secondary', size = 'medium', disabled = false } = defineProps({
+const {
+  variant = 'secondary',
+  size = 'medium',
+  disabled = false,
+} = defineProps({
   variant: {
     type: String,
     default: 'secondary',
@@ -32,7 +36,7 @@ const { variant = 'secondary', size = 'medium', disabled = false } = defineProps
   },
 })
 
-const emit = defineEmits(['click'])
+defineEmits(['click'])
 </script>
 
 <style scoped>

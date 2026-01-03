@@ -146,10 +146,7 @@
 
         <div class="tech-block">
           <h3 class="tech-title">Performance Optimization | 성능 최적화</h3>
-          <CodeBlock>
-            // Font and image preloading await Promise.all([ document.fonts.ready,
-            waitForElements(), authPromise ]);</CodeBlock
-          >
+          <CodeBlock :code="performanceCode" />
           <ul class="feature-list">
             <li>Strategic resource preloading (fonts, images)</li>
             <li>Loading state management for smooth UX</li>
@@ -226,10 +223,7 @@
         <div class="challenge-block">
           <h3 class="challenge-title">Challenge 2: Loading State Management</h3>
           <p class="section-text">문제: Preventing layout shift and ensuring smooth initial load</p>
-          <CodeBlock>
-            async initializeApp() { await Promise.all([ document.fonts.ready,
-            this.waitForElements(), authPromise ]); }</CodeBlock
-          >
+          <CodeBlock :code="loadingCode" />
           <ul class="feature-list">
             <li>Coordinated loading of fonts, images, and authentication</li>
             <li>Progressive enhancement for better perceived performance</li>
@@ -316,6 +310,22 @@ const featureText1Ref = ref(null)
 const featureText2Ref = ref(null)
 const featureText3Ref = ref(null)
 const { isMobile, isTablet } = useResponsive()
+
+// Code snippets for CodeBlock components
+const performanceCode = `// Font and image preloading
+await Promise.all([
+  document.fonts.ready,
+  waitForElements(),
+  authPromise
+]);`
+
+const loadingCode = `async initializeApp() {
+  await Promise.all([
+    document.fonts.ready,
+    this.waitForElements(),
+    authPromise
+  ]);
+}`
 
 const isLandscape = window.innerWidth > window.innerHeight
 

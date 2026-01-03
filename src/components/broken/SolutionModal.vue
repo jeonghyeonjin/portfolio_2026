@@ -126,7 +126,7 @@
             </svg>
             코드
           </div>
-          <CodeBlock>{{ issue.code }}</CodeBlock>
+          <CodeBlock :code="issue.code" />
         </div>
       </div>
 
