@@ -28,8 +28,17 @@
           <div class="skill-card-header">
             <h3 class="skill-card-title">Developer</h3>
             <p class="skill-card-description">
-              JavaScript specialist with Vue.js and Flutter expertise. I transform ideas into
-              functional applications through rapid prototyping.
+              Specializing in <span class="text-highlight">JavaScript</span>-based development with
+              proficiency in <span class="text-highlight">Vue.js</span> and
+              <span class="text-highlight">Flutter</span>. I rapidly
+              <span class="text-highlight">prototype</span> ideas and efficiently implement them
+              into <span class="text-highlight">practical applications</span>. I enjoy creating the
+              <span class="text-highlight">intersection</span> where ideas meet users.
+            </p>
+            <p class="skill-card-description-ko">
+              자바스크립트 기반 개발을 전문으로 하며 Vue.js와 Flutter에 능숙합니다. 아이디어를
+              빠르게 프로토타이핑하고 효율적으로 구현하여 실용적인 애플리케이션으로 전환합니다.
+              아이디어와 사용자가 만나는 접점을 만드는 것을 좋아합니다.
             </p>
           </div>
           <div class="skill-chips">
@@ -45,8 +54,19 @@
           <div class="skill-card-header">
             <h3 class="skill-card-title">Designer</h3>
             <p class="skill-card-description">
-              UI/UX designer bridging vision and development with Figma. Creating holistic solutions
-              from interfaces to visual assets.
+              With a <span class="text-highlight">design background</span>, I create intuitive
+              <span class="text-highlight">UI/UX solutions</span> using
+              <span class="text-highlight">Figma</span> and Adobe XD. Beyond interface design, I'm
+              skilled in <span class="text-highlight">visual asset production</span> and
+              illustration work using <span class="text-highlight">Photoshop</span> and
+              <span class="text-highlight">Illustrator</span>, considering both
+              <span class="text-highlight">aesthetic appeal</span> and
+              <span class="text-highlight">functional usability</span>.
+            </p>
+            <p class="skill-card-description-ko">
+              디자인 전공을 바탕으로 Figma와 Adobe XD를 활용해 직관적인 UI/UX 솔루션을 만듭니다.
+              Photoshop과 Illustrator를 활용한 비주얼 에셋 제작과 일러스트 작업에도 능숙하며, 심미적
+              매력과 기능적 사용성을 모두 고려하고자 합니다.
             </p>
           </div>
           <div class="skill-chips">
@@ -62,8 +82,19 @@
           <div class="skill-card-header">
             <h3 class="skill-card-title">Creator</h3>
             <p class="skill-card-description">
-              Keyboard designer combining 3D modeling and PCB engineering. Documenting the maker
-              journey through video.
+              Passionate about <span class="text-highlight">keyboard design</span>, I combine
+              <span class="text-highlight">3D modeling</span> with
+              <span class="text-highlight">Blender</span> and
+              <span class="text-highlight">PCB engineering</span> with Illustrator and
+              <span class="text-highlight">KiCad</span> to create custom keyboard solutions from
+              concept to reality. I document the creation process through
+              <span class="text-highlight">video</span> using
+              <span class="text-highlight">Premiere Pro</span> and After Effects.
+            </p>
+            <p class="skill-card-description-ko">
+              키보드 디자인에 열정을 가지고 Blender를 활용한 3D 모델링과 Illustrator 및 KiCad를
+              사용한 PCB 엔지니어링을 결합하여 컨셉부터 실물까지 커스텀 키보드 솔루션을 제작합니다.
+              Premiere Pro와 After Effects로 제작 과정을 영상으로 기록합니다.
             </p>
           </div>
           <div class="skill-chips">
@@ -97,6 +128,7 @@ const designerCardRef = ref(null)
 const creatorCardRef = ref(null)
 let titleAnimation = null
 let cardAnimations = []
+let highlightTriggers = []
 let resizeHandler = null
 
 // 이미지 경로를 computed로 메모이제이션
@@ -128,6 +160,8 @@ const setupScrollTrigger = () => {
   }
   cardAnimations.forEach((anim) => anim.kill())
   cardAnimations = []
+  highlightTriggers.forEach((t) => t.kill())
+  highlightTriggers = []
   gsap.killTweensOf(skillTitleRef.value)
   if (developerCardRef.value) gsap.killTweensOf(developerCardRef.value)
   if (designerCardRef.value) gsap.killTweensOf(designerCardRef.value)
@@ -218,6 +252,19 @@ const setupScrollTrigger = () => {
       cardAnimations.push(animation)
     })
   }
+
+  // 텍스트 하이라이트 애니메이션
+  const highlights = skillSectionRef.value.querySelectorAll('.text-highlight')
+  highlights.forEach((highlight) => {
+    highlight.classList.remove('active')
+    const trigger = ScrollTrigger.create({
+      trigger: highlight,
+      start: 'top 85%',
+      onEnter: () => highlight.classList.add('active'),
+      onLeaveBack: () => highlight.classList.remove('active'),
+    })
+    highlightTriggers.push(trigger)
+  })
 }
 
 onMounted(() => {
@@ -245,6 +292,10 @@ onUnmounted(() => {
   }
   cardAnimations.forEach((anim) => anim.kill())
   cardAnimations = []
+
+  // 하이라이트 트리거 정리
+  highlightTriggers.forEach((t) => t.kill())
+  highlightTriggers = []
 
   // GSAP 트윈 정리
   if (skillTitleRef.value) {
@@ -372,6 +423,15 @@ onUnmounted(() => {
   grid-row: 2;
 }
 
+.skill-card-description-ko {
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--regular);
+  line-height: 1.6;
+  color: rgb(var(--gray--5s));
+  grid-column: 1;
+  grid-row: 3;
+}
+
 .skill-chips {
   display: flex;
   flex-wrap: wrap;
@@ -480,6 +540,10 @@ onUnmounted(() => {
   .skill-card-header {
     grid-template-columns: 3fr 1fr;
     grid-template-rows: auto;
+  }
+
+  .skill-card-description-ko {
+    display: none;
   }
 }
 </style>

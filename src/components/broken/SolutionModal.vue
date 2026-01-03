@@ -1,6 +1,6 @@
 <template>
-  <div v-if="isOpen" class="solution-modal-overlay" @click="close" @wheel.stop @touchmove.stop>
-    <div ref="solutionModalRef" class="solution-modal" @click.stop @wheel.stop="handleModalWheel">
+  <div v-if="isOpen" class="solution-modal-overlay" @click="close" @wheel.passive.stop @touchmove.stop>
+    <div ref="solutionModalRef" class="solution-modal" @click.stop @wheel.passive.stop="handleModalWheel">
       <Transition name="issue-marker">
         <div
           v-if="

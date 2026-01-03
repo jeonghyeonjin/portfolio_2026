@@ -2,6 +2,7 @@
 @import './typography.css';
 @import './base.css';
 @import './breakpoints.css';
+@import './highlight.css';
 
 #app {
   width: 100%;

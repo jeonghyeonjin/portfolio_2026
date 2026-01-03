@@ -1,0 +1,21 @@
+:root {
+  --highlight-color: rgba(var(--yellow--light), 0.9);
+  --highlight-duration: 1s;
+  --highlight-ease: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.text-highlight {
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition: background-size var(--highlight-duration) var(--highlight-ease);
+
+  /* Half highlight style */
+  background-image: linear-gradient(transparent 30%, var(--highlight-color) 80%);
+
+  display: inline;
+}
+
+.text-highlight.active {
+  color: rgb(var(--gray--1));
+  background-size: 100% 100%;
+}
