@@ -80,28 +80,37 @@
                   class="footer-link footer-link-github"
                   :class="{ 'is-disabled': work.footer.githubDisabled }"
                   @click.stop="work.footer.githubDisabled ? $event.preventDefault() : null"
-                  :aria-label="work.footer.githubDisabled ? 'GitHub 저장소 (비활성화)' : 'GitHub 저장소 열기'"
+                  :aria-label="
+                    work.footer.githubDisabled ? 'GitHub 저장소 (비활성화)' : 'GitHub 저장소 열기'
+                  "
                   :aria-disabled="work.footer.githubDisabled"
                 >
                   <img src="@/assets/images/icons/github.svg" alt="GitHub" class="footer-icon" />
                 </a>
-                <a
+                <BaseTooltip
                   v-if="work.footer.externalLink"
-                  :href="work.footer.externalDisabled ? undefined : work.footer.externalLink"
-                  :target="work.footer.externalDisabled ? undefined : '_blank'"
-                  :rel="work.footer.externalDisabled ? undefined : 'noopener noreferrer'"
-                  class="footer-link footer-link-external"
-                  :class="{ 'is-disabled': work.footer.externalDisabled }"
-                  @click.stop="work.footer.externalDisabled ? $event.preventDefault() : null"
-                  :aria-label="work.footer.externalDisabled ? '외부 링크 (비활성화)' : '외부 링크 열기'"
-                  :aria-disabled="work.footer.externalDisabled"
+                  :text="work.footer.externalLink"
+                  placement="bottom"
                 >
-                  <img
-                    src="@/assets/images/icons/external_link.svg"
-                    alt="External link"
-                    class="footer-icon"
-                  />
-                </a>
+                  <a
+                    :href="work.footer.externalDisabled ? undefined : work.footer.externalLink"
+                    :target="work.footer.externalDisabled ? undefined : '_blank'"
+                    :rel="work.footer.externalDisabled ? undefined : 'noopener noreferrer'"
+                    class="footer-link footer-link-external"
+                    :class="{ 'is-disabled': work.footer.externalDisabled }"
+                    @click.stop="work.footer.externalDisabled ? $event.preventDefault() : null"
+                    :aria-label="
+                      work.footer.externalDisabled ? '외부 링크 (비활성화)' : '외부 링크 열기'
+                    "
+                    :aria-disabled="work.footer.externalDisabled"
+                  >
+                    <img
+                      src="@/assets/images/icons/external_link.svg"
+                      alt="External link"
+                      class="footer-icon"
+                    />
+                  </a>
+                </BaseTooltip>
               </div>
             </div>
           </div>
@@ -143,6 +152,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import WorkModal from './works/WorkModal.vue'
 import WorkChip from '@/components/common/WorkChip.vue'
+import BaseTooltip from '@/components/common/BaseTooltip.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import { useResponsive } from '@/composables/useResponsive'
