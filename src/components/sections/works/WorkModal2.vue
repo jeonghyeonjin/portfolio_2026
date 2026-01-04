@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
 import { gsap } from 'gsap'
 import { Flip } from 'gsap/all'
 import imgHero from '@/assets/images/works/master-forge/20241120_214422.jpg'
@@ -84,8 +84,12 @@ import imgHeroWide from '@/assets/images/works/master-forge/20241120_214422_1.jp
 import imgPin from '@/assets/images/works/master-forge/m4g_pin.png'
 import imgMockup from '@/assets/images/works/master-forge/m4g_pin_mockup.png'
 import imgSticker from '@/assets/images/works/master-forge/m4g_sticker.png'
+import worksData from '@/data/works.json'
 
 gsap.registerPlugin(Flip)
+
+const workId = inject('workId', 2)
+const workData = worksData.find((work) => work.id === workId) || null
 
 // Refs
 const containerRef = ref(null)
@@ -120,10 +124,10 @@ const heroImage = computed(() => (isLandscape.value ? imgHeroWide : imgHero))
 const slides = computed(() => [
   {
     image: heroImage.value,
-    title: 'MASTER FORGE',
+    title: workData?.title?.toUpperCase() || 'MASTER FORGE',
     description: {
-      en: "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
-      ko: 'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
+      en: workData?.description || "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
+      ko: workData?.description || 'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
     },
   },
   {

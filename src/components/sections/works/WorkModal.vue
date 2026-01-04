@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { shallowRef, ref, onMounted } from 'vue'
+import { shallowRef, ref, onMounted, provide } from 'vue'
 import { gsap } from 'gsap'
 import IconButton from '@/components/common/IconButton.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
@@ -48,6 +48,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+// workId를 provide로 전달하여 자식 컴포넌트에서 사용할 수 있도록 함
+provide('workId', props.workId)
 
 // shallowRef를 사용하여 컴포넌트를 반응형으로 만들지 않음
 const workComponent = shallowRef(null)

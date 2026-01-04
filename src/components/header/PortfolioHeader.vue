@@ -70,6 +70,7 @@ let mobileBadgeAnimation = null
 let mobileRoleAnimation = null
 
 // ScrollTrigger 인스턴스
+let aboutScrollTrigger = null
 let skillScrollTrigger = null
 let workScrollTrigger = null
 let experienceScrollTrigger = null
@@ -229,6 +230,10 @@ const killMobileAnimations = () => {
 
 // ScrollTrigger 정리
 const cleanupScrollTriggers = () => {
+  if (aboutScrollTrigger) {
+    aboutScrollTrigger.kill()
+    aboutScrollTrigger = null
+  }
   if (skillScrollTrigger) {
     skillScrollTrigger.kill()
     skillScrollTrigger = null
@@ -270,11 +275,19 @@ const initializeHeader = () => {
   cleanupScrollTriggers()
 
   const heroSection = document.querySelector('.hero-section')
+  const aboutSection = document.querySelector('.about-section')
   const skillSection = document.querySelector('.skill-section')
   const workSection = document.querySelector('.work-section')
   const experienceSection = document.querySelector('.experience-section')
 
-  if (!heroSection || !skillSection || !workSection || !experienceSection || !nameTitleRef.value)
+  if (
+    !heroSection ||
+    !aboutSection ||
+    !skillSection ||
+    !workSection ||
+    !experienceSection ||
+    !nameTitleRef.value
+  )
     return
 
   // 원래 상태로 복원하는 함수 (Skill 섹션을 벗어날 때)
@@ -454,13 +467,23 @@ const initializeHeader = () => {
     setupMobileHeaderScrollAnimation()
   }
 
-  // Skill 섹션이 보이는지 확인
+  // 섹션 가시성 확인 함수들
   const isSkillSectionVisible = () => {
     const skillRect = skillSection.getBoundingClientRect()
     return skillRect.top < window.innerHeight && skillRect.bottom > 0
   }
 
-  // Skill 섹션 ScrollTrigger (데스크톱/태블릿용)
+  const isWorkSectionVisible = () => {
+    const workRect = workSection.getBoundingClientRect()
+    return workRect.top < window.innerHeight && workRect.bottom > 0
+  }
+
+  const isExperienceSectionVisible = () => {
+    const experienceRect = experienceSection.getBoundingClientRect()
+    return experienceRect.top < window.innerHeight && experienceRect.bottom > 0
+  }
+
+  // Skill 섹션 ScrollTrigger (데스크톱/태블릿용) - 첫 번째 섹션
   if (!isMobile.value) {
     skillScrollTrigger = ScrollTrigger.create({
       trigger: skillSection,
@@ -472,12 +495,13 @@ const initializeHeader = () => {
         changeNameText('Skill')
       },
       onLeaveBack: () => {
+        // Skill 섹션을 벗어날 때 (Hero로 돌아갈 때) 원래 상태로 복원
         restoreOriginalState()
       },
     })
   }
 
-  // Work 섹션 ScrollTrigger (데스크톱/태블릿용)
+  // Work 섹션 ScrollTrigger (데스크톱/태블릿용) - 두 번째 섹션
   if (!isMobile.value) {
     workScrollTrigger = ScrollTrigger.create({
       trigger: workSection,
@@ -485,24 +509,21 @@ const initializeHeader = () => {
       end: SCROLL_TRIGGER_END,
       scrub: SCROLL_TRIGGER_SCRUB,
       onEnter: () => {
-        // Work 섹션에 진입할 때도 hideState 호출 (이미 Skill에서 숨겨졌을 수 있음)
         hideState()
         changeNameText('Work')
       },
       onLeaveBack: () => {
-        // Work 섹션을 벗어날 때, Skill 섹션이 아직 보이면 "Skill"로, 아니면 원래 상태로
+        // Work 섹션을 벗어날 때, Skill 섹션이 보이면 "Skill"로
         if (isSkillSectionVisible()) {
-          // Skill 섹션이 보이면 "Skill"로 변경
           changeNameText('Skill')
         } else {
-          // Skill 섹션도 벗어났으면 복원
           restoreOriginalState()
         }
       },
     })
   }
 
-  // Experience 섹션 ScrollTrigger (데스크톱/태블릿용)
+  // Experience 섹션 ScrollTrigger (데스크톱/태블릿용) - 세 번째 섹션
   if (!isMobile.value) {
     experienceScrollTrigger = ScrollTrigger.create({
       trigger: experienceSection,
@@ -515,10 +536,33 @@ const initializeHeader = () => {
       },
       onLeaveBack: () => {
         // Experience 섹션을 벗어날 때, 이전 섹션 확인
-        const workRect = workSection.getBoundingClientRect()
-        const isWorkSectionVisible = workRect.top < window.innerHeight && workRect.bottom > 0
+        if (isWorkSectionVisible()) {
+          changeNameText('Work')
+        } else if (isSkillSectionVisible()) {
+          changeNameText('Skill')
+        } else {
+          restoreOriginalState()
+        }
+      },
+    })
+  }
 
-        if (isWorkSectionVisible) {
+  // About 섹션 ScrollTrigger (데스크톱/태블릿용) - 네 번째 섹션
+  if (!isMobile.value) {
+    aboutScrollTrigger = ScrollTrigger.create({
+      trigger: aboutSection,
+      start: SCROLL_TRIGGER_START,
+      end: SCROLL_TRIGGER_END,
+      scrub: SCROLL_TRIGGER_SCRUB,
+      onEnter: () => {
+        hideState()
+        changeNameText('About')
+      },
+      onLeaveBack: () => {
+        // About 섹션을 벗어날 때, 이전 섹션 확인
+        if (isExperienceSectionVisible()) {
+          changeNameText('EXP.')
+        } else if (isWorkSectionVisible()) {
           changeNameText('Work')
         } else if (isSkillSectionVisible()) {
           changeNameText('Skill')

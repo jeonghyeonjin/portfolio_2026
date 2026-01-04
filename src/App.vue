@@ -3,6 +3,7 @@ import { ref, provide, readonly } from 'vue'
 import PortfolioHeader from './components/header/PortfolioHeader.vue'
 import SiteNavigation from './components/navigation/SiteNavigation.vue'
 import HeroSection from './components/sections/HeroSection.vue'
+import AboutSection from './components/sections/AboutSection.vue'
 import SkillSection from './components/sections/SkillSection.vue'
 import WorkSection from './components/sections/WorkSection.vue'
 import ExperienceSection from './components/sections/ExperienceSection.vue'
@@ -45,6 +46,7 @@ provide('setSelectWorkCallback', (callback) => {
       <SkillSection />
       <WorkSection />
       <ExperienceSection />
+      <AboutSection />
     </main>
   </div>
 </template>

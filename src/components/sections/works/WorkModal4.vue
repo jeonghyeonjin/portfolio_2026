@@ -1,10 +1,21 @@
 <template>
   <div class="work-modal-content">
     <div ref="workModalHeaderRef" class="work-modal-header">
-      <h1 class="work-modal-title">Tape</h1>
+      <h1 class="work-modal-title">{{ workData?.title || '' }}</h1>
       <p class="work-modal-subtitle">
-        Asynchronous Video Messaging Tool for Collaborative Workspace
+        {{ workData?.description || '' }}
       </p>
+    </div>
+    <div ref="producthuntBadgeRef" class="producthunt-badge">
+      <img
+        src="@/assets/images/producthunt/dailybadge2.avif"
+        alt="Product Hunt Daily #2"
+        class="producthunt-badge-icon"
+      />
+      <div class="producthunt-badge-text">
+        <span class="producthunt-badge-label">Product Hunt Daily #2</span>
+        <span class="producthunt-badge-date">February 23rd, 2023</span>
+      </div>
     </div>
     <div class="work-modal-body">
       <div ref="heroImageContainerRef" class="hero-image-container">
@@ -63,24 +74,52 @@
 
       <!-- Key Contributions -->
       <section class="content-section">
-        <h2 class="section-title">🎨 My Key Contributions | 주요 역할</h2>
-        <p class="section-text">
-          <strong>Role:</strong> Frontend Developer & UI/UX Designer - 전체 레이아웃 및 디자인 총괄
-        </p>
-
+        <h2 class="section-title">🎨 My Key Contributions</h2>
         <!-- 1. Design Director -->
         <div class="feature-block" ref="featureBlock1Ref">
           <div class="feature-content">
             <div class="feature-text" ref="featureText1Ref">
-              <h3 class="feature-title">🥇 #1. 디자인 총괄 | Design Director</h3>
+              <h3 class="feature-title">🥇 디자인 총괄 | Design Director</h3>
               <p class="section-text"><strong>Scope:</strong></p>
               <ul class="feature-list">
-                <li>AI 자막/요약 UI: 언어 선택 다이얼로그, 번역 버튼 디자인</li>
-                <li>텍스트 클립: TipTap 에디터 통합 및 코드블락 스타일링</li>
-                <li>커스텀 토스트: Element UI notify → vue-toastification 전환</li>
-                <li>온보딩 시스템: 툴팁 위치 조정, Progress Bar 디자인</li>
-                <li>녹화 UI: 전체 레이아웃 수정, 타이머 위치 변경</li>
-                <li>반응형 디자인: 모바일/태블릿 환경 최적화</li>
+                <li>
+                  <strong>AI 자막/요약 UI:</strong> 언어 선택 다이얼로그, Translate/Regenerate 버튼,
+                  Summary Export
+                </li>
+                <li>
+                  <strong>텍스트 클립:</strong> TipTap Script 에디터, 코드블락 스타일, 포커스/줄바꿈
+                  처리
+                </li>
+                <li>
+                  <strong>커스텀 토스트:</strong> Element UI notify → vue-toastification 전환, 중복
+                  방지
+                </li>
+                <li>
+                  <strong>온보딩 시스템:</strong> Welcome 페이지, 툴팁 위치 조정, Progress Bar,
+                  라우팅 전환 체크
+                </li>
+                <li>
+                  <strong>녹화 UI:</strong> 전체 레이아웃 수정, Record type 선택, 타이머 표시 위치
+                  변경
+                </li>
+                <li>
+                  <strong>채널/인박스:</strong> 채널 헤더 영역, 외부 접속 CTA, 템플릿 버튼, 채널
+                  아이콘
+                </li>
+                <li>
+                  <strong>게스트 로그인:</strong> 팝업 문구, 이메일 가입 정합성, 이름 변경, 다운로드
+                  제한
+                </li>
+                <li><strong>Notification:</strong> 기본값 설정, 디자인 개선, 퀵 레코드 비활성화</li>
+                <li>
+                  <strong>모바일 최적화:</strong> 채널 헤더, 툴팁, 가로/세로 비디오 고정, 레이아웃
+                  버그 수정
+                </li>
+                <li><strong>단축키:</strong> 방향키 추가, 팝업 동작 개선</li>
+                <li>
+                  <strong>기타 UI/UX:</strong> 미팅 제목, 브라우저 탭 이름, 사이드바 여백, 폰트
+                  사이즈, z-index
+                </li>
               </ul>
               <p class="section-text"><strong>Key Deliverables:</strong></p>
               <ul class="feature-list">
@@ -92,7 +131,7 @@
               </ul>
               <p class="section-text"><strong>Impact:</strong></p>
               <ul class="feature-list">
-                <li>✅ 대규모 프로젝트 디자인 총괄 경험</li>
+                <li>✅ 프로젝트 디자인 총괄</li>
                 <li>✅ UI 라이브러리 커스터마이징 능력</li>
                 <li>✅ 프로덕션 수준 반응형 디자인</li>
               </ul>
@@ -108,7 +147,7 @@
         <div class="feature-block" ref="featureBlock2Ref">
           <div class="feature-content">
             <div class="feature-text" ref="featureText2Ref">
-              <h3 class="feature-title">🥈 #2. 이모지 피드백 | Emoji Feedback</h3>
+              <h3 class="feature-title">🥈 이모지 피드백 개발 | Emoji Feedback System</h3>
               <p class="section-text"><strong>Challenge:</strong></p>
               <ul class="feature-list">
                 <li>비디오 위에 실시간으로 표시되는 이모지 시각화</li>
@@ -118,10 +157,14 @@
               </ul>
               <p class="section-text"><strong>Solution:</strong></p>
               <ul class="feature-list">
-                <li>이모지 피드백 화면 로직 및 디자인 조정</li>
-                <li>Clip reaction 화면 배경 투명도 및 곡률 제거</li>
-                <li>게스트 이모지 입력 기능 UI 구현</li>
-                <li>모바일/데스크톱 반응형 레이아웃 디자인</li>
+                <li>
+                  <strong>이모지 피드백 화면 로직 및 디자인 조정</strong> - 비디오 위 실시간 이모지
+                  표시
+                </li>
+                <li><strong>Clip reaction 화면 수정</strong> - 배경 투명도 조정 및 곡률 제거</li>
+                <li><strong>게스트 이모지 입력 기능</strong> - 비로그인 사용자 접근성 개선</li>
+                <li><strong>모바일 최적화</strong> - 가로/세로 환경에 따른 레이아웃 조정</li>
+                <li><strong>시간 기반 필터링</strong> - 성능 최적화 및 랜덤 액세스 지원</li>
               </ul>
               <p class="section-text"><strong>Impact:</strong></p>
               <ul class="feature-list">
@@ -135,15 +178,16 @@
               <EmojiFeedbackDemo ref="emojiFeedbackDemoRef" />
             </div>
           </div>
+          <div class="feature-code-wrapper">
+            <CodeBlock :code="emojiCode" />
+          </div>
         </div>
 
         <!-- 3. Embed Integration -->
         <div class="feature-block" ref="featureBlock3Ref">
           <div class="feature-content">
             <div class="feature-text" ref="featureText3Ref">
-              <h3 class="feature-title">
-                🥉 #3. 다양한 클립 타입 지원 | Multiple Clip Types Support
-              </h3>
+              <h3 class="feature-title">🥉 다양한 클립 타입 지원 | Multiple Clip Types Support</h3>
               <p class="section-text"><strong>Challenge:</strong></p>
               <ul class="feature-list">
                 <li>비디오뿐만 아니라 다양한 타입의 클립 지원 필요</li>
@@ -153,11 +197,20 @@
               </ul>
               <p class="section-text"><strong>Solution:</strong></p>
               <ul class="feature-list">
-                <li>다양한 클립 타입 선택 버튼 UI 디자인 (Upload, Text, Embed, Poll, Request)</li>
-                <li>각 클립 타입별 생성 및 편집 인터페이스 구현</li>
-                <li>임베드: Calendly, CodePen, Figma 등 외부 서비스 통합</li>
-                <li>텍스트 클립: TipTap 에디터 통합 및 코드블락 스타일링</li>
-                <li>폴 및 리퀘스트 클립 UI/UX 디자인</li>
+                <li>
+                  <strong>다양한 클립 타입 UI 구현</strong> - Upload, Text, Embed, Poll, Request
+                  클립 타입 지원
+                </li>
+                <li>
+                  <strong>임베드 레이아웃 및 디자인 작업</strong> - Calendly, CodePen, Figma 임베드
+                  대응
+                </li>
+                <li>
+                  <strong>텍스트 클립 에디터 통합</strong> - TipTap 에디터 및 코드블락 스타일링
+                </li>
+                <li><strong>Fixed size embed width/height 자동 계산</strong> - 반응형 크기 조정</li>
+                <li><strong>임베드 시 자막 버튼 처리</strong> - UI 충돌 방지</li>
+                <li><strong>임베드 URL 풀 URL 처리</strong> - 사용자 편의성 개선</li>
               </ul>
               <p class="section-text"><strong>Impact:</strong></p>
               <ul class="feature-list">
@@ -174,91 +227,16 @@
               />
             </div>
           </div>
+          <div class="feature-code-wrapper">
+            <CodeBlock :code="embedCode" />
+          </div>
         </div>
       </section>
 
       <!-- Tech Stack -->
       <section class="content-section">
-        <h2 class="section-title">🛠️ Tech Stack Summary | 기술 스택 요약</h2>
+        <h2 class="section-title">🛠️ Tech Stack Summary</h2>
         <TechStackGrid :stacks="techStacks" />
-      </section>
-
-      <!-- Detailed Work Examples -->
-      <section class="content-section">
-        <h2 class="section-title">💼 Detailed Work Examples | 상세 작업 내역</h2>
-
-        <div class="challenge-block">
-          <h3 class="challenge-title">1. Emoji Feedback System | 이모지 피드백 시스템</h3>
-          <CodeBlock :code="emojiCode" />
-          <ul class="feature-list">
-            <li>
-              <strong>이모지 피드백 화면 로직 및 디자인 조정</strong> - 비디오 위 실시간 이모지 표시
-            </li>
-            <li><strong>Clip reaction 화면 수정</strong> - 배경 투명도 조정 및 곡률 제거</li>
-            <li><strong>게스트 이모지 입력 기능</strong> - 비로그인 사용자 접근성 개선</li>
-            <li><strong>모바일 최적화</strong> - 가로/세로 환경에 따른 레이아웃 조정</li>
-            <li><strong>시간 기반 필터링</strong> - 성능 최적화 및 랜덤 액세스 지원</li>
-          </ul>
-        </div>
-
-        <div class="challenge-block">
-          <h3 class="challenge-title">2. Multiple Clip Types Support | 다양한 클립 타입 지원</h3>
-          <CodeBlock :code="embedCode" />
-          <ul class="feature-list">
-            <li>
-              <strong>다양한 클립 타입 UI 구현</strong> - Upload, Text, Embed, Poll, Request 클립
-              타입 지원
-            </li>
-            <li>
-              <strong>임베드 레이아웃 및 디자인 작업</strong> - Calendly, CodePen, Figma 임베드 대응
-            </li>
-            <li><strong>텍스트 클립 에디터 통합</strong> - TipTap 에디터 및 코드블락 스타일링</li>
-            <li><strong>Fixed size embed width/height 자동 계산</strong> - 반응형 크기 조정</li>
-            <li><strong>임베드 시 자막 버튼 처리</strong> - UI 충돌 방지</li>
-            <li><strong>임베드 URL 풀 URL 처리</strong> - 사용자 편의성 개선</li>
-          </ul>
-        </div>
-
-        <div class="challenge-block">
-          <h3 class="challenge-title">3. Design System & Layout | 디자인 시스템 및 레이아웃</h3>
-          <ul class="feature-list">
-            <li>
-              <strong>AI 자막/요약 UI:</strong> 언어 선택 다이얼로그, Translate/Regenerate 버튼,
-              Summary Export
-            </li>
-            <li>
-              <strong>텍스트 클립:</strong> TipTap Script 에디터, 코드블락 스타일, 포커스/줄바꿈
-              처리
-            </li>
-            <li>
-              <strong>커스텀 토스트:</strong> Element UI notify → vue-toastification 전환, 중복 방지
-            </li>
-            <li>
-              <strong>온보딩 시스템:</strong> Welcome 페이지, 툴팁 위치 조정, Progress Bar, 라우팅
-              전환 체크
-            </li>
-            <li>
-              <strong>녹화 UI:</strong> 전체 레이아웃 수정, Record type 선택, 타이머 표시 위치 변경
-            </li>
-            <li>
-              <strong>채널/인박스:</strong> 채널 헤더 영역, 외부 접속 CTA, 템플릿 버튼, 채널 아이콘
-            </li>
-            <li>
-              <strong>게스트 로그인:</strong> 팝업 문구, 이메일 가입 정합성, 이름 변경, 다운로드
-              제한
-            </li>
-            <li><strong>Notification:</strong> 기본값 설정, 디자인 개선, 퀵 레코드 비활성화</li>
-            <li>
-              <strong>모바일 최적화:</strong> 채널 헤더, 툴팁, 가로/세로 비디오 고정, 레이아웃 버그
-              수정
-            </li>
-            <li><strong>단축키:</strong> 방향키 추가, 팝업 동작 개선</li>
-            <li>
-              <strong>기타 UI/UX:</strong> 미팅 제목, 브라우저 탭 이름, 사이드바 여백, 폰트 사이즈,
-              z-index
-            </li>
-          </ul>
-        </div>
       </section>
 
       <!-- Performance Metrics -->
@@ -321,6 +299,10 @@
         <div class="takeaway-block">
           <h3 class="takeaway-title">Business Impact:</h3>
           <ul class="feature-list">
+            <li>
+              <strong>Product Hunt Success:</strong> Product Hunt 데일리 2등 달성 (February 23rd,
+              2023)
+            </li>
             <li><strong>User Onboarding:</strong> 온보딩 시스템 구축으로 신규 사용자 경험 개선</li>
             <li>
               <strong>Cross-platform Support:</strong> 모바일/데스크톱 반응형 디자인으로 사용자층
@@ -358,7 +340,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, inject, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
@@ -368,10 +350,18 @@ import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import EmojiFeedbackDemo from './demos/EmojiFeedbackDemo.vue'
 import ChannelListDemo from './demos/ChannelListDemo.vue'
 import VideoDetailDemo from './demos/VideoDetailDemo.vue'
+import worksData from '@/data/works.json'
+
+const workId = inject('workId', 4)
+
+const workData = computed(() => {
+  return worksData.find((work) => work.id === workId) || null
+})
 
 gsap.registerPlugin(ScrollTrigger)
 
 const workModalHeaderRef = ref(null)
+const producthuntBadgeRef = ref(null)
 const heroImageContainerRef = ref(null)
 const heroImageOverlayRef = ref(null)
 const heroImageWrapperRef = ref(null)
@@ -590,8 +580,7 @@ const setupBlockAnimation = (block, index = 0) => {
 const performanceMetrics = [
   { label: 'Components Designed', value: '150+ Vue Components' },
   { label: 'Feature Areas', value: '12+ Major Features' },
-  { label: 'UI Libraries', value: 'Element UI + Vuetify' },
-  { label: 'Responsive Support', value: 'Mobile/Tablet/Desktop' },
+  { label: 'Product Hunt', value: 'Daily #2 (Feb 23, 2023)' },
 ]
 
 // Tech Stack Data
@@ -675,6 +664,13 @@ onMounted(() => {
 
           if (workModalHeaderRef.value) {
             gsap.to(workModalHeaderRef.value, {
+              opacity: 0,
+              scrollTrigger: scrollTriggerConfig3,
+            })
+          }
+
+          if (producthuntBadgeRef.value) {
+            gsap.to(producthuntBadgeRef.value, {
               opacity: 0,
               scrollTrigger: scrollTriggerConfig3,
             })
@@ -823,6 +819,43 @@ onMounted(() => {
   justify-content: center;
 }
 
+.producthunt-badge {
+  position: fixed;
+  top: calc(50% + 120px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.producthunt-badge-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.producthunt-badge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.producthunt-badge-label {
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--bold);
+  color: rgb(var(--white--1));
+  letter-spacing: -0.01em;
+}
+
+.producthunt-badge-date {
+  font-size: var(--body--2--normal);
+  font-weight: var(--font-weight--regular);
+  color: rgb(var(--white--3));
+}
+
 .work-modal-title {
   font-size: var(--hero--1);
   font-weight: var(--font-weight--bold);
@@ -894,10 +927,10 @@ onMounted(() => {
 }
 
 .section-text {
-  font-size: var(--body--1--normal);
-  font-weight: var(--font-weight--regular);
+  font-size: var(--headline--1);
+  font-weight: var(--font-weight--bold);
   line-height: 1.7;
-  color: rgb(var(--white--2));
+  color: rgb(var(--white--1));
   margin: 0 0 20px 0;
 }
 
@@ -941,13 +974,18 @@ onMounted(() => {
   align-items: start;
 }
 
+.feature-code-wrapper {
+  width: 100%;
+  margin-top: 30px;
+}
+
 .feature-text {
   display: flex;
   flex-direction: column;
 }
 
 .feature-title {
-  font-size: var(--body--1--normal);
+  font-size: var(--heading--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--white--1));
   margin: 0 0 15px 0;
@@ -1080,6 +1118,15 @@ p {
     font-weight: var(--font-weight--bold);
   }
 
+  .producthunt-badge {
+    top: calc(50% + 100px);
+  }
+
+  .producthunt-badge-icon {
+    width: 40px;
+    height: 40px;
+  }
+
   .content-section {
     padding: 40px 30px;
   }
@@ -1103,6 +1150,24 @@ p {
   .work-modal-subtitle {
     font-size: var(--body--2--normal);
     font-weight: var(--font-weight--regular);
+  }
+
+  .producthunt-badge {
+    top: calc(50% + 80px);
+    gap: 10px;
+  }
+
+  .producthunt-badge-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .producthunt-badge-label {
+    font-size: var(--body--2--normal);
+  }
+
+  .producthunt-badge-date {
+    font-size: var(--label--1--normal);
   }
 
   .content-section {

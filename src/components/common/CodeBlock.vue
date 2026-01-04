@@ -1,6 +1,8 @@
 <template>
   <div class="code-block">
-    <pre><code ref="codeRef" class="hljs">{{ formattedCode }}</code></pre>
+    <div class="code-scroll-wrapper">
+      <pre><code ref="codeRef" class="hljs">{{ formattedCode }}</code></pre>
+    </div>
   </div>
 </template>
 
@@ -54,17 +56,54 @@ watch(() => props.code, highlightCode)
 </script>
 
 <style scoped>
+@import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+
 .code-block {
+  border: 1px solid rgba(var(--white--1), 0.1);
   background: rgb(var(--gray--1));
   border-radius: 12px;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.code-scroll-wrapper {
   padding: 16px;
   overflow-y: auto;
   overflow-x: auto;
   max-height: 280px;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  margin: 20px 0;
-  border-radius: 12px;
+}
+
+/* Custom Scrollbar Styles */
+.code-scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.code-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(var(--gray--0), 0.3);
+  border-radius: 4px;
+}
+
+.code-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(var(--gray--5), 0.5);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.code-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--gray--5), 0.7);
+}
+
+.code-scroll-wrapper::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox Scrollbar */
+.code-scroll-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--gray--5), 0.4) rgba(var(--gray--0), 0.7);
 }
 
 .code-block pre {
@@ -77,10 +116,16 @@ watch(() => props.code, highlightCode)
 }
 
 .code-block code {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Fira Code', monospace;
   font-size: 0.9em;
   white-space: pre-wrap;
   display: block;
+}
+
+@supports (font-variation-settings: normal) {
+  .code-block code {
+    font-family: 'Fira Code VF', monospace;
+  }
 }
 
 /* Override highlight.js theme to match portfolio design */
@@ -94,12 +139,12 @@ watch(() => props.code, highlightCode)
 .code-block :deep(.hljs-literal),
 .code-block :deep(.hljs-section),
 .code-block :deep(.hljs-link) {
-  color: #ff6b9d;
+  color: rgb(var(--red--light));
 }
 
 .code-block :deep(.hljs-string),
 .code-block :deep(.hljs-attr) {
-  color: #98c379;
+  color: rgb(var(--green--light));
 }
 
 .code-block :deep(.hljs-name),
@@ -107,13 +152,13 @@ watch(() => props.code, highlightCode)
 .code-block :deep(.hljs-number),
 .code-block :deep(.hljs-selector-id),
 .code-block :deep(.hljs-selector-class) {
-  color: #61afef;
+  color: rgb(var(--blue--light));
 }
 
 .code-block :deep(.hljs-attribute),
 .code-block :deep(.hljs-variable),
 .code-block :deep(.hljs-template-variable) {
-  color: #d19a66;
+  color: rgb(var(--yellow--light));
 }
 
 .code-block :deep(.hljs-comment),
@@ -124,12 +169,6 @@ watch(() => props.code, highlightCode)
 
 .code-block :deep(.hljs-function),
 .code-block :deep(.hljs-title) {
-  color: #c678dd;
-}
-
-.code-block {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(var(--gray--5s), 0.5) rgba(var(--gray--0), 0.5);
-  scroll-margin: 5px;
+  color: rgb(var(--purple--light));
 }
 </style>

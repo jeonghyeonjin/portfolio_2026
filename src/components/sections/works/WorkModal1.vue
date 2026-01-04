@@ -1,9 +1,9 @@
 <template>
   <div class="work-modal-content">
     <div class="work-modal-header">
-      <h1 class="work-modal-title">Master Forge Piexl art</h1>
+      <h1 class="work-modal-title">{{ workData?.title || '' }}</h1>
       <p class="work-modal-subtitle">
-        Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter.
+        {{ workData?.description || '' }}
       </p>
     </div>
     <div class="work-modal-body">
@@ -180,7 +180,14 @@
 </template>
 
 <script setup>
-// Work 1의 상세 내용을 여기에 구현하세요
+import { inject, computed } from 'vue'
+import worksData from '@/data/works.json'
+
+const workId = inject('workId', 1)
+
+const workData = computed(() => {
+  return worksData.find((work) => work.id === workId) || null
+})
 </script>
 
 <style scoped>

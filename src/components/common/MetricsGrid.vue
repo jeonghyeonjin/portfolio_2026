@@ -37,7 +37,6 @@ defineProps({
   gap: 12px;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
 }
 
 .metric-item::before {
@@ -57,15 +56,6 @@ defineProps({
   transition: transform 0.3s ease;
 }
 
-.metric-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(var(--gray--5), 0.15);
-}
-
-.metric-item:hover::before {
-  transform: scaleX(1);
-}
-
 .metric-label {
   font-size: var(--body--2--normal);
   font-weight: var(--font-weight--regular);
@@ -77,7 +67,7 @@ defineProps({
   font-size: var(--title--2);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
-  font-feature-settings: 'tnum';
+  /* font-feature-settings: 'tnum'; */
 }
 
 /* Tablet */

@@ -1,5 +1,10 @@
 <template>
-  <section id="experience" class="experience-section" ref="experienceSectionRef" aria-labelledby="experience-heading">
+  <section
+    id="experience"
+    class="experience-section"
+    ref="experienceSectionRef"
+    aria-labelledby="experience-heading"
+  >
     <div class="experience-container">
       <h2 id="experience-heading" class="visually-hidden">Experience</h2>
       <svg
@@ -39,6 +44,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ExperienceItem from './ExperienceItem.vue'
 import { useResponsive } from '@/composables/useResponsive'
+import experiencesData from '@/data/experiences.json'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -49,55 +55,7 @@ const experienceSectionRef = ref(null)
 let titleAnimation = null
 let resizeHandler = null
 
-const experiences = [
-  {
-    id: 1,
-    date: 'Apr 2022 - Jan 2026',
-    role: 'Frontend Developer & Lead UI/UX Designer',
-    company: 'Taperlabs',
-    description:
-      'Designing and developing enterprise collaboration tools with focus on real-time features and cross-platform compatibility.',
-    technologies: ['Flutter', 'Vue', 'SQLite', 'Figma', 'Adobe XD'],
-    keyProjects: ['Tape | Collaborative workspace', 'Shadow | AI meeting transcription app'],
-    impact: ['Responsive design', 'Real-time sync'],
-  },
-  {
-    id: 2,
-    date: 'Jan 2018 - Jul 2021',
-    role: 'Frontend Developer',
-    company: 'Samsung fire service',
-    description:
-      'Led mobile interface development for direct insurance platform serving millions of users.',
-    technologies: ['JavaScript', 'jQuery', 'Node.js', 'Ajax'],
-    achievements: [
-      'Spearheaded 2018 mobile renewal project',
-      'Developed insurance premium calculators',
-      'Maintained mobile "My Direct" platform',
-    ],
-    impact: ['Performance optimization', 'Code reusability'],
-  },
-  {
-    id: 3,
-    date: 'Aug 20217 - Jan 2018',
-    role: 'Frontend Developer',
-    company: 'Cobaltlab',
-    description: 'Mobile platform operations for Samsung Fire Direct services.',
-    technologies: ['JavaScript', 'jQuery', 'Node.js', 'Ajax'],
-  },
-  {
-    id: 4,
-    date: 'Dec 2015 - Jul 2017',
-    role: 'Junior Designer',
-    company: 'Concepters',
-    description: 'End-to-end design and development for marketing solutions and campaigns.',
-    technologies: ['Photoshop', 'Illustrator'],
-    keyProjects: [
-      'BigBird | Big data marketing platform (clients: VSL3, Pulmuone, Siwon School)',
-      'Pulmuone campaign (2017) | Character design, event pages, branding',
-      'VSL probiotics campaign (2016) | SNS strategy, content creation',
-    ],
-  },
-]
+const experiences = experiencesData
 
 const setupScrollTrigger = () => {
   if (!experienceTitleRef.value || !experienceSectionRef.value) return

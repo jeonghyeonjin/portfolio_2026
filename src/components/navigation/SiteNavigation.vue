@@ -264,31 +264,31 @@ const scrollToSection = (sectionId) => {
   if (!section?.element) return
 
   // skill 섹션은 하단이 화면 하단에 오도록 스크롤
-  if (sectionId === 'skill') {
-    const rect = section.element.getBoundingClientRect()
-    const elementTop = rect.top + window.scrollY
-    const elementHeight = rect.height
-    const windowHeight = window.innerHeight
-    const targetScrollY = elementTop + elementHeight - windowHeight
+  // if (sectionId === 'skill') {
+  const rect = section.element.getBoundingClientRect()
+  const elementTop = rect.top + window.scrollY
+  const elementHeight = rect.height
+  const windowHeight = window.innerHeight
+  const targetScrollY = elementTop + elementHeight - windowHeight
 
-    gsap.to(window, {
-      duration: SCROLL_DURATION,
-      scrollTo: {
-        y: targetScrollY,
-      },
-      ease: SCROLL_EASE,
-    })
-  } else {
-    // 다른 섹션은 상단이 화면 상단에 오도록 스크롤
-    gsap.to(window, {
-      duration: SCROLL_DURATION,
-      scrollTo: {
-        y: section.element,
-        offsetY: 0,
-      },
-      ease: SCROLL_EASE,
-    })
-  }
+  gsap.to(window, {
+    duration: SCROLL_DURATION,
+    scrollTo: {
+      y: targetScrollY,
+    },
+    ease: SCROLL_EASE,
+  })
+  // } else {
+  //   // 다른 섹션은 상단이 화면 상단에 오도록 스크롤
+  //   gsap.to(window, {
+  //     duration: SCROLL_DURATION,
+  //     scrollTo: {
+  //       y: section.element,
+  //       offsetY: 0,
+  //     },
+  //     ease: SCROLL_EASE,
+  //   })
+  // }
 }
 
 // 활성 섹션 업데이트

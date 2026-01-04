@@ -62,12 +62,8 @@ const formatStackItems = (items) => {
   font-size: var(--body--1--bold);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
-  margin: 0 0 16px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid rgba(var(--gray--4), 0.2);
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .tech-stack-title::before {

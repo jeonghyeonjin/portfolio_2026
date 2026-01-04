@@ -1,8 +1,8 @@
 <template>
   <div class="work-modal-content">
     <div ref="workModalHeaderRef" class="work-modal-header">
-      <h1 class="work-modal-title">Keebbear</h1>
-      <p class="work-modal-subtitle">Comprehensive Platform for Keyboard Lovers</p>
+      <h1 class="work-modal-title">{{ workData?.title || '' }}</h1>
+      <p class="work-modal-subtitle">{{ workData?.description || '' }}</p>
     </div>
     <div class="work-modal-body">
       <div ref="mockupContainerRef" class="mockup-container">
@@ -27,13 +27,14 @@
         <h2 class="section-title">📌 Project Overview | 프로젝트 개요</h2>
         <p class="section-text">
           KeeBBear는 기계식 키보드 애호가들을 위한 종합 웹 플랫폼입니다. 현재 타이핑 연습 시스템과
-          키보드 스위치 테스터를 제공하며, 향후 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로
-          확장될 예정입니다.
+          키보드 스위치 테스터를 제공하며, 향후 스위치 - 키캡 호환성 체크 시스템, 키보드 추천
+          프로그램, 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로 확장될 예정입니다.
         </p>
         <p class="section-text">
           KeeBBear is a comprehensive web platform for mechanical keyboard enthusiasts. Currently
           featuring a typing practice system and keyboard switch tester, with plans to expand into
-          typing games, keyboard build logs, and community features.
+          typing games, keyboard build logs, switch compatibility check system, keyboard
+          recommendation program, and community features.
         </p>
       </section>
 
@@ -107,6 +108,43 @@
                 alt="Dashboard"
                 class="feature-image"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Design Features -->
+      <section class="content-section">
+        <h2 class="section-title">🎨 Design Features | 디자인 특징</h2>
+
+        <div class="feature-block" ref="designFeatureBlockRef">
+          <div class="feature-content">
+            <div class="feature-text" ref="designFeatureTextRef">
+              <h3 class="feature-title">Pixel Art Style Border | 픽셀아트 스타일 보더</h3>
+              <p class="section-text">
+                KeeBBear의 가장 특징적인 디자인 요소는 픽셀아트 게임에서 영감을 받은 보더
+                스타일입니다. CSS box-shadow를 활용하여 픽셀 단위의 정확한 보더 효과를 구현했습니다.
+              </p>
+              <p class="section-text">
+                The most distinctive design element of KeeBBear is the border style inspired by
+                pixel art games. Using CSS box-shadow, we implemented precise pixel-level border
+                effects.
+              </p>
+              <ul class="feature-list">
+                <li>Multiple box-shadow layers for pixel-perfect borders</li>
+                <li>Customizable border width (2px, 4px, 6px, 10px)</li>
+                <li>Hover effects with color transitions</li>
+                <li>Retro gaming aesthetic throughout the UI</li>
+              </ul>
+              <ul class="feature-list">
+                <li>픽셀 단위의 정확한 보더를 위한 다중 box-shadow 레이어</li>
+                <li>커스터마이징 가능한 보더 두께 (2px, 4px, 6px, 10px)</li>
+                <li>색상 전환을 포함한 호버 효과</li>
+                <li>UI 전반에 걸친 레트로 게임 미학</li>
+              </ul>
+            </div>
+            <div class="feature-image-wrapper">
+              <PixelBorderDemo ref="pixelBorderDemoRef" />
             </div>
           </div>
         </div>
@@ -187,6 +225,7 @@
           <h4 class="roadmap-phase">Phase 2: In Development (개발 중)</h4>
           <ul class="feature-list">
             <li>🔄 Typing game mode (Corrupt Type)</li>
+            <li>🔄 Keyboard recommendation program</li>
             <li>🔄 Enhanced statistics visualization</li>
             <li>🔄 Achievement system</li>
           </ul>
@@ -194,10 +233,10 @@
         <div class="roadmap-block">
           <h4 class="roadmap-phase">Phase 3: Planned (계획)</h4>
           <ul class="feature-list">
+            <li>📋 Switch compatibility check system</li>
             <li>📋 Keyboard build log system</li>
             <li>📋 Community features</li>
             <li>📋 Leaderboard & competitions</li>
-            <li>📋 Custom typing tests</li>
             <li>📋 Switch database & reviews</li>
           </ul>
         </div>
@@ -282,7 +321,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, inject, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
@@ -292,7 +331,15 @@ import MetricsGrid from '@/components/common/MetricsGrid.vue'
 import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import TypingDemo from './demos/TypingDemo.vue'
 import KeyboardTesterDemo from './demos/KeyboardTesterDemo.vue'
+import PixelBorderDemo from './demos/PixelBorderDemo.vue'
 import imgDashboard from '@/assets/images/works/keebbear/keebbear_dashboard.png'
+import worksData from '@/data/works.json'
+
+const workId = inject('workId', 3)
+
+const workData = computed(() => {
+  return worksData.find((work) => work.id === workId) || null
+})
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -303,12 +350,15 @@ const workModalHeaderRef = ref(null)
 const dashboardImageRef = ref(null)
 const typingDemoRef = ref(null)
 const keyboardTesterDemoRef = ref(null)
+const pixelBorderDemoRef = ref(null)
 const featureBlock1Ref = ref(null)
 const featureBlock2Ref = ref(null)
 const featureBlock3Ref = ref(null)
+const designFeatureBlockRef = ref(null)
 const featureText1Ref = ref(null)
 const featureText2Ref = ref(null)
 const featureText3Ref = ref(null)
+const designFeatureTextRef = ref(null)
 const { isMobile, isTablet } = useResponsive()
 
 // Code snippets for CodeBlock components
@@ -805,6 +855,26 @@ onMounted(() => {
     })
   })
 
+  // PixelBorderDemo 애니메이션 (오른쪽에서 왼쪽으로)
+  nextTick(() => {
+    nextTick(() => {
+      if (!pixelBorderDemoRef.value) return
+
+      const modalOverlay = document.querySelector('.work-modal-overlay')
+      if (!modalOverlay) return
+
+      const demoElement = pixelBorderDemoRef.value.$el || pixelBorderDemoRef.value
+      if (!demoElement || demoElement.offsetParent === null) {
+        setTimeout(() => {
+          setupDemoAnimation(pixelBorderDemoRef.value)
+        }, 100)
+        return
+      }
+
+      setupDemoAnimation(pixelBorderDemoRef.value)
+    })
+  })
+
   // 주요 기능 텍스트 애니메이션 (왼쪽에서 오른쪽으로)
   nextTick(() => {
     nextTick(() => {
@@ -812,7 +882,12 @@ onMounted(() => {
       if (!modalOverlay) return
 
       // 주요 기능 섹션의 텍스트들
-      const featureTexts = [featureText1Ref.value, featureText2Ref.value, featureText3Ref.value]
+      const featureTexts = [
+        featureText1Ref.value,
+        featureText2Ref.value,
+        featureText3Ref.value,
+        designFeatureTextRef.value,
+      ]
 
       featureTexts.forEach((textRef) => {
         if (!textRef) return
@@ -835,9 +910,9 @@ onMounted(() => {
       const modalOverlay = document.querySelector('.work-modal-overlay')
       if (!modalOverlay) return
 
-      // 모든 tech-block, roadmap-block, challenge-block, takeaway-block 선택
+      // 모든 tech-block, roadmap-block, challenge-block, takeaway-block, feature-block 선택
       const blocks = document.querySelectorAll(
-        '.tech-block, .roadmap-block, .challenge-block, .takeaway-block',
+        '.tech-block, .roadmap-block, .challenge-block, .takeaway-block, .feature-block',
       )
 
       blocks.forEach((block, index) => {
