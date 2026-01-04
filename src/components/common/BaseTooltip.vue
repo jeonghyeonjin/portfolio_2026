@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
 
 const props = defineProps({
   text: {
@@ -10,6 +10,10 @@ const props = defineProps({
     type: String,
     default: 'top', // 'top', 'bottom', 'left', 'right'
     validator: (value) => ['top', 'bottom', 'left', 'right'].includes(value),
+  },
+  backgroundColor: {
+    type: String,
+    default: 'rgb(var(--gray--1))',
   },
 })
 
@@ -37,9 +41,12 @@ const arrowStyles = reactive({
   transform: '',
   width: '12px',
   height: '12px',
-  backgroundColor: 'rgb(var(--gray--1))',
   borderRadius: '3px',
 })
+
+// 배경색은 computed로 처리
+const arrowBackgroundColor = computed(() => props.backgroundColor)
+const contentBackgroundColor = computed(() => props.backgroundColor)
 
 const updatePosition = async () => {
   if (!triggerRef.value) return
@@ -150,7 +157,10 @@ const updatePosition = async () => {
 
 const showTooltip = () => {
   isVisible.value = true
-  isReady.value = false // 초기화
+  // 이미 준비된 상태라면 깜빡임을 방지하기 위해 isReady를 초기화하지 않음
+  if (!isReady.value) {
+    isReady.value = false // 초기화
+  }
   updatePosition()
 }
 
@@ -158,6 +168,22 @@ const hideTooltip = () => {
   isVisible.value = false
   isReady.value = false
 }
+
+// 깜빡임 없이 내용을 업데이트하거나 툴팁을 다시 표시하기 위한 메서드
+// showTooltip과 달리 isReady를 false로 초기화하지 않음
+const ensureShown = () => {
+  isVisible.value = true
+  updatePosition()
+}
+
+// 외부에서 호출할 수 있도록 expose
+defineExpose({
+  show: showTooltip,
+  hide: hideTooltip,
+  ensureShown,
+  updatePosition,
+  isVisible: () => isVisible.value,
+})
 </script>
 
 <template>
@@ -188,9 +214,16 @@ const hideTooltip = () => {
 
       <!-- 실제 보여지는 Content (애니메이션 적용) -->
       <Transition name="tooltip-bounce">
-        <div v-if="isReady" class="tooltip-content real" :style="contentStyles">
+        <div
+          v-if="isReady"
+          class="tooltip-content real"
+          :style="{ ...contentStyles, backgroundColor: contentBackgroundColor }"
+        >
           {{ text }}
-          <div class="tooltip-arrow" :style="arrowStyles"></div>
+          <div
+            class="tooltip-arrow"
+            :style="{ ...arrowStyles, backgroundColor: arrowBackgroundColor }"
+          ></div>
         </div>
       </Transition>
     </div>

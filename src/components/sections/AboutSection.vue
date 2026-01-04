@@ -28,10 +28,26 @@
         <div class="about-section-block">
           <div class="contact-links">
             <div class="contact-link-wrapper">
-              <a href="mailto:j.hyeonjin@gmail.com" class="contact-link" aria-label="이메일 보내기">
-                <img src="@/assets/images/icons/mail.svg" alt="Email" class="contact-icon" />
-                <span class="contact-text">j.hyeonjin@gmail.com</span>
-              </a>
+              <div class="contact-link-container">
+                <a
+                  href="mailto:j.hyeonjin@gmail.com"
+                  class="contact-link"
+                  aria-label="이메일 보내기"
+                >
+                  <img src="@/assets/images/icons/mail.svg" alt="Email" class="contact-icon" />
+                  <span class="contact-text">j.hyeonjin@gmail.com</span>
+                </a>
+                <BaseTooltip
+                  ref="tooltipRef"
+                  :text="tooltipText"
+                  :backgroundColor="tooltipBackgroundColor"
+                  placement="top"
+                >
+                  <button class="copy-button" @click="copyEmail" :aria-label="copyButtonLabel">
+                    <img src="@/assets/images/icons/copy.svg" alt="Copy" class="copy-icon" />
+                  </button>
+                </BaseTooltip>
+              </div>
             </div>
             <div class="contact-link-wrapper">
               <a
@@ -86,10 +102,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
+import BaseTooltip from '@/components/common/BaseTooltip.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -99,6 +116,91 @@ const aboutTitleRef = ref(null)
 const aboutSectionRef = ref(null)
 let titleAnimation = null
 let resizeHandler = null
+
+// 이메일 복사 기능
+const email = 'j.hyeonjin@gmail.com'
+const copied = ref(false)
+const tooltipRef = ref(null)
+let copyFeedbackTimeout = null
+
+const copyButtonLabel = computed(() => {
+  return copied.value ? '복사됨' : '이메일 주소 복사'
+})
+
+const tooltipText = computed(() => {
+  return copied.value ? 'Copied!' : 'Copy address'
+})
+
+const tooltipBackgroundColor = computed(() => {
+  return copied.value ? 'rgb(var(--green--normal))' : 'rgb(var(--gray--1))'
+})
+
+const copyEmail = async () => {
+  try {
+    await navigator.clipboard.writeText(email)
+
+    // 복사 상태를 업데이트 (툴팁이 이미 표시된 경우 내용이 자동으로 변경됨)
+    copied.value = true
+
+    await nextTick()
+
+    // 툴팁 위치 재계산 및 표시 (깜빡임 방지를 위해 ensureShown 사용)
+    if (tooltipRef.value) {
+      tooltipRef.value.ensureShown()
+    }
+
+    // 기존 타이머가 있으면 취소
+    if (copyFeedbackTimeout) {
+      clearTimeout(copyFeedbackTimeout)
+    }
+
+    // 피드백 메시지 숨기기
+    copyFeedbackTimeout = setTimeout(() => {
+      copied.value = false
+      if (tooltipRef.value) {
+        tooltipRef.value.hide()
+      }
+      copyFeedbackTimeout = null
+    }, 1000)
+  } catch (err) {
+    console.error('이메일 복사 실패:', err)
+    // 폴백: 텍스트 영역 선택 방식
+    const textArea = document.createElement('textarea')
+    textArea.value = email
+    textArea.style.position = 'fixed'
+    textArea.style.opacity = '0'
+    document.body.appendChild(textArea)
+    textArea.select()
+    try {
+      document.execCommand('copy')
+
+      copied.value = true
+
+      await nextTick()
+
+      // 툴팁 위치 재계산 또는 표시
+      if (tooltipRef.value && tooltipRef.value.isVisible()) {
+        tooltipRef.value.updatePosition()
+      } else if (tooltipRef.value) {
+        tooltipRef.value.show()
+      }
+
+      if (copyFeedbackTimeout) {
+        clearTimeout(copyFeedbackTimeout)
+      }
+      copyFeedbackTimeout = setTimeout(() => {
+        copied.value = false
+        if (tooltipRef.value) {
+          tooltipRef.value.hide()
+        }
+        copyFeedbackTimeout = null
+      }, 1000)
+    } catch (fallbackErr) {
+      console.error('폴백 복사 실패:', fallbackErr)
+    }
+    document.body.removeChild(textArea)
+  }
+}
 
 const setupScrollTrigger = () => {
   if (!aboutTitleRef.value || !aboutSectionRef.value) return
@@ -157,6 +259,9 @@ onUnmounted(() => {
   }
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
+  }
+  if (copyFeedbackTimeout) {
+    clearTimeout(copyFeedbackTimeout)
   }
 })
 </script>
@@ -469,6 +574,12 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
+.contact-link-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .contact-link {
   display: flex;
   align-items: center;
@@ -480,10 +591,42 @@ onUnmounted(() => {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--medium);
   transition: all 0.2s ease;
+  flex: 1;
 }
 
 .contact-link:hover {
   transform: translateX(4px);
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.copy-button:active {
+  background-color: rgb(var(--gray--4));
+}
+
+.copy-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1) brightness(0.46);
+  transition: filter 0.2s;
+}
+
+.copy-button:hover .copy-icon {
+  filter: brightness(0) invert(1) brightness(0.16);
 }
 
 .contact-icon {
@@ -628,6 +771,17 @@ onUnmounted(() => {
   .contact-icon {
     width: 18px;
     height: 18px;
+  }
+
+  .copy-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .copy-button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 6px;
   }
 }
 </style>
