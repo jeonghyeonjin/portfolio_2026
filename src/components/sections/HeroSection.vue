@@ -58,7 +58,14 @@
       </div>
     </div>
 
-    <MouseScroll :trigger="heroSectionRef" />
+    <a href="#" class="mouse-scroll" ref="mouseScrollRef">
+      <div class="mouse-scroll__mouse">
+        <div class="mouse-scroll__mouse-in"></div>
+      </div>
+      <div class="mouse-scroll__arrow">
+        <span class="mouse-scroll__down-arrow"></span>
+      </div>
+    </a>
 
     <Teleport to="body">
       <SolutionModal />
@@ -76,7 +83,6 @@ import { useResponsive } from '@/composables/useResponsive'
 import { useMobileViewport } from '@/composables/useMobileViewport'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import SolutionModal from '@/components/broken/SolutionModal.vue'
-import MouseScroll from '@/components/common/MouseScroll.vue'
 import heroShapes from '@/data/heroShapes.json'
 
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
@@ -88,6 +94,7 @@ const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
 const heroBgSvgRef = ref(null)
 const heroBgPathRef = ref(null)
+const mouseScrollRef = ref(null)
 let heroBgPathAnimation = null
 
 // 모바일 뷰포트 높이 관리
@@ -164,6 +171,20 @@ onMounted(() => {
     },
   })
   // }
+
+  // 마우스 스크롤 애니메이션 숨김 처리
+  if (mouseScrollRef.value) {
+    gsap.to(mouseScrollRef.value, {
+      opacity: 0,
+      pointerEvents: 'none',
+      scrollTrigger: {
+        trigger: heroSectionRef.value,
+        start: 'top top',
+        end: '50px top',
+        scrub: true,
+      },
+    })
+  }
 })
 
 onUnmounted(() => {
@@ -395,6 +416,84 @@ onUnmounted(() => {
 @media (--mobile) {
   .hero-grid-item-image {
     padding: 20px;
+  }
+}
+
+.mouse-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  pointer-events: auto;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.mouse-scroll__mouse {
+  height: 35px;
+  width: 23px;
+  border-radius: 10px;
+  border: 2px solid rgb(var(--white--1));
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.mouse-scroll__mouse-in {
+  height: 6px;
+  width: 3px;
+  background: rgb(var(--white--1));
+  border-radius: 1px;
+  animation: mouse-scroll-animated 1.2s ease infinite;
+}
+
+.mouse-scroll__arrow {
+  margin-top: 6px;
+}
+
+.mouse-scroll__down-arrow {
+  display: block;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  border-right: 2px solid rgb(var(--white--1));
+  border-bottom: 2px solid rgb(var(--white--1));
+  animation: mouse-scroll-arrow 1s infinite;
+  animation-direction: alternate;
+}
+
+@keyframes mouse-scroll-animated {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mouse-scroll-arrow {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (--mobile) {
+  .mouse-scroll {
+    display: none;
   }
 }
 </style>
