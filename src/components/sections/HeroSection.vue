@@ -58,6 +58,8 @@
       </div>
     </div>
 
+    <MouseScroll :trigger="heroSectionRef" />
+
     <Teleport to="body">
       <SolutionModal />
     </Teleport>
@@ -74,6 +76,7 @@ import { useResponsive } from '@/composables/useResponsive'
 import { useMobileViewport } from '@/composables/useMobileViewport'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import SolutionModal from '@/components/broken/SolutionModal.vue'
+import MouseScroll from '@/components/common/MouseScroll.vue'
 import heroShapes from '@/data/heroShapes.json'
 
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
