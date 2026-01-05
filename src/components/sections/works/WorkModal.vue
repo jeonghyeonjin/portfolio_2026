@@ -4,8 +4,14 @@
     class="work-modal-overlay"
     @click.self="handleClose"
     @wheel.passive.stop
+    @touchmove.stop
   >
-    <div class="work-modal-container" @wheel.passive.stop>
+    <div
+      ref="workModalContainerRef"
+      class="work-modal-container"
+      @click.stop
+      @wheel.passive.stop="handleModalWheel"
+    >
       <IconButton size="large" class="work-modal-close" aria-label="닫기" @click="handleClose">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -74,6 +80,7 @@ const modalComponents = {
 // shallowRef를 사용하여 컴포넌트를 반응형으로 만들지 않음
 const workComponent = shallowRef(null)
 const modalOverlayRef = ref(null)
+const workModalContainerRef = ref(null)
 
 // 부모 컴포넌트에서 DOM 요소에 접근할 수 있도록 expose
 defineExpose({
@@ -106,6 +113,21 @@ const handleClose = () => {
   emit('close')
 }
 
+const handleModalWheel = (e) => {
+  // 모달 내부의 스크롤 가능한 영역에서는 스크롤 허용
+  const target = e.target
+  const codeBlock = target.closest('.code-block')
+  const container = target.closest('.work-modal-container')
+
+  // 코드 블록이나 컨테이너가 스크롤 가능한 경우 이벤트 전파 허용
+  if (codeBlock || (container && container.scrollHeight > container.clientHeight)) {
+    return
+  }
+
+  // 그 외의 경우 이벤트 전파 차단
+  e.stopPropagation()
+}
+
 onMounted(() => {
   loadWorkComponent()
   // 초기 상태 설정 - 모달은 항상 숨김 상태로 시작
@@ -121,8 +143,7 @@ onMounted(() => {
 
 .work-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   background-color: rgb(var(--white--1));
