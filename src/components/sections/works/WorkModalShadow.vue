@@ -235,7 +235,7 @@ const logoImages = [logo1, logo2, logo3, logo4]
 const setupFeatureTextAnimation = (textRef) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!textRef.offsetParent && textRef.offsetWidth === 0 && textRef.offsetHeight === 0) {
@@ -276,7 +276,7 @@ const setupFeatureTextAnimation = (textRef) => {
 const setupFeatureCodeAnimation = (codeRef, textRef) => {
   if (!codeRef || !textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!codeRef.offsetParent && codeRef.offsetWidth === 0 && codeRef.offsetHeight === 0) {
@@ -318,7 +318,7 @@ const setupFeatureCodeAnimation = (codeRef, textRef) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0) => {
   if (!blockRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!blockRef.offsetParent && blockRef.offsetWidth === 0 && blockRef.offsetHeight === 0) {
@@ -359,7 +359,7 @@ const setupFeatureBlockAnimation = (blockRef, index = 0) => {
 const setupBlockAnimation = (block, index = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!block.offsetParent && block.offsetWidth === 0 && block.offsetHeight === 0) {
@@ -401,7 +401,7 @@ const setupBlockAnimation = (block, index = 0) => {
 onMounted(() => {
   // Hero image scroll animation
   if (heroImageContainerRef.value && heroImageWrapperRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-overlay')
+    const modalOverlay = document.querySelector('.work-modal-container')
 
     if (modalOverlay && heroImageContainerRef.value) {
       try {
@@ -471,7 +471,7 @@ onMounted(() => {
   // Feature blocks animation (카드 컨테이너)
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       featureBlockRefs.value.forEach((blockRef, index) => {
@@ -492,7 +492,7 @@ onMounted(() => {
   // Feature texts animation
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       featureTextRefs.value.forEach((textRef, index) => {
@@ -521,7 +521,7 @@ onMounted(() => {
   // Blocks animation
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const blocks = document.querySelectorAll('.takeaway-block, .tech-stack-grid')

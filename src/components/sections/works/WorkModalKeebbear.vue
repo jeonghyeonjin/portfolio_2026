@@ -255,7 +255,7 @@ const isLandscape = window.innerWidth > window.innerHeight
 const setupDemoAnimation = (demoRef) => {
   if (!demoRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   // Vue 컴포넌트인 경우 $el 사용, 일반 요소인 경우 직접 사용
@@ -314,7 +314,7 @@ const setupDemoAnimation = (demoRef) => {
 const setupFeatureTextAnimation = (textRef) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -360,7 +360,7 @@ const setupFeatureTextAnimation = (textRef) => {
 const setupBlockAnimation = (block, index = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -424,7 +424,7 @@ const tocSections = [
 
 onMounted(() => {
   if (mockupContainerRef.value && mockupWrapperRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-overlay')
+    const modalOverlay = document.querySelector('.work-modal-container')
 
     if (modalOverlay && mockupContainerRef.value) {
       try {
@@ -495,7 +495,7 @@ onMounted(() => {
     nextTick(() => {
       if (!achievementDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = achievementDemoRef.value.$el || achievementDemoRef.value
@@ -520,7 +520,7 @@ onMounted(() => {
     nextTick(() => {
       if (!typingDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = typingDemoRef.value.$el || typingDemoRef.value
@@ -544,7 +544,7 @@ onMounted(() => {
     nextTick(() => {
       if (!keyboardTesterDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = keyboardTesterDemoRef.value.$el || keyboardTesterDemoRef.value
@@ -568,7 +568,7 @@ onMounted(() => {
     nextTick(() => {
       if (!pixelBorderDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = pixelBorderDemoRef.value.$el || pixelBorderDemoRef.value
@@ -590,7 +590,7 @@ onMounted(() => {
   // 주요 기능 텍스트 애니메이션 (왼쪽에서 오른쪽으로)
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       // 주요 기능 섹션의 텍스트들
@@ -614,7 +614,7 @@ onMounted(() => {
   // 나머지 feature-block들 애니메이션 (아래에서 위로)
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       // feature-block들

@@ -246,7 +246,7 @@ const setFeatureTextRef = (el, index) => {
 const setupFeatureTextAnimation = (textRef) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!textRef.offsetParent && textRef.offsetWidth === 0 && textRef.offsetHeight === 0) {
@@ -288,7 +288,7 @@ const setupFeatureTextAnimation = (textRef) => {
 const setupDemoAnimation = (demoRef) => {
   if (!demoRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   // Vue 컴포넌트인 경우 $el 사용, 일반 요소인 경우 직접 사용
@@ -347,7 +347,7 @@ const setupDemoAnimation = (demoRef) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0) => {
   if (!blockRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!blockRef.offsetParent && blockRef.offsetWidth === 0 && blockRef.offsetHeight === 0) {
@@ -389,7 +389,7 @@ const setupFeatureBlockAnimation = (blockRef, index = 0) => {
 const setupBlockAnimation = (block, index = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
   if (!block.offsetParent && block.offsetWidth === 0 && block.offsetHeight === 0) {
@@ -444,7 +444,7 @@ const tocSections = [
 onMounted(() => {
   // Hero 이미지 스크롤 애니메이션 (WorkModal3 참고)
   if (heroImageContainerRef.value && heroImageWrapperRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-overlay')
+    const modalOverlay = document.querySelector('.work-modal-container')
 
     if (modalOverlay && heroImageContainerRef.value) {
       try {
@@ -524,7 +524,7 @@ onMounted(() => {
   // Feature blocks animation (카드 컨테이너)
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       featureBlockRefs.value.forEach((blockRef, index) => {
@@ -545,7 +545,7 @@ onMounted(() => {
   // 주요 기능 텍스트 애니메이션
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       featureTextRefs.value.forEach((textRef) => {
@@ -568,7 +568,7 @@ onMounted(() => {
     nextTick(() => {
       if (!emojiFeedbackDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = emojiFeedbackDemoRef.value.$el || emojiFeedbackDemoRef.value
@@ -593,7 +593,7 @@ onMounted(() => {
     nextTick(() => {
       if (!channelListDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = channelListDemoRef.value.$el || channelListDemoRef.value
@@ -618,7 +618,7 @@ onMounted(() => {
     nextTick(() => {
       if (!videoDetailDemoRef.value) return
 
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const demoElement = videoDetailDemoRef.value.$el || videoDetailDemoRef.value
@@ -641,7 +641,7 @@ onMounted(() => {
   // 나머지 블록들 애니메이션
   nextTick(() => {
     nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-overlay')
+      const modalOverlay = document.querySelector('.work-modal-container')
       if (!modalOverlay) return
 
       const blocks = document.querySelectorAll('.tech-block, .challenge-block, .takeaway-block')

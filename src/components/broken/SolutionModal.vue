@@ -12,9 +12,9 @@
         ref="solutionModalRef"
         class="solution-modal"
         @click.stop
-        @wheel.passive.stop="handleModalWheel"
+        @wheel.passive="handleModalWheel"
         @touchstart.stop
-        @touchmove.stop="handleModalTouchMove"
+        @touchmove="handleModalTouchMove"
       >
         <Transition name="issue-marker">
           <div
@@ -261,17 +261,7 @@ const handleFix = () => {
 }
 
 const handleModalWheel = (e) => {
-  // 모달 내부의 스크롤 가능한 영역에서는 스크롤 허용
-  const target = e.target
-  const codeBlock = target.closest('.code-block')
-  const modal = target.closest('.solution-modal')
-
-  // 코드 블록이나 모달 자체가 스크롤 가능한 경우 이벤트 전파 허용
-  if (codeBlock || (modal && modal.scrollHeight > modal.clientHeight)) {
-    return
-  }
-
-  // 그 외의 경우 이벤트 전파 차단
+  // 모달 내부에서는 스크롤 허용, overlay로의 전파만 차단
   e.stopPropagation()
 }
 
@@ -294,10 +284,9 @@ const handleOverlayTouchMove = (e) => {
   }
 }
 
-const handleModalTouchMove = () => {
-  // 모달 내부에서는 터치 스크롤 허용
-  // 이벤트 전파를 차단하여 overlay로 전파되지 않도록 함
-  // 하지만 모달 내부에서는 정상적으로 스크롤 가능
+const handleModalTouchMove = (e) => {
+  // 모달 내부에서는 터치 스크롤 허용, overlay로의 전파만 차단
+  e.stopPropagation()
 }
 
 // 포커스 트랩 함수

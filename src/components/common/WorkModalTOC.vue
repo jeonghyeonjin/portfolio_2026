@@ -62,8 +62,8 @@ let scrollEndCheckInterval = null
 
 // Threshold logic
 const checkVisibility = () => {
-  const modalOverlay = document.querySelector('.work-modal-overlay')
-  if (!modalOverlay) return
+  const modalContainer = document.querySelector('.work-modal-container')
+  if (!modalContainer) return
 
   const targetId =
     props.thresholdSelector || (props.sections.length > 0 ? props.sections[0].id : null)
@@ -82,8 +82,8 @@ const checkActiveSection = () => {
   // 사용자가 클릭한 직후라면 자동 감지 스킵
   if (isUserScrolling.value) return
 
-  const modalOverlay = document.querySelector('.work-modal-overlay')
-  if (!modalOverlay) return
+  const modalContainer = document.querySelector('.work-modal-container')
+  if (!modalContainer) return
 
   // 뷰포트 상단에서 200px 아래를 활성화 기준선으로 설정
   const ACTIVATION_OFFSET = 200
@@ -118,10 +118,10 @@ const handleScroll = () => {
 }
 
 const scrollToSection = (id) => {
-  const modalOverlay = document.querySelector('.work-modal-overlay')
+  const modalContainer = document.querySelector('.work-modal-container')
   const el = document.getElementById(id)
 
-  if (modalOverlay && el) {
+  if (modalContainer && el) {
     // 클릭한 섹션을 즉시 활성화
     activeSection.value = id
 
@@ -133,20 +133,20 @@ const scrollToSection = (id) => {
     // 섹션으로 스크롤
     const headerOffset = 100
     const elementPosition = el.getBoundingClientRect().top
-    const offsetPosition = elementPosition + modalOverlay.scrollTop - headerOffset
+    const offsetPosition = elementPosition + modalContainer.scrollTop - headerOffset
 
-    modalOverlay.scrollTo({
+    modalContainer.scrollTo({
       top: offsetPosition,
       behavior: 'smooth',
     })
 
     // 실제 스크롤 완료 감지
-    let lastScrollTop = modalOverlay.scrollTop
+    let lastScrollTop = modalContainer.scrollTop
     let stableCount = 0
     const STABLE_THRESHOLD = 3 // 연속 3회 변화 없으면 완료로 간주
 
     scrollEndCheckInterval = setInterval(() => {
-      const currentScrollTop = modalOverlay.scrollTop
+      const currentScrollTop = modalContainer.scrollTop
 
       if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
         stableCount++
@@ -198,18 +198,18 @@ const onScroll = () => {
 }
 
 onMounted(() => {
-  const modalOverlay = document.querySelector('.work-modal-overlay')
-  if (modalOverlay) {
-    modalOverlay.addEventListener('scroll', onScroll, { passive: true })
+  const modalContainer = document.querySelector('.work-modal-container')
+  if (modalContainer) {
+    modalContainer.addEventListener('scroll', onScroll, { passive: true })
     // Initial check
     setTimeout(handleScroll, 500) // Wait for layout
   }
 })
 
 onUnmounted(() => {
-  const modalOverlay = document.querySelector('.work-modal-overlay')
-  if (modalOverlay) {
-    modalOverlay.removeEventListener('scroll', onScroll)
+  const modalContainer = document.querySelector('.work-modal-container')
+  if (modalContainer) {
+    modalContainer.removeEventListener('scroll', onScroll)
   }
   if (scrollRaf) cancelAnimationFrame(scrollRaf)
   if (userScrollTimeout) clearTimeout(userScrollTimeout)
