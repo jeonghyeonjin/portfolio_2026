@@ -5,13 +5,14 @@
       class="solution-modal-overlay"
       @click="close"
       @wheel.passive.stop
-      @touchmove.stop
+      @touchmove="handleOverlayTouchMove"
     >
       <div
         ref="solutionModalRef"
         class="solution-modal"
         @click.stop
         @wheel.passive.stop="handleModalWheel"
+        @touchmove="handleModalTouchMove"
       >
         <Transition name="issue-marker">
           <div
@@ -265,6 +266,32 @@ const handleModalWheel = (e) => {
 
   // 코드 블록이나 모달 자체가 스크롤 가능한 경우 이벤트 전파 허용
   if (codeBlock || (modal && modal.scrollHeight > modal.clientHeight)) {
+    return
+  }
+
+  // 그 외의 경우 이벤트 전파 차단
+  e.stopPropagation()
+}
+
+const handleOverlayTouchMove = (e) => {
+  // overlay에서 터치 이벤트는 기본적으로 차단
+  // 단, 모달 내부에서 발생한 이벤트는 허용
+  const modal = e.target.closest('.solution-modal')
+  if (!modal) {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+}
+
+const handleModalTouchMove = (e) => {
+  // 모달 내부의 스크롤 가능한 영역에서는 터치 스크롤 허용
+  const target = e.target
+  const codeBlock = target.closest('.code-block')
+  const modal = target.closest('.solution-modal')
+  const modalContent = target.closest('.modal-content')
+
+  // 코드 블록, 모달 컨텐츠, 또는 모달 자체가 스크롤 가능한 경우 이벤트 전파 허용
+  if (codeBlock || modalContent || (modal && modal.scrollHeight > modal.clientHeight)) {
     return
   }
 
