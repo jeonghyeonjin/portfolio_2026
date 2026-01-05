@@ -34,6 +34,11 @@ import IconButton from '@/components/common/IconButton.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import worksData from '@/data/works.json'
+// 모든 모달 컴포넌트를 명시적으로 import (Vite 빌드 시 정적 분석을 위해)
+import WorkModalShadow from './WorkModalShadow.vue'
+import WorkModalMasterForge from './WorkModalMasterForge.vue'
+import WorkModalKeebbear from './WorkModalKeebbear.vue'
+import WorkModalTape from './WorkModalTape.vue'
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 
@@ -53,6 +58,14 @@ const emit = defineEmits(['close'])
 // workId를 provide로 전달하여 자식 컴포넌트에서 사용할 수 있도록 함
 provide('workId', props.workId)
 
+// 모달 컴포넌트 맵 (명시적 import로 Vite가 빌드 시 모든 컴포넌트를 포함하도록 함)
+const modalComponents = {
+  WorkModalShadow,
+  WorkModalMasterForge,
+  WorkModalKeebbear,
+  WorkModalTape,
+}
+
 // shallowRef를 사용하여 컴포넌트를 반응형으로 만들지 않음
 const workComponent = shallowRef(null)
 const modalOverlayRef = ref(null)
@@ -67,19 +80,21 @@ const workData = computed(() => {
   return worksData.find((work) => work.id === props.workId) || null
 })
 
-// modalComponent 이름에 따라 해당 컴포넌트 동적 로드
-const loadWorkComponent = async () => {
-  try {
-    const modalComponent = workData.value?.modalComponent
-    if (!modalComponent) {
-      console.error(`workId ${props.workId}에 대한 modalComponent가 정의되지 않았습니다.`)
-      return
-    }
-    const component = await import(`./${modalComponent}.vue`)
-    workComponent.value = component.default
-  } catch (error) {
-    console.error(`${workData.value?.modalComponent || 'Unknown'}.vue를 로드할 수 없습니다:`, error)
+// modalComponent 이름에 따라 해당 컴포넌트 로드
+const loadWorkComponent = () => {
+  const modalComponent = workData.value?.modalComponent
+  if (!modalComponent) {
+    console.error(`workId ${props.workId}에 대한 modalComponent가 정의되지 않았습니다.`)
+    return
   }
+  
+  const component = modalComponents[modalComponent]
+  if (!component) {
+    console.error(`${modalComponent} 컴포넌트를 찾을 수 없습니다.`)
+    return
+  }
+  
+  workComponent.value = component
 }
 
 const handleClose = () => {

@@ -165,6 +165,18 @@ import {
   createCircleCloseAnimation,
 } from '@/utils/modalAnimations'
 
+// 썸네일 이미지 import (Vite가 빌드 시 처리하도록)
+import imgShadowThumbnail from '@/assets/images/works/shadow/shadow_thumbnail2.png'
+import imgMasterForgePin from '@/assets/images/works/master-forge/m4g_pin.png'
+import imgTapeThumbnail from '@/assets/images/works/tape/tape_thumbnail.png'
+
+// 썸네일 이미지 매핑
+const thumbnailMap = {
+  '../../assets/images/works/shadow/shadow_thumbnail2.png': imgShadowThumbnail,
+  '../../assets/images/works/master-forge/m4g_pin.png': imgMasterForgePin,
+  '../../assets/images/works/tape/tape_thumbnail.png': imgTapeThumbnail,
+}
+
 gsap.registerPlugin(ScrollTrigger)
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
@@ -202,12 +214,37 @@ const works = Object.freeze(worksData.map((work) => Object.freeze(work)))
 // 썸네일 URL 처리 함수
 const getThumbnailUrl = (thumbnailPath) => {
   if (!thumbnailPath) return null
-  try {
-    // 상대 경로를 new URL()로 처리 (Vite가 빌드 시 올바른 경로로 변환)
-    return new URL(thumbnailPath, import.meta.url).href
-  } catch {
+
+  // 이미 절대 URL인 경우 그대로 반환
+  if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
     return thumbnailPath
   }
+
+  // 썸네일 매핑에서 찾기 (import된 이미지 사용)
+  if (thumbnailMap[thumbnailPath]) {
+    return thumbnailMap[thumbnailPath]
+  }
+
+  // 매핑에 없는 경우 fallback으로 경로 처리
+  // ../../assets/images/... 형식의 경로를 처리
+  if (thumbnailPath.startsWith('../../assets/')) {
+    const assetPath = thumbnailPath.replace('../../assets/', '')
+    return `${import.meta.env.BASE_URL}assets/${assetPath}`
+  }
+
+  // @/assets/... 형식의 경로 처리
+  if (thumbnailPath.startsWith('@/assets/')) {
+    const assetPath = thumbnailPath.replace('@/assets/', '')
+    return `${import.meta.env.BASE_URL}assets/${assetPath}`
+  }
+
+  // 이미 /로 시작하는 절대 경로인 경우 BASE_URL 추가
+  if (thumbnailPath.startsWith('/')) {
+    return `${import.meta.env.BASE_URL}${thumbnailPath.slice(1)}`
+  }
+
+  // 그 외의 경우 그대로 반환
+  return thumbnailPath
 }
 
 // 링크 개수 계산 함수
@@ -657,9 +694,9 @@ onUnmounted(() => {
 }
 
 /* 링크가 2개 이하일 때는 hover 시 확장 없음 */
-.work-item.link-count-1:hover,
+/* .work-item.link-count-1:hover,
 .work-item.link-count-2:hover {
-}
+} */
 
 /* 링크가 3개 이상일 때만 hover 시 확장 (미래 확장 가능) */
 .work-item.has-footer:hover:not(.link-count-1):not(.link-count-2) {
