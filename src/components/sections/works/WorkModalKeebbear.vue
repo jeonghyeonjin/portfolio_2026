@@ -546,7 +546,9 @@ onMounted(() => {
           createScrollTrigger(animation2)
 
           // Fade out elements - consolidated
-          const elementsToFade = [workModalHeaderRef.value].filter(Boolean)
+          const elementsToFade = [workModalHeaderRef.value, mockupContainerInnerRef.value].filter(
+            Boolean,
+          )
           if (elementsToFade.length > 0) {
             const animation3 = gsap.to(elementsToFade, {
               opacity: 0,

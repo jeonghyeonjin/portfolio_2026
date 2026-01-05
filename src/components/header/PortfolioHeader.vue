@@ -592,7 +592,7 @@ const handleResize = () => {
 
 onMounted(() => {
   // 모바일에서 주소표시줄/하단 메뉴 변화로 인한 스크롤 이슈 해결
-  ScrollTrigger.normalizeScroll(true)
+  // ScrollTrigger.normalizeScroll(true)
 
   // 초기화
   initializeHeader()
@@ -628,7 +628,7 @@ onUnmounted(() => {
   cleanupScrollTriggers()
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
   // normalizeScroll 정리
-  ScrollTrigger.normalizeScroll(false)
+  // ScrollTrigger.normalizeScroll(false)
 })
 </script>
 
