@@ -173,8 +173,14 @@ watch(
         const backgroundColor = modalBackgroundColors[modalComponent] || 'rgb(var(--white--1))'
         setModalBackgroundColor(backgroundColor)
       }
+      // 컴포넌트가 없으면 다시 로드
+      if (!workComponent.value) {
+        loadWorkComponent()
+      }
     } else {
       unlockBodyScroll(WORK_MODAL_ID)
+      // 모달이 닫힐 때 컴포넌트 정리 (리소스 해제)
+      workComponent.value = null
     }
   },
 )
@@ -189,6 +195,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   unlockBodyScroll(WORK_MODAL_ID)
+  // 컴포넌트 정리 (리소스 해제)
+  workComponent.value = null
 })
 </script>
 

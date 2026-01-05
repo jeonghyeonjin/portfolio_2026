@@ -677,6 +677,17 @@ onMounted(() => {
 
 // Cleanup on unmount
 onUnmounted(() => {
+  // 비디오 정리 (메모리 해제)
+  if (mockupVideoRef.value) {
+    try {
+      mockupVideoRef.value.pause()
+      mockupVideoRef.value.src = ''
+      mockupVideoRef.value.load()
+    } catch (error) {
+      console.warn('Video cleanup failed:', error)
+    }
+  }
+
   // Kill all ScrollTrigger instances
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) {

@@ -42,7 +42,16 @@
           @mouseleave="(e) => handleWorkHover(e, work.id, false)"
         >
           <div class="work-image-container" aria-hidden="true">
-            <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
+            <video
+              v-if="work.videoSources"
+              :ref="(el) => setVideoRef(el, work.id)"
+              class="work-video"
+              autoplay
+              loop
+              muted
+              playsinline
+              @error="(e) => handleVideoError(e, work.id)"
+            >
               <!-- MP4를 우선 사용 (용량이 더 작고 모든 브라우저 지원) -->
               <source
                 v-if="work.videoSources.mp4"
@@ -57,12 +66,15 @@
               />
             </video>
             <img
-              v-else-if="work.thumbnail"
+              v-if="work.thumbnail && (!work.videoSources || videoErrors[work.id])"
               :src="getThumbnailUrl(work.thumbnail)"
               :alt="`${work.title} 대표 이미지`"
               class="work-image"
             />
-            <div v-else class="work-image-placeholder"></div>
+            <div
+              v-if="!work.thumbnail && (!work.videoSources || videoErrors[work.id])"
+              class="work-image-placeholder"
+            ></div>
             <div class="work-overlay"></div>
 
             <div v-if="work.chips && work.chips.length > 0" class="work-chips-container">
@@ -210,6 +222,8 @@ const isModalVisible = ref(false)
 const circleRevealRef = ref(null)
 const workModalRef = ref(null)
 const workItemRefs = ref({})
+const videoRefs = ref({})
+const videoErrors = ref({})
 let currentCircleScale = null
 
 const IS_VISIBLE_CLASS = 'is-visible'
@@ -226,6 +240,25 @@ const supportsWebM = computed(() => {
 const setWorkItemRef = (el, workId) => {
   if (el) {
     workItemRefs.value[workId] = el
+  }
+}
+
+// video ref 설정
+const setVideoRef = (el, workId) => {
+  if (el) {
+    videoRefs.value[workId] = el
+  }
+}
+
+// 비디오 에러 핸들러 (모바일에서 비디오 로드 실패 시 썸네일로 fallback)
+const handleVideoError = (event, workId) => {
+  console.warn(`비디오 로드 실패 (workId: ${workId}):`, event)
+  videoErrors.value[workId] = true
+
+  // 비디오 요소 숨기기
+  const video = videoRefs.value[workId]
+  if (video) {
+    video.style.display = 'none'
   }
 }
 
@@ -645,6 +678,21 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  // 비디오 정리 (메모리 해제)
+  Object.values(videoRefs.value).forEach((video) => {
+    if (video) {
+      try {
+        video.pause()
+        video.src = ''
+        video.load()
+      } catch (error) {
+        console.warn('Video cleanup failed:', error)
+      }
+    }
+  })
+  videoRefs.value = {}
+  videoErrors.value = {}
+
   // ScrollTrigger 정리
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) trigger.kill()
