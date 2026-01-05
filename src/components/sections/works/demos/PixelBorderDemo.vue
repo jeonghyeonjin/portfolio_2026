@@ -1,10 +1,7 @@
 <template>
   <div class="pixel-border-demo">
     <div class="demo-container">
-      <h3 class="demo-title">픽셀아트 스타일 보더 | Pixel Art Style Border</h3>
       <p class="demo-description">
-        CSS box-shadow를 활용하여 픽셀아트 게임의 특징적인 보더 스타일을 구현했습니다.
-        <br />
         Using CSS box-shadow to implement the characteristic border style of pixel art games.
       </p>
 
@@ -18,7 +15,7 @@
       </div>
       <!-- 코드 예시 -->
       <div class="code-example">
-        <h4 class="code-title">CSS 구현 예시 | CSS Implementation Example</h4>
+        <h4 class="code-title">CSS Implementation Example</h4>
         <CodeBlock
           :code="`.pixel-border-2 {
   box-shadow:
@@ -70,15 +67,13 @@ import CodeBlock from '@/components/common/CodeBlock.vue'
 
 .demo-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(1fr);
   margin-bottom: 50px;
 }
 
 .demo-item {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
 .demo-label {
@@ -90,7 +85,6 @@ import CodeBlock from '@/components/common/CodeBlock.vue'
 .pixel-border-box {
   background-color: rgb(var(--gray--0));
   padding: 20px 30px;
-  margin: 0 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,10 +95,10 @@ import CodeBlock from '@/components/common/CodeBlock.vue'
 @keyframes marginPulse {
   0%,
   100% {
-    margin: 0 100px;
+    margin: 0 50px;
   }
   50% {
-    margin: 0 50px;
+    margin: 0 10px;
   }
 }
 

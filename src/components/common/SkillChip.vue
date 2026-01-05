@@ -17,11 +17,18 @@ const { label } = defineProps({
 .skill-chip {
   display: inline-block;
   padding: 8px 16px;
-  background-color: rgb(var(--gray--1));
-  color: rgb(var(--white--1));
-  border-radius: 12px;
+  background-color: rgb(var(--white--3));
+  color: rgb(var(--gray--1));
+  border-radius: 6px;
   font-size: var(--body--2--normal);
-  font-weight: var(--font-weight--regular);
+  font-weight: var(--font-weight--medium);
   white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.skill-chip:hover {
+  background-color: rgb(var(--primary--green));
+  color: rgb(var(--gray--6));
+  transform: translateY(-2px);
 }
 </style>

@@ -23,26 +23,31 @@
       <div class="content-area">
         <!-- Video Player / Embed Area -->
         <div class="video-area">
-          <div class="video-placeholder">
-            <div class="play-button">
+          <div class="video-placeholder" @click="togglePlay">
+            <div class="play-button" v-if="!isPlaying">
               <span class="material-icons-round">play_arrow</span>
             </div>
-            <div class="video-controls">
+            <div class="video-controls" :class="{ 'show-controls': !isPlaying }">
               <div class="progress-bar">
-                <div class="progress-fill" style="width: 35%"></div>
+                <div class="progress-fill" :style="{ width: progress + '%' }"></div>
               </div>
               <div class="control-buttons">
-                <span class="time">0:45 / 3:12</span>
+                <span class="time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
+                <span class="status-text" v-if="isPlaying">Playing...</span>
               </div>
             </div>
 
-            <!-- Floating Emoji Feedback (Static representation) -->
-            <!-- <div class="floating-reaction" style="left: 80%; bottom: 25%">
-              <img :src="imgCheck" alt="Check" />
-            </div>
-            <div class="floating-reaction" style="left: 85%; bottom: 40%">
-              <img :src="imgClap" alt="Clap" />
-            </div> -->
+            <!-- Floating Emoji Feedback -->
+            <TransitionGroup name="float">
+              <div
+                class="floating-reaction"
+                v-for="reaction in reactions"
+                :key="reaction.id"
+                :style="{ left: reaction.x + '%', bottom: reaction.y + '%' }"
+              >
+                <img :src="reaction.src" alt="reaction" />
+              </div>
+            </TransitionGroup>
           </div>
         </div>
 
@@ -52,35 +57,28 @@
             <span class="tab active">Comment</span>
             <span class="tab">Transcript</span>
           </div>
-          <div class="comment-list">
-            <div class="comment-item">
+          <div class="comment-list" ref="commentListRef">
+            <div class="comment-item" v-for="comment in comments" :key="comment.id">
               <div class="comment-avatar">
                 <span class="material-icons-round">face</span>
               </div>
               <div class="comment-content">
                 <div class="comment-header">
-                  <span class="username">Designer</span>
-                  <span class="timestamp">2 mins ago</span>
+                  <span class="username">{{ comment.username }}</span>
+                  <span class="timestamp">{{ comment.timestamp }}</span>
                 </div>
-                <div class="comment-text">이 부분 디자인 수정 부탁드려요!</div>
-              </div>
-            </div>
-            <div class="comment-item">
-              <div class="comment-avatar">
-                <span class="material-icons-round">face</span>
-              </div>
-              <div class="comment-content">
-                <div class="comment-header">
-                  <span class="username">Manager</span>
-                  <span class="timestamp">1 hour ago</span>
-                </div>
-                <div class="comment-text">확인했습니다. 반영할게요.</div>
+                <div class="comment-text">{{ comment.text }}</div>
               </div>
             </div>
           </div>
           <div class="comment-input-area">
-            <input type="text" placeholder="Leave a comment..." readonly />
-            <button class="btn-send">
+            <input
+              type="text"
+              placeholder="Leave a comment..."
+              v-model="newComment"
+              @keyup.enter="addComment"
+            />
+            <button class="btn-send" @click="addComment" :disabled="!newComment.trim()">
               <span class="material-icons-round">send</span>
             </button>
           </div>
@@ -91,10 +89,97 @@
 </template>
 
 <script setup>
-// import imgCheck from '@/assets/images/works/tape/emoji/check_mark_button_3d.png'
-// import imgClap from '@/assets/images/works/tape/emoji/clapping_hands_3d_default.png'
-// import imgEmoji1 from '@/assets/images/works/tape/emoji/eyes_3d.png'
-// import imgEmoji3 from '@/assets/images/works/tape/emoji/red_heart_3d.png'
+import { ref, onUnmounted, nextTick } from 'vue'
+import imgCheck from '@/assets/images/works/tape/emoji/check_mark_button_3d.png'
+import imgClap from '@/assets/images/works/tape/emoji/clapping_hands_3d_default.png'
+import imgEyes from '@/assets/images/works/tape/emoji/eyes_3d.png'
+import imgHeart from '@/assets/images/works/tape/emoji/red_heart_3d.png'
+
+// Video Logic
+const isPlaying = ref(false)
+const progress = ref(35)
+const duration = 192 // 3:12
+const currentTime = ref(45)
+let timer = null
+
+const togglePlay = () => {
+  isPlaying.value = !isPlaying.value
+  if (isPlaying.value) {
+    timer = setInterval(() => {
+      if (currentTime.value < duration) {
+        currentTime.value++
+        progress.value = (currentTime.value / duration) * 100
+
+        // Random reactions while playing
+        if (Math.random() < 0.1) addRandomReaction()
+      } else {
+        isPlaying.value = false
+        currentTime.value = 0
+        progress.value = 0
+        clearInterval(timer)
+      }
+    }, 1000)
+    addRandomReaction() // Immediate reaction on play
+  } else {
+    clearInterval(timer)
+  }
+}
+
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+
+// Reactions Logic
+const reactions = ref([])
+const reactionImages = [imgCheck, imgClap, imgEyes, imgHeart]
+let reactionId = 0
+
+const addRandomReaction = () => {
+  const id = reactionId++
+  const src = reactionImages[Math.floor(Math.random() * reactionImages.length)]
+  const x = 70 + Math.random() * 20 // 70-90% right side
+  const y = 20 + Math.random() * 30 // 20-50% bottom
+
+  reactions.value.push({ id, src, x, y })
+
+  // Remove after animation
+  setTimeout(() => {
+    const idx = reactions.value.findIndex(r => r.id === id)
+    if (idx !== -1) reactions.value.splice(idx, 1)
+  }, 2000)
+}
+
+// Comments Logic
+const newComment = ref('')
+const commentListRef = ref(null)
+const comments = ref([
+  { id: 1, username: 'Designer', timestamp: '2 mins ago', text: '이 부분 디자인 수정 부탁드려요!' },
+  { id: 2, username: 'Manager', timestamp: '1 hour ago', text: '확인했습니다. 반영할게요.' },
+])
+
+const addComment = () => {
+  if (!newComment.value.trim()) return
+
+  comments.value.push({
+    id: comments.value.length + 1,
+    username: 'Me',
+    timestamp: 'Just now',
+    text: newComment.value
+  })
+  newComment.value = ''
+
+  nextTick(() => {
+    if (commentListRef.value) {
+      commentListRef.value.scrollTop = commentListRef.value.scrollHeight
+    }
+  })
+}
 </script>
 
 <style scoped>
@@ -267,13 +352,55 @@
 
 @keyframes floatUp {
   0% {
-    transform: translateY(0);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(-40px);
+    transform: translateY(0) scale(0.8);
     opacity: 0;
   }
+  20% {
+    transform: translateY(-10px) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px) scale(1);
+    opacity: 0;
+  }
+}
+
+.float-enter-active,
+.float-leave-active {
+  transition: all 0.5s ease;
+}
+
+.float-enter-from,
+.float-leave-to {
+  opacity: 0;
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: opacity 0.3s;
+  opacity: 1;
+}
+
+.video-controls.show-controls {
+  opacity: 1;
+}
+
+.status-text {
+  font-size: 10px;
+  color: #289067;
+  margin-left: 8px;
 }
 
 /* Right Sidebar */

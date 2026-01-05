@@ -25,12 +25,12 @@
       <!-- Project Overview -->
       <section class="content-section">
         <h2 class="section-title">📌 Project Overview | 프로젝트 개요</h2>
-        <p class="section-text">
+        <p class="section-text text-ko">
           KeeBBear는 기계식 키보드 애호가들을 위한 종합 웹 플랫폼입니다. 현재 타이핑 연습 시스템과
           키보드 스위치 테스터를 제공하며, 향후 스위치 - 키캡 호환성 체크 시스템, 키보드 추천
           프로그램, 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로 확장될 예정입니다.
         </p>
-        <p class="section-text">
+        <p class="section-text text-en">
           KeeBBear is a comprehensive web platform for mechanical keyboard enthusiasts. Currently
           featuring a typing practice system and keyboard switch tester, with plans to expand into
           typing games, keyboard build logs, switch compatibility check system, keyboard
@@ -46,12 +46,12 @@
           <div class="feature-content">
             <div class="feature-text" ref="featureText1Ref">
               <h3 class="feature-title">1. Interactive Typing Practice | 인터랙티브 타이핑 연습</h3>
-              <ul class="feature-list">
+              <ul class="feature-list text-en">
                 <li>Real-time CPM/WPM calculation and accuracy tracking</li>
                 <li>Performance visualization with charts and statistics</li>
                 <li>Login streak management for continuous improvement</li>
               </ul>
-              <ul class="feature-list">
+              <ul class="feature-list text-ko">
                 <li>실시간 CPM/WPM 계산 및 정확도 추적</li>
                 <li>차트와 통계를 통한 성능 시각화</li>
                 <li>지속적인 향상을 위한 로그인 연속 기록 관리</li>
@@ -67,12 +67,12 @@
           <div class="feature-content">
             <div class="feature-text" ref="featureText2Ref">
               <h3 class="feature-title">2. Keyboard Switch Tester | 키보드 스위치 테스터</h3>
-              <ul class="feature-list">
+              <ul class="feature-list text-en">
                 <li>Real-time keypress detection and visualization</li>
                 <li>Switch sound and feel simulation</li>
                 <li>Testing interface for keyboard enthusiasts</li>
               </ul>
-              <ul class="feature-list">
+              <ul class="feature-list text-ko">
                 <li>실시간 키 입력 감지 및 시각화</li>
                 <li>스위치 사운드 및 타감 시뮬레이션</li>
                 <li>키보드 애호가를 위한 테스트 인터페이스</li>
@@ -90,24 +90,19 @@
               <h3 class="feature-title">
                 3. User Profile & Progress Tracking | 사용자 프로필 및 진행도 추적
               </h3>
-              <ul class="feature-list">
+              <ul class="feature-list text-en">
                 <li>Firebase-based authentication system</li>
                 <li>Personal dashboard with performance history</li>
                 <li>Achievement and milestone tracking</li>
               </ul>
-              <ul class="feature-list">
+              <ul class="feature-list text-ko">
                 <li>Firebase 기반 인증 시스템</li>
                 <li>성능 기록이 포함된 개인 대시보드</li>
                 <li>성과 및 마일스톤 추적</li>
               </ul>
             </div>
             <div class="feature-image-wrapper">
-              <img
-                ref="dashboardImageRef"
-                :src="imgDashboard"
-                alt="Dashboard"
-                class="feature-image"
-              />
+              <AchievementDemo ref="achievementDemoRef" />
             </div>
           </div>
         </div>
@@ -121,22 +116,22 @@
           <div class="feature-content">
             <div class="feature-text" ref="designFeatureTextRef">
               <h3 class="feature-title">Pixel Art Style Border | 픽셀아트 스타일 보더</h3>
-              <p class="section-text">
+              <p class="section-text text-ko">
                 KeeBBear의 가장 특징적인 디자인 요소는 픽셀아트 게임에서 영감을 받은 보더
                 스타일입니다. CSS box-shadow를 활용하여 픽셀 단위의 정확한 보더 효과를 구현했습니다.
               </p>
-              <p class="section-text">
+              <p class="section-text text-en">
                 The most distinctive design element of KeeBBear is the border style inspired by
                 pixel art games. Using CSS box-shadow, we implemented precise pixel-level border
                 effects.
               </p>
-              <ul class="feature-list">
+              <ul class="feature-list text-en">
                 <li>Multiple box-shadow layers for pixel-perfect borders</li>
                 <li>Customizable border width (2px, 4px, 6px, 10px)</li>
                 <li>Hover effects with color transitions</li>
                 <li>Retro gaming aesthetic throughout the UI</li>
               </ul>
-              <ul class="feature-list">
+              <ul class="feature-list text-ko">
                 <li>픽셀 단위의 정확한 보더를 위한 다중 box-shadow 레이어</li>
                 <li>커스터마이징 가능한 보더 두께 (2px, 4px, 6px, 10px)</li>
                 <li>색상 전환을 포함한 호버 효과</li>
@@ -332,7 +327,7 @@ import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import TypingDemo from './demos/TypingDemo.vue'
 import KeyboardTesterDemo from './demos/KeyboardTesterDemo.vue'
 import PixelBorderDemo from './demos/PixelBorderDemo.vue'
-import imgDashboard from '@/assets/images/works/keebbear/keebbear_dashboard.png'
+import AchievementDemo from './demos/AchievementDemo.vue'
 import worksData from '@/data/works.json'
 
 const workId = inject('workId', 3)
@@ -347,10 +342,10 @@ const mockupContainerRef = ref(null)
 const mockupWrapperRef = ref(null)
 const mockupContainerInnerRef = ref(null)
 const workModalHeaderRef = ref(null)
-const dashboardImageRef = ref(null)
 const typingDemoRef = ref(null)
 const keyboardTesterDemoRef = ref(null)
 const pixelBorderDemoRef = ref(null)
+const achievementDemoRef = ref(null)
 const featureBlock1Ref = ref(null)
 const featureBlock2Ref = ref(null)
 const featureBlock3Ref = ref(null)
@@ -378,57 +373,6 @@ const loadingCode = `async initializeApp() {
 }`
 
 const isLandscape = window.innerWidth > window.innerHeight
-
-// Dashboard 이미지 애니메이션 설정 함수
-const setupDashboardAnimation = () => {
-  if (!dashboardImageRef.value) return
-
-  const modalOverlay = document.querySelector('.work-modal-overlay')
-  if (!modalOverlay) return
-
-  // 요소가 실제로 DOM에 있고 크기가 있는지 확인
-  if (
-    !dashboardImageRef.value.offsetParent &&
-    dashboardImageRef.value.offsetWidth === 0 &&
-    dashboardImageRef.value.offsetHeight === 0
-  ) {
-    return
-  }
-
-  try {
-    // 초기 상태: 오른쪽으로 이동하고 투명하게
-    gsap.set(dashboardImageRef.value, {
-      x: 100,
-      opacity: 0,
-    })
-
-    const scrollTriggerConfig = {
-      trigger: dashboardImageRef.value,
-      scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
-      toggleActions: 'play none none reverse',
-      invalidateOnRefresh: true,
-    }
-
-    // ScrollTrigger 파라미터 검증
-    if (!scrollTriggerConfig.trigger || !scrollTriggerConfig.scroller) {
-      console.warn('ScrollTrigger params are not set properly')
-      return
-    }
-
-    // 스크롤 트리거로 애니메이션
-    gsap.to(dashboardImageRef.value, {
-      x: 0,
-      opacity: 1,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: scrollTriggerConfig,
-    })
-  } catch (error) {
-    console.warn('Dashboard animation setup failed:', error)
-  }
-}
 
 const setupDemoAnimation = (demoRef) => {
   if (!demoRef) return
@@ -793,25 +737,24 @@ onMounted(() => {
     }
   }
 
-  // Dashboard 이미지 애니메이션 (오른쪽에서 왼쪽으로)
-  // DOM이 완전히 렌더링될 때까지 대기
+  // AchievementDemo Animation
   nextTick(() => {
     nextTick(() => {
-      if (!dashboardImageRef.value) return
+      if (!achievementDemoRef.value) return
 
       const modalOverlay = document.querySelector('.work-modal-overlay')
       if (!modalOverlay) return
 
-      // 요소가 실제로 DOM에 있는지 확인
-      if (dashboardImageRef.value.offsetParent === null) {
-        // 요소가 아직 렌더링되지 않았으면 잠시 후 다시 시도
+      const demoElement = achievementDemoRef.value.$el || achievementDemoRef.value
+      // Check if element is in DOM
+      if (!demoElement || demoElement.offsetParent === null) {
         setTimeout(() => {
-          setupDashboardAnimation()
+          setupDemoAnimation(achievementDemoRef.value)
         }, 100)
         return
       }
 
-      setupDashboardAnimation()
+      setupDemoAnimation(achievementDemoRef.value)
     })
   })
 
@@ -1059,6 +1002,10 @@ onMounted(() => {
 /* Feature Blocks */
 .feature-block {
   margin-bottom: 60px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .feature-content {
@@ -1096,6 +1043,18 @@ onMounted(() => {
   position: relative;
 }
 
+/* Language distinction */
+.text-en {
+  opacity: 0.8;
+  margin-bottom: 24px;
+  font-size: 0.95em;
+}
+
+.text-ko {
+  color: rgb(var(--gray--1));
+  font-weight: var(--font-weight--medium);
+}
+
 .feature-image-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -1113,6 +1072,10 @@ onMounted(() => {
 /* Tech Blocks */
 .tech-block {
   margin-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .tech-title {
@@ -1132,6 +1095,10 @@ onMounted(() => {
 /* Roadmap Blocks */
 .roadmap-block {
   margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .roadmap-phase {
@@ -1144,6 +1111,10 @@ onMounted(() => {
 /* Challenge Blocks */
 .challenge-block {
   margin-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .challenge-title {
@@ -1156,6 +1127,10 @@ onMounted(() => {
 /* Takeaway Blocks */
 .takeaway-block {
   margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .takeaway-title {

@@ -76,6 +76,7 @@
           class="search-results"
           role="listbox"
           :aria-label="`${filteredWorks.length}개의 검색 결과`"
+          @wheel.stop
         >
           <div
             v-for="(work, index) in filteredWorks"
@@ -1030,7 +1031,8 @@ onUnmounted(() => {
   right: 0;
   max-height: 400px;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.95);
+  overscroll-behavior: contain;
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);

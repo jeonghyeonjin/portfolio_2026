@@ -58,7 +58,7 @@ const emojiTypes = [
 
 const videoPlaceholder = ref(null)
 const displayingEmojis = ref([])
-const selectedType = ref('check') // Default selected type
+const selectedType = ref('clap') // Default selected type
 let emojiIdCounter = 0
 let animationFrameId = null
 

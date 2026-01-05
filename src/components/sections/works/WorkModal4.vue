@@ -5,18 +5,19 @@
       <p class="work-modal-subtitle">
         {{ workData?.description || '' }}
       </p>
-    </div>
-    <div ref="producthuntBadgeRef" class="producthunt-badge">
-      <img
-        src="@/assets/images/producthunt/dailybadge2.avif"
-        alt="Product Hunt Daily #2"
-        class="producthunt-badge-icon"
-      />
-      <div class="producthunt-badge-text">
-        <span class="producthunt-badge-label">Product Hunt Daily #2</span>
-        <span class="producthunt-badge-date">February 23rd, 2023</span>
+      <div ref="producthuntBadgeRef" class="producthunt-badge">
+        <img
+          src="@/assets/images/producthunt/dailybadge2.avif"
+          alt="Product Hunt Daily #2"
+          class="producthunt-badge-icon"
+        />
+        <div class="producthunt-badge-text">
+          <span class="producthunt-badge-label">Product Hunt Daily #2</span>
+          <span class="producthunt-badge-date">February 23rd, 2023</span>
+        </div>
       </div>
     </div>
+
     <div class="work-modal-body">
       <div ref="heroImageContainerRef" class="hero-image-container">
         <div ref="heroImageWrapperRef" class="hero-image-wrapper">
@@ -32,12 +33,12 @@
       <!-- Project Overview -->
       <section class="content-section">
         <h2 class="section-title">📌 Project Overview | 프로젝트 개요</h2>
-        <p class="section-text">
+        <p class="section-text text-ko">
           Tape는 비동기 비디오 메시징 도구로, 회의의 번거로움 없이 작업을 명확하게 공유하고, 신중한
           피드백을 교환하며, 작업을 완료할 수 있도록 도와줍니다. Tape의 인터랙티브 기능은 협업을
           원활하고 더욱 생산적으로 만듭니다.
         </p>
-        <p class="section-text">
+        <p class="section-text text-en">
           Tape is an asynchronous video messaging tool that helps you share your work with clarity,
           exchange thoughtful feedback, and accomplish tasks without the hassles of meetings. Tape's
           interactive features make collaboration seamless and extra-productive.
@@ -70,6 +71,12 @@
             class="screenshot-image"
           />
         </div>
+      </section>
+
+      <!-- Tech Stack -->
+      <section class="content-section">
+        <h2 class="section-title">🛠️ Tech Stack Summary</h2>
+        <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Key Contributions -->
@@ -231,12 +238,6 @@
             <CodeBlock :code="embedCode" />
           </div>
         </div>
-      </section>
-
-      <!-- Tech Stack -->
-      <section class="content-section">
-        <h2 class="section-title">🛠️ Tech Stack Summary</h2>
-        <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Performance Metrics -->
@@ -620,7 +621,7 @@ onMounted(() => {
 
         if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
           gsap.to(heroImageWrapperRef.value, {
-            scale: isTablet.value ? (isMobile.value ? 0.7 : 1) : 1.1,
+            scale: isTablet.value ? (isMobile.value ? 0.7 : 0.83) : 1.1,
             bottom: isTablet.value ? (isMobile.value ? '-5%' : '0%') : '-12%',
             opacity: 1,
             scrollTrigger: scrollTriggerConfig1,
@@ -820,10 +821,7 @@ onMounted(() => {
 }
 
 .producthunt-badge {
-  position: fixed;
-  top: calc(50% + 120px);
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 20px;
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -965,6 +963,10 @@ onMounted(() => {
 /* Feature Blocks */
 .feature-block {
   margin-bottom: 60px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .feature-content {
@@ -1063,6 +1065,10 @@ onMounted(() => {
 /* Tech Blocks */
 .tech-block {
   margin-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .tech-title {
@@ -1082,6 +1088,10 @@ onMounted(() => {
 /* Challenge Blocks */
 .challenge-block {
   margin-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .challenge-title {
@@ -1094,6 +1104,10 @@ onMounted(() => {
 /* Takeaway Blocks */
 .takeaway-block {
   margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .takeaway-title {
@@ -1101,6 +1115,18 @@ onMounted(() => {
   font-weight: var(--font-weight--bold);
   color: rgb(var(--white--1));
   margin: 0 0 15px 0;
+}
+
+/* Language distinction */
+.text-en {
+  opacity: 0.8;
+  margin-bottom: 24px;
+  font-size: 0.95em;
+}
+
+.text-ko {
+  color: rgb(var(--white--1));
+  font-weight: var(--font-weight--medium);
 }
 
 p {
@@ -1116,10 +1142,6 @@ p {
   .work-modal-title {
     font-size: var(--hero--2);
     font-weight: var(--font-weight--bold);
-  }
-
-  .producthunt-badge {
-    top: calc(50% + 100px);
   }
 
   .producthunt-badge-icon {
@@ -1150,11 +1172,6 @@ p {
   .work-modal-subtitle {
     font-size: var(--body--2--normal);
     font-weight: var(--font-weight--regular);
-  }
-
-  .producthunt-badge {
-    top: calc(50% + 80px);
-    gap: 10px;
   }
 
   .producthunt-badge-icon {

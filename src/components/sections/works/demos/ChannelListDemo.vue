@@ -25,15 +25,25 @@
     <!-- Grid -->
     <div class="cards-grid">
       <!-- Add Card -->
-      <div class="card add-card">
+      <div class="card add-card" @click="addChannel" :class="{ disabled: cards.length >= 3 }">
         <div class="plus-icon">+</div>
       </div>
 
       <!-- Content Cards -->
-      <div class="card video-card" v-for="(card, index) in cards" :key="index">
+      <div
+        class="card video-card"
+        v-for="(card, index) in cards"
+        :key="index"
+        :class="{ active: activeIndex === index }"
+        @click="setActive(index)"
+      >
         <div class="thumbnail-area">
           <img :src="card.thumbnail" alt="Thumbnail" class="thumbnail-img" />
           <span class="status-dot"></span>
+          <!-- Active Indicator Overlay -->
+          <div class="active-overlay" v-if="activeIndex === index">
+            <span class="material-icons-round">check_circle</span>
+          </div>
         </div>
         <div class="card-info">
           <h3 class="card-title">{{ card.title }}</h3>
@@ -75,6 +85,37 @@ const cards = ref([
     avatar: imgEmoji1,
   },
 ])
+
+const activeIndex = ref(-1)
+
+const setActive = (index) => {
+  activeIndex.value = index
+}
+
+const addChannel = () => {
+  if (cards.value.length >= 3) return
+
+  const unsplashImages = [
+    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80',
+    'https://images.unsplash.com/photo-1542744094-24638eff58bb?w=800&q=80',
+    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80',
+    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80',
+    'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80',
+    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80',
+  ]
+  const randomImage = unsplashImages[Math.floor(Math.random() * unsplashImages.length)]
+
+  const newCard = {
+    title: `New Review ${cards.value.length + 1}`,
+    date: 'Just now',
+    clipCount: 0,
+    duration: '0:00',
+    thumbnail: randomImage,
+    avatar: imgEmoji1,
+  }
+  cards.value.push(newCard)
+  activeIndex.value = cards.value.length - 1 // Select new one
+}
 </script>
 
 <style scoped>
@@ -182,7 +223,7 @@ const cards = ref([
 /* Grid */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   padding: 24px;
   overflow-x: auto; /* Allow scrolling if too narrow */
@@ -190,7 +231,7 @@ const cards = ref([
 
 /* Add Card */
 .add-card {
-  aspect-ratio: 4/3;
+  aspect-ratio: 1;
   border: 2px dashed rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   display: flex;
@@ -206,6 +247,12 @@ const cards = ref([
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+.add-card.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .plus-icon {
   font-size: 48px;
   color: #289067; /* Green accent color */
@@ -214,7 +261,7 @@ const cards = ref([
 
 /* Video Card */
 .video-card {
-  aspect-ratio: 4/3; /* Approximate ratio including text */
+  aspect-ratio: 1; /* Approximate ratio including text */
   background-color: #1f2b32; /* Card bg */
   border-radius: 12px;
   overflow: hidden;
@@ -232,11 +279,30 @@ const cards = ref([
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
+.video-card.active {
+  box-shadow: 0 0 0 2px #289067; /* Active border */
+}
+
 .thumbnail-area {
   width: 100%;
   height: 60%;
   position: relative;
   background-color: #000;
+}
+
+.active-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(40, 144, 103, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.active-overlay span {
+  font-size: 32px;
+  color: #fff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .thumbnail-img {
