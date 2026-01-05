@@ -16,7 +16,7 @@
             <div ref="mockupContainerInnerRef" class="mockup-container-inner"></div>
             <video
               ref="mockupVideoRef"
-              autoplay
+              :autoplay="!isMobile"
               loop
               muted
               playsinline
