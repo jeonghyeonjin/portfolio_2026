@@ -1,0 +1,28 @@
+{
+  "slides": [
+    {
+      "title": "PIN DESIGN",
+      "description": {
+        "en": "A pin design expressing Master Forge keyboard identity through pixel art. Captures a retro sensibility and brand identity.",
+        "ko": "Master Forge 키보드의 아이덴티티를 픽셀 아트로 표현한 핀 디자인입니다. 레트로한 감성과 브랜드의 정체성을 담았습니다."
+      },
+      "imagePath": "@/assets/images/works/master-forge/m4g_pin.png"
+    },
+    {
+      "title": "MOCKUP",
+      "description": {
+        "en": "A mockup visualizing how it would look when produced as an actual product.",
+        "ko": "실제 제품으로 제작되었을 때의 모습을 시각화한 목업입니다."
+      },
+      "imagePath": "@/assets/images/works/master-forge/m4g_pin_mockup.png"
+    },
+    {
+      "title": "STICKER",
+      "description": {
+        "en": "A sticker design that can be attached to various keyboards and accessories. Made in a cute style and infused with the charm of stickers.",
+        "ko": "키보드와 다양한 액세서리에 부착할 수 있는 스티커 디자인입니다. 귀여운 스타일로 제작하고 스티커만의 매력을 살렸습니다."
+      },
+      "imagePath": "@/assets/images/works/master-forge/m4g_sticker.png"
+    }
+  ]
+}

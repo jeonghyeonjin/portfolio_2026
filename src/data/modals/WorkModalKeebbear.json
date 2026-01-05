@@ -1,0 +1,372 @@
+{
+  "sections": {
+    "projectOverview": {
+      "title": "📌 Project Overview | 프로젝트 개요",
+      "paragraphs": {
+        "ko": "KeeBBear는 기계식 키보드 애호가들을 위한 종합 웹 플랫폼입니다. 현재 타이핑 연습 시스템과 키보드 스위치 테스터를 제공하며, 향후 스위치 - 키캡 호환성 체크 시스템, 키보드 추천 프로그램, 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로 확장될 예정입니다.",
+        "en": "KeeBBear is a comprehensive web platform for mechanical keyboard enthusiasts. Currently featuring a typing practice system and keyboard switch tester, with plans to expand into typing games, keyboard build logs, switch compatibility check system, keyboard recommendation program, and community features."
+      }
+    },
+    "keyFeatures": {
+      "title": "🎯 Key Features | 주요 기능"
+    },
+    "designFeatures": {
+      "title": "🎨 Design Features | 디자인 특징"
+    },
+    "technicalHighlights": {
+      "title": "💻 Technical Highlights | 기술적 특징"
+    },
+    "componentArchitecture": {
+      "title": "🎨 Component Architecture | 컴포넌트 아키텍처"
+    },
+    "futureRoadmap": {
+      "title": "🚀 Future Roadmap | 향후 개발 계획"
+    },
+    "technicalChallenges": {
+      "title": "💡 Technical Challenges & Solutions | 기술적 과제 및 해결"
+    },
+    "performanceMetrics": {
+      "title": "📈 Performance Metrics | 성능 지표"
+    },
+    "techStackSummary": {
+      "title": "🛠️ Tech Stack Summary | 기술 스택 요약"
+    },
+    "keyTakeaways": {
+      "title": "👨‍💻 Key Takeaways | 핵심 요약"
+    }
+  },
+  "features": [
+    {
+      "title": "1. Interactive Typing Practice | 인터랙티브 타이핑 연습",
+      "items": {
+        "en": [
+          "Real-time CPM/WPM calculation and accuracy tracking",
+          "Performance visualization with charts and statistics",
+          "Login streak management for continuous improvement"
+        ],
+        "ko": [
+          "실시간 CPM/WPM 계산 및 정확도 추적",
+          "차트와 통계를 통한 성능 시각화",
+          "지속적인 향상을 위한 로그인 연속 기록 관리"
+        ]
+      }
+    },
+    {
+      "title": "2. Keyboard Switch Tester | 키보드 스위치 테스터",
+      "items": {
+        "en": [
+          "Real-time keypress detection and visualization",
+          "Switch sound and feel simulation",
+          "Testing interface for keyboard enthusiasts"
+        ],
+        "ko": [
+          "실시간 키 입력 감지 및 시각화",
+          "스위치 사운드 및 타감 시뮬레이션",
+          "키보드 애호가를 위한 테스트 인터페이스"
+        ]
+      }
+    },
+    {
+      "title": "3. User Profile & Progress Tracking | 사용자 프로필 및 진행도 추적",
+      "items": {
+        "en": [
+          "Firebase-based authentication system",
+          "Personal dashboard with performance history",
+          "Achievement and milestone tracking"
+        ],
+        "ko": [
+          "Firebase 기반 인증 시스템",
+          "성능 기록이 포함된 개인 대시보드",
+          "성과 및 마일스톤 추적"
+        ]
+      }
+    }
+  ],
+  "designFeature": {
+    "title": "Pixel Art Style Border | 픽셀아트 스타일 보더",
+    "description": {
+      "ko": "KeeBBear의 가장 특징적인 디자인 요소는 픽셀아트 게임에서 영감을 받은 보더 스타일입니다. CSS box-shadow를 활용하여 픽셀 단위의 정확한 보더 효과를 구현했습니다.",
+      "en": "The most distinctive design element of KeeBBear is the border style inspired by pixel art games. Using CSS box-shadow, we implemented precise pixel-level border effects."
+    },
+    "items": {
+      "en": [
+        "Multiple box-shadow layers for pixel-perfect borders",
+        "Customizable border width (2px, 4px, 6px, 10px)",
+        "Hover effects with color transitions",
+        "Retro gaming aesthetic throughout the UI"
+      ],
+      "ko": [
+        "픽셀 단위의 정확한 보더를 위한 다중 box-shadow 레이어",
+        "커스터마이징 가능한 보더 두께 (2px, 4px, 6px, 10px)",
+        "색상 전환을 포함한 호버 효과",
+        "UI 전반에 걸친 레트로 게임 미학"
+      ]
+    }
+  },
+  "techBlocks": [
+    {
+      "title": "Frontend Architecture | 프론트엔드 아키텍처",
+      "description": "Key Implementation Points:",
+      "items": [
+        "Vue 3 Composition API: Modular and reusable component logic",
+        "Vuex State Management: Centralized state for user data, typing statistics, and game progress",
+        "35+ Vue Components: Clear separation of concerns (game logic, UI, controls, results)"
+      ],
+      "treeKey": "vueEcosystemTree"
+    },
+    {
+      "title": "Backend & Infrastructure | 백엔드 및 인프라",
+      "description": "Implementation:",
+      "items": [
+        "User authentication with email/password and social login",
+        "Real-time data synchronization for user progress",
+        "Login streak calculation and persistence",
+        "Secure user data storage with Firestore rules"
+      ],
+      "treeKey": "firebaseTree"
+    },
+    {
+      "title": "Performance Optimization | 성능 최적화",
+      "items": [
+        "Strategic resource preloading (fonts, images)",
+        "Loading state management for smooth UX",
+        "Progressive enhancement approach"
+      ],
+      "codeKey": "performanceCode"
+    },
+    {
+      "title": "Responsive Design | 반응형 디자인",
+      "items": [
+        "Mobile-first design approach",
+        "Adaptive navigation (hamburger menu for mobile)",
+        "Responsive typography and spacing"
+      ],
+      "treeKey": "responsiveTree"
+    }
+  ],
+  "roadmap": [
+    {
+      "phase": "Phase 1: Current (완료)",
+      "items": [
+        "✅ Typing practice system",
+        "✅ Keyboard switch tester",
+        "✅ User authentication",
+        "✅ Performance tracking"
+      ]
+    },
+    {
+      "phase": "Phase 2: In Development (개발 중)",
+      "items": [
+        "🔄 Typing game mode (Corrupt Type)",
+        "🔄 Keyboard recommendation program",
+        "🔄 Enhanced statistics visualization",
+        "🔄 Achievement system"
+      ]
+    },
+    {
+      "phase": "Phase 3: Planned (계획)",
+      "items": [
+        "📋 Switch compatibility check system",
+        "📋 Keyboard build log system",
+        "📋 Community features",
+        "📋 Leaderboard & competitions",
+        "📋 Switch database & reviews"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "title": "Challenge 1: Real-time Typing Performance Calculation",
+      "problem": "문제: Accurate CPM/WPM calculation during typing without performance degradation",
+      "solution": "Solution:",
+      "items": [
+        "Implemented debounced calculation using Vue 3 reactivity",
+        "Optimized state updates to minimize re-renders",
+        "Used Web Workers for heavy calculations (planned)"
+      ]
+    },
+    {
+      "title": "Challenge 2: Loading State Management",
+      "problem": "문제: Preventing layout shift and ensuring smooth initial load",
+      "items": [
+        "Coordinated loading of fonts, images, and authentication",
+        "Progressive enhancement for better perceived performance"
+      ],
+      "codeKey": "loadingCode"
+    },
+    {
+      "title": "Challenge 3: Responsive Navigation Design",
+      "problem": "문제: Seamless navigation experience across devices",
+      "items": [
+        "Desktop: Horizontal navigation bar with pixel-art theme",
+        "Mobile: Hamburger menu with smooth transitions",
+        "Adaptive layout using Vuetify breakpoints"
+      ]
+    }
+  ],
+  "takeaways": [
+    {
+      "title": "Technical Proficiency:",
+      "items": [
+        "Vue 3 Ecosystem Mastery - Composition API, Vuex, Router",
+        "Firebase Integration - Authentication, Firestore, Real-time sync",
+        "Performance Optimization - Loading strategies, reactive programming",
+        "Responsive Design - Mobile-first, adaptive UI/UX",
+        "Modular Architecture - Scalable component structure"
+      ]
+    },
+    {
+      "title": "Soft Skills:",
+      "items": [
+        "Product thinking: Building for a specific community (keyboard enthusiasts)",
+        "Scalability mindset: Designing for future feature expansion",
+        "User experience focus: Optimizing every interaction"
+      ]
+    }
+  ],
+  "techStacks": [
+    {
+      "title": "Frontend:",
+      "items": [
+        "Vue 3 (Composition API)",
+        "Vuex 4 (State Management)",
+        "Vue Router 4 (SPA Routing)",
+        "Vuetify 3 (UI Framework)",
+        "Chart.js (Data Visualization)",
+        "Sass/SCSS (Styling)"
+      ]
+    },
+    {
+      "title": "Backend:",
+      "items": ["Firebase Authentication", "Cloud Firestore (Database)", "Firebase Hosting"]
+    },
+    {
+      "title": "Development:",
+      "items": [
+        "Vue CLI 5",
+        "Babel (Transpiling)",
+        "ESLint (Code Quality)",
+        "Webpack 5 (Bundling)",
+        "Git (Version Control)"
+      ]
+    }
+  ],
+  "performanceMetrics": [
+    { "label": "Initial Load Time", "value": "< 2s" },
+    { "label": "Time to Interactive", "value": "< 3s" },
+    { "label": "Lighthouse Score", "value": "90+ (Performance)" },
+    { "label": "Mobile-Friendly", "value": "Yes" }
+  ],
+  "codeSnippets": {
+    "performanceCode": "// Font and image preloading\nawait Promise.all([\n  document.fonts.ready,\n  waitForElements(),\n  authPromise\n]);",
+    "loadingCode": "async initializeApp() {\n  await Promise.all([\n    document.fonts.ready,\n    this.waitForElements(),\n    authPromise\n  ]);\n}"
+  },
+  "treeData": {
+    "vueEcosystemTree": {
+      "label": "Vue 3 Ecosystem",
+      "children": [
+        { "label": "Composition API (Reactive Programming)" },
+        { "label": "Vuex (State Management)" },
+        { "label": "Vue Router (SPA Navigation)" },
+        { "label": "Vuetify 3 (UI Framework)" }
+      ]
+    },
+    "firebaseTree": {
+      "label": "Firebase Services",
+      "children": [
+        { "label": "Authentication (User Management)" },
+        { "label": "Firestore (Real-time Database)" },
+        { "label": "Hosting (Deployment)" }
+      ]
+    },
+    "responsiveTree": {
+      "label": "Breakpoints",
+      "children": [
+        { "label": "Mobile: < 768px" },
+        { "label": "Tablet: 768px - 960px" },
+        { "label": "Desktop: > 960px" }
+      ]
+    },
+    "componentArchitectureTree": {
+      "label": "App.vue (Root)",
+      "children": [
+        {
+          "label": "HeaderItem / NavigationBar",
+          "children": [
+            { "label": "Logo" },
+            {
+              "label": "Navigation Items",
+              "children": [
+                { "label": "Home" },
+                { "label": "Typing Bear (Typing Practice)" },
+                { "label": "Corrupt Type (Game Mode)" },
+                { "label": "Tester (Keyboard Tester)" }
+              ]
+            },
+            {
+              "label": "UserMenu",
+              "children": [
+                { "label": "Profile Avatar" },
+                { "label": "Login Streak Display" },
+                {
+                  "label": "Dropdown Menu",
+                  "children": [{ "label": "Dashboard" }, { "label": "Logout" }]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Router View",
+          "children": [
+            {
+              "label": "MainWindow (Home /)",
+              "children": [
+                { "label": "Hero Section" },
+                { "label": "Feature Showcase" },
+                { "label": "Call-to-Action" }
+              ]
+            },
+            {
+              "label": "TypingContainer (/TypingBear)",
+              "children": [
+                {
+                  "label": "TypingWindow",
+                  "children": [
+                    { "label": "ControlButtons" },
+                    { "label": "TypeInput (Main Typing Area)" },
+                    { "label": "TypingProgress" },
+                    { "label": "TypingResult" }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "KeyboardTester (/Tester)",
+              "children": [
+                { "label": "Keyboard Layout Display" },
+                { "label": "Key Press Visualization" },
+                { "label": "Switch Sound Player" },
+                { "label": "Test Statistics" }
+              ]
+            },
+            {
+              "label": "AuthPage (/auth)",
+              "children": [{ "label": "Login" }, { "label": "Register" }]
+            },
+            {
+              "label": "Dashboard (/Dashboard)",
+              "children": [
+                { "label": "User Profile Section" },
+                { "label": "Statistics Overview" },
+                { "label": "Performance Charts" },
+                { "label": "Achievements" }
+              ]
+            }
+          ]
+        },
+        { "label": "FooterItem" }
+      ]
+    }
+  }
+}

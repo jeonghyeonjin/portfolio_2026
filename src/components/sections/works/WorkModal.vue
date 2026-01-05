@@ -28,11 +28,12 @@
 </template>
 
 <script setup>
-import { shallowRef, ref, onMounted, provide } from 'vue'
+import { shallowRef, ref, onMounted, provide, computed } from 'vue'
 import { gsap } from 'gsap'
 import IconButton from '@/components/common/IconButton.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import worksData from '@/data/works.json'
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 
@@ -61,13 +62,23 @@ defineExpose({
   $el: modalOverlayRef,
 })
 
-// workId에 따라 해당 컴포넌트 동적 로드
+// workId에 해당하는 work 데이터 찾기
+const workData = computed(() => {
+  return worksData.find((work) => work.id === props.workId) || null
+})
+
+// modalComponent 이름에 따라 해당 컴포넌트 동적 로드
 const loadWorkComponent = async () => {
   try {
-    const component = await import(`./WorkModal${props.workId}.vue`)
+    const modalComponent = workData.value?.modalComponent
+    if (!modalComponent) {
+      console.error(`workId ${props.workId}에 대한 modalComponent가 정의되지 않았습니다.`)
+      return
+    }
+    const component = await import(`./${modalComponent}.vue`)
     workComponent.value = component.default
   } catch (error) {
-    console.error(`WorkModal${props.workId}.vue를 로드할 수 없습니다:`, error)
+    console.error(`${workData.value?.modalComponent || 'Unknown'}.vue를 로드할 수 없습니다:`, error)
   }
 }
 

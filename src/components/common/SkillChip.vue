@@ -25,10 +25,4 @@ const { label } = defineProps({
   white-space: nowrap;
   transition: all 0.2s ease;
 }
-
-.skill-chip:hover {
-  background-color: rgb(var(--primary--green));
-  color: rgb(var(--gray--6));
-  transform: translateY(-2px);
-}
 </style>

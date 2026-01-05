@@ -23,119 +23,57 @@
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section">
-        <h2 class="section-title">📌 Project Overview | 프로젝트 개요</h2>
-        <p class="section-text text-ko">
-          KeeBBear는 기계식 키보드 애호가들을 위한 종합 웹 플랫폼입니다. 현재 타이핑 연습 시스템과
-          키보드 스위치 테스터를 제공하며, 향후 스위치 - 키캡 호환성 체크 시스템, 키보드 추천
-          프로그램, 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로 확장될 예정입니다.
-        </p>
-        <p class="section-text text-en">
-          KeeBBear is a comprehensive web platform for mechanical keyboard enthusiasts. Currently
-          featuring a typing practice system and keyboard switch tester, with plans to expand into
-          typing games, keyboard build logs, switch compatibility check system, keyboard
-          recommendation program, and community features.
-        </p>
+      <section class="content-section" v-if="modalData.sections?.projectOverview">
+        <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
+        <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
+        <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
       </section>
 
       <!-- Key Features -->
-      <section class="content-section">
-        <h2 class="section-title">🎯 Key Features | 주요 기능</h2>
+      <section class="content-section" v-if="modalData.sections?.keyFeatures">
+        <h2 class="section-title">{{ modalData.sections.keyFeatures.title }}</h2>
 
-        <div class="feature-block" ref="featureBlock1Ref">
-          <div class="feature-content">
-            <div class="feature-text" ref="featureText1Ref">
-              <h3 class="feature-title">1. Interactive Typing Practice | 인터랙티브 타이핑 연습</h3>
-              <ul class="feature-list text-en">
-                <li>Real-time CPM/WPM calculation and accuracy tracking</li>
-                <li>Performance visualization with charts and statistics</li>
-                <li>Login streak management for continuous improvement</li>
-              </ul>
-              <ul class="feature-list text-ko">
-                <li>실시간 CPM/WPM 계산 및 정확도 추적</li>
-                <li>차트와 통계를 통한 성능 시각화</li>
-                <li>지속적인 향상을 위한 로그인 연속 기록 관리</li>
-              </ul>
-            </div>
-            <div class="feature-image-wrapper">
-              <TypingDemo ref="typingDemoRef" />
+        <template v-for="(feature, index) in modalData.features" :key="index">
+          <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
+            <div class="feature-content">
+              <div class="feature-text" :ref="(el) => setFeatureTextRef(el, index)">
+                <h3 class="feature-title">{{ feature.title }}</h3>
+                <ul class="feature-list text-en">
+                  <li v-for="(item, itemIndex) in feature.items.en" :key="itemIndex">{{ item }}</li>
+                </ul>
+                <ul class="feature-list text-ko">
+                  <li v-for="(item, itemIndex) in feature.items.ko" :key="itemIndex">{{ item }}</li>
+                </ul>
+              </div>
+              <div class="feature-image-wrapper">
+                <TypingDemo v-if="index === 0" ref="typingDemoRef" />
+                <KeyboardTesterDemo v-else-if="index === 1" ref="keyboardTesterDemoRef" />
+                <AchievementDemo v-else-if="index === 2" ref="achievementDemoRef" />
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="feature-block" ref="featureBlock2Ref">
-          <div class="feature-content">
-            <div class="feature-text" ref="featureText2Ref">
-              <h3 class="feature-title">2. Keyboard Switch Tester | 키보드 스위치 테스터</h3>
-              <ul class="feature-list text-en">
-                <li>Real-time keypress detection and visualization</li>
-                <li>Switch sound and feel simulation</li>
-                <li>Testing interface for keyboard enthusiasts</li>
-              </ul>
-              <ul class="feature-list text-ko">
-                <li>실시간 키 입력 감지 및 시각화</li>
-                <li>스위치 사운드 및 타감 시뮬레이션</li>
-                <li>키보드 애호가를 위한 테스트 인터페이스</li>
-              </ul>
-            </div>
-            <div class="feature-image-wrapper">
-              <KeyboardTesterDemo ref="keyboardTesterDemoRef" />
-            </div>
-          </div>
-        </div>
-
-        <div class="feature-block" ref="featureBlock3Ref">
-          <div class="feature-content">
-            <div class="feature-text" ref="featureText3Ref">
-              <h3 class="feature-title">
-                3. User Profile & Progress Tracking | 사용자 프로필 및 진행도 추적
-              </h3>
-              <ul class="feature-list text-en">
-                <li>Firebase-based authentication system</li>
-                <li>Personal dashboard with performance history</li>
-                <li>Achievement and milestone tracking</li>
-              </ul>
-              <ul class="feature-list text-ko">
-                <li>Firebase 기반 인증 시스템</li>
-                <li>성능 기록이 포함된 개인 대시보드</li>
-                <li>성과 및 마일스톤 추적</li>
-              </ul>
-            </div>
-            <div class="feature-image-wrapper">
-              <AchievementDemo ref="achievementDemoRef" />
-            </div>
-          </div>
-        </div>
+        </template>
       </section>
 
       <!-- Design Features -->
-      <section class="content-section">
-        <h2 class="section-title">🎨 Design Features | 디자인 특징</h2>
+      <section class="content-section" v-if="modalData.sections?.designFeatures">
+        <h2 class="section-title">{{ modalData.sections.designFeatures.title }}</h2>
 
         <div class="feature-block" ref="designFeatureBlockRef">
           <div class="feature-content">
             <div class="feature-text" ref="designFeatureTextRef">
-              <h3 class="feature-title">Pixel Art Style Border | 픽셀아트 스타일 보더</h3>
-              <p class="section-text text-ko">
-                KeeBBear의 가장 특징적인 디자인 요소는 픽셀아트 게임에서 영감을 받은 보더
-                스타일입니다. CSS box-shadow를 활용하여 픽셀 단위의 정확한 보더 효과를 구현했습니다.
-              </p>
-              <p class="section-text text-en">
-                The most distinctive design element of KeeBBear is the border style inspired by
-                pixel art games. Using CSS box-shadow, we implemented precise pixel-level border
-                effects.
-              </p>
+              <h3 class="feature-title">{{ modalData.designFeature.title }}</h3>
+              <p class="section-text text-ko">{{ modalData.designFeature.description.ko }}</p>
+              <p class="section-text text-en">{{ modalData.designFeature.description.en }}</p>
               <ul class="feature-list text-en">
-                <li>Multiple box-shadow layers for pixel-perfect borders</li>
-                <li>Customizable border width (2px, 4px, 6px, 10px)</li>
-                <li>Hover effects with color transitions</li>
-                <li>Retro gaming aesthetic throughout the UI</li>
+                <li v-for="(item, index) in modalData.designFeature.items.en" :key="index">
+                  {{ item }}
+                </li>
               </ul>
               <ul class="feature-list text-ko">
-                <li>픽셀 단위의 정확한 보더를 위한 다중 box-shadow 레이어</li>
-                <li>커스터마이징 가능한 보더 두께 (2px, 4px, 6px, 10px)</li>
-                <li>색상 전환을 포함한 호버 효과</li>
-                <li>UI 전반에 걸친 레트로 게임 미학</li>
+                <li v-for="(item, index) in modalData.designFeature.items.ko" :key="index">
+                  {{ item }}
+                </li>
               </ul>
             </div>
             <div class="feature-image-wrapper">
@@ -146,168 +84,78 @@
       </section>
 
       <!-- Technical Highlights -->
-      <section class="content-section">
-        <h2 class="section-title">💻 Technical Highlights | 기술적 특징</h2>
+      <section class="content-section" v-if="modalData.sections?.technicalHighlights">
+        <h2 class="section-title">{{ modalData.sections.technicalHighlights.title }}</h2>
 
-        <div class="tech-block">
-          <h3 class="tech-title">Frontend Architecture | 프론트엔드 아키텍처</h3>
-          <TreeDiagram :data="vueEcosystemTree" />
-          <p class="tech-desc">Key Implementation Points:</p>
-          <ul class="feature-list">
-            <li>Vue 3 Composition API: Modular and reusable component logic</li>
-            <li>
-              Vuex State Management: Centralized state for user data, typing statistics, and game
-              progress
-            </li>
-            <li>
-              35+ Vue Components: Clear separation of concerns (game logic, UI, controls, results)
-            </li>
-          </ul>
-        </div>
-
-        <div class="tech-block">
-          <h3 class="tech-title">Backend & Infrastructure | 백엔드 및 인프라</h3>
-          <TreeDiagram :data="firebaseTree" />
-          <p class="tech-desc">Implementation:</p>
-          <ul class="feature-list">
-            <li>User authentication with email/password and social login</li>
-            <li>Real-time data synchronization for user progress</li>
-            <li>Login streak calculation and persistence</li>
-            <li>Secure user data storage with Firestore rules</li>
-          </ul>
-        </div>
-
-        <div class="tech-block">
-          <h3 class="tech-title">Performance Optimization | 성능 최적화</h3>
-          <CodeBlock :code="performanceCode" />
-          <ul class="feature-list">
-            <li>Strategic resource preloading (fonts, images)</li>
-            <li>Loading state management for smooth UX</li>
-            <li>Progressive enhancement approach</li>
-          </ul>
-        </div>
-
-        <div class="tech-block">
-          <h3 class="tech-title">Responsive Design | 반응형 디자인</h3>
-          <TreeDiagram :data="responsiveTree" />
-          <ul class="feature-list">
-            <li>Mobile-first design approach</li>
-            <li>Adaptive navigation (hamburger menu for mobile)</li>
-            <li>Responsive typography and spacing</li>
-          </ul>
-        </div>
+        <template v-for="(techBlock, index) in modalData.techBlocks" :key="index">
+          <div class="tech-block">
+            <h3 class="tech-title">{{ techBlock.title }}</h3>
+            <TreeDiagram v-if="techBlock.treeKey" :data="modalData.treeData[techBlock.treeKey]" />
+            <p v-if="techBlock.description" class="tech-desc">{{ techBlock.description }}</p>
+            <CodeBlock v-if="techBlock.codeKey" :code="modalData.codeSnippets[techBlock.codeKey]" />
+            <ul class="feature-list">
+              <li v-for="(item, itemIndex) in techBlock.items" :key="itemIndex">{{ item }}</li>
+            </ul>
+          </div>
+        </template>
       </section>
 
       <!-- Component Architecture -->
-      <section class="content-section">
-        <h2 class="section-title">🎨 Component Architecture | 컴포넌트 아키텍처</h2>
+      <section class="content-section" v-if="modalData.sections?.componentArchitecture">
+        <h2 class="section-title">{{ modalData.sections.componentArchitecture.title }}</h2>
         <TreeDiagram :data="componentArchitectureTree" />
       </section>
 
       <!-- Future Roadmap -->
-      <section class="content-section">
-        <h2 class="section-title">🚀 Future Roadmap | 향후 개발 계획</h2>
-        <div class="roadmap-block">
-          <h4 class="roadmap-phase">Phase 1: Current (완료)</h4>
+      <section class="content-section" v-if="modalData.sections?.futureRoadmap">
+        <h2 class="section-title">{{ modalData.sections.futureRoadmap.title }}</h2>
+        <div v-for="(phase, index) in modalData.roadmap" :key="index" class="roadmap-block">
+          <h4 class="roadmap-phase">{{ phase.phase }}</h4>
           <ul class="feature-list">
-            <li>✅ Typing practice system</li>
-            <li>✅ Keyboard switch tester</li>
-            <li>✅ User authentication</li>
-            <li>✅ Performance tracking</li>
-          </ul>
-        </div>
-        <div class="roadmap-block">
-          <h4 class="roadmap-phase">Phase 2: In Development (개발 중)</h4>
-          <ul class="feature-list">
-            <li>🔄 Typing game mode (Corrupt Type)</li>
-            <li>🔄 Keyboard recommendation program</li>
-            <li>🔄 Enhanced statistics visualization</li>
-            <li>🔄 Achievement system</li>
-          </ul>
-        </div>
-        <div class="roadmap-block">
-          <h4 class="roadmap-phase">Phase 3: Planned (계획)</h4>
-          <ul class="feature-list">
-            <li>📋 Switch compatibility check system</li>
-            <li>📋 Keyboard build log system</li>
-            <li>📋 Community features</li>
-            <li>📋 Leaderboard & competitions</li>
-            <li>📋 Switch database & reviews</li>
+            <li v-for="(item, itemIndex) in phase.items" :key="itemIndex">{{ item }}</li>
           </ul>
         </div>
       </section>
 
       <!-- Technical Challenges -->
-      <section class="content-section">
-        <h2 class="section-title">💡 Technical Challenges & Solutions | 기술적 과제 및 해결</h2>
+      <section class="content-section" v-if="modalData.sections?.technicalChallenges">
+        <h2 class="section-title">{{ modalData.sections.technicalChallenges.title }}</h2>
 
-        <div class="challenge-block">
-          <h3 class="challenge-title">Challenge 1: Real-time Typing Performance Calculation</h3>
-          <p class="section-text">
-            문제: Accurate CPM/WPM calculation during typing without performance degradation
-          </p>
-          <p class="section-text">Solution:</p>
-          <ul class="feature-list">
-            <li>Implemented debounced calculation using Vue 3 reactivity</li>
-            <li>Optimized state updates to minimize re-renders</li>
-            <li>Used Web Workers for heavy calculations (planned)</li>
-          </ul>
-        </div>
-
-        <div class="challenge-block">
-          <h3 class="challenge-title">Challenge 2: Loading State Management</h3>
-          <p class="section-text">문제: Preventing layout shift and ensuring smooth initial load</p>
-          <CodeBlock :code="loadingCode" />
-          <ul class="feature-list">
-            <li>Coordinated loading of fonts, images, and authentication</li>
-            <li>Progressive enhancement for better perceived performance</li>
-          </ul>
-        </div>
-
-        <div class="challenge-block">
-          <h3 class="challenge-title">Challenge 3: Responsive Navigation Design</h3>
-          <p class="section-text">문제: Seamless navigation experience across devices</p>
-          <ul class="feature-list">
-            <li>Desktop: Horizontal navigation bar with pixel-art theme</li>
-            <li>Mobile: Hamburger menu with smooth transitions</li>
-            <li>Adaptive layout using Vuetify breakpoints</li>
+        <div
+          v-for="(challenge, index) in modalData.challenges"
+          :key="index"
+          class="challenge-block"
+        >
+          <h3 class="challenge-title">{{ challenge.title }}</h3>
+          <p v-if="challenge.problem" class="section-text">{{ challenge.problem }}</p>
+          <p v-if="challenge.solution" class="section-text">{{ challenge.solution }}</p>
+          <CodeBlock v-if="challenge.codeKey" :code="modalData.codeSnippets[challenge.codeKey]" />
+          <ul v-if="challenge.items" class="feature-list">
+            <li v-for="(item, itemIndex) in challenge.items" :key="itemIndex">{{ item }}</li>
           </ul>
         </div>
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section">
-        <h2 class="section-title">📈 Performance Metrics | 성능 지표</h2>
+      <section class="content-section" v-if="modalData.sections?.performanceMetrics">
+        <h2 class="section-title">{{ modalData.sections.performanceMetrics.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Tech Stack -->
-      <section class="content-section">
-        <h2 class="section-title">🛠️ Tech Stack Summary | 기술 스택 요약</h2>
+      <section class="content-section" v-if="modalData.sections?.techStackSummary">
+        <h2 class="section-title">{{ modalData.sections.techStackSummary.title }}</h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Key Takeaways -->
-      <section class="content-section">
-        <h2 class="section-title">👨‍💻 Key Takeaways | 핵심 요약</h2>
+      <section class="content-section" v-if="modalData.sections?.keyTakeaways">
+        <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
 
-        <div class="takeaway-block">
-          <h3 class="takeaway-title">Technical Proficiency:</h3>
+        <div v-for="(takeaway, index) in modalData.takeaways" :key="index" class="takeaway-block">
+          <h3 class="takeaway-title">{{ takeaway.title }}</h3>
           <ul class="feature-list">
-            <li>Vue 3 Ecosystem Mastery - Composition API, Vuex, Router</li>
-            <li>Firebase Integration - Authentication, Firestore, Real-time sync</li>
-            <li>Performance Optimization - Loading strategies, reactive programming</li>
-            <li>Responsive Design - Mobile-first, adaptive UI/UX</li>
-            <li>Modular Architecture - Scalable component structure</li>
-          </ul>
-        </div>
-
-        <div class="takeaway-block">
-          <h3 class="takeaway-title">Soft Skills:</h3>
-          <ul class="feature-list">
-            <li>Product thinking: Building for a specific community (keyboard enthusiasts)</li>
-            <li>Scalability mindset: Designing for future feature expansion</li>
-            <li>User experience focus: Optimizing every interaction</li>
+            <li v-for="(item, itemIndex) in takeaway.items" :key="itemIndex">{{ item }}</li>
           </ul>
         </div>
       </section>
@@ -329,6 +177,7 @@ import KeyboardTesterDemo from './demos/KeyboardTesterDemo.vue'
 import PixelBorderDemo from './demos/PixelBorderDemo.vue'
 import AchievementDemo from './demos/AchievementDemo.vue'
 import worksData from '@/data/works.json'
+import modalData from '@/data/modals/WorkModalKeebbear.json'
 
 const workId = inject('workId', 3)
 
@@ -346,31 +195,25 @@ const typingDemoRef = ref(null)
 const keyboardTesterDemoRef = ref(null)
 const pixelBorderDemoRef = ref(null)
 const achievementDemoRef = ref(null)
-const featureBlock1Ref = ref(null)
-const featureBlock2Ref = ref(null)
-const featureBlock3Ref = ref(null)
 const designFeatureBlockRef = ref(null)
-const featureText1Ref = ref(null)
-const featureText2Ref = ref(null)
-const featureText3Ref = ref(null)
 const designFeatureTextRef = ref(null)
 const { isMobile, isTablet } = useResponsive()
 
-// Code snippets for CodeBlock components
-const performanceCode = `// Font and image preloading
-await Promise.all([
-  document.fonts.ready,
-  waitForElements(),
-  authPromise
-]);`
+// Dynamic refs for features
+const featureBlockRefs = ref([])
+const featureTextRefs = ref([])
 
-const loadingCode = `async initializeApp() {
-  await Promise.all([
-    document.fonts.ready,
-    this.waitForElements(),
-    authPromise
-  ]);
-}`
+const setFeatureBlockRef = (el, index) => {
+  if (el) {
+    featureBlockRefs.value[index] = el
+  }
+}
+
+const setFeatureTextRef = (el, index) => {
+  if (el) {
+    featureTextRefs.value[index] = el
+  }
+}
 
 const isLandscape = window.innerWidth > window.innerHeight
 
@@ -383,6 +226,11 @@ const setupDemoAnimation = (demoRef) => {
   // Vue 컴포넌트인 경우 $el 사용, 일반 요소인 경우 직접 사용
   const demoElement = demoRef.$el || demoRef
   if (!demoElement) return
+
+  // DOM 요소인지 확인 (HTMLElement인지 확인)
+  if (!(demoElement instanceof HTMLElement)) {
+    return
+  }
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
   if (
@@ -521,153 +369,10 @@ const setupBlockAnimation = (block, index = 0) => {
   }
 }
 
-// Performance Metrics Data
-const performanceMetrics = [
-  { label: 'Initial Load Time', value: '< 2s' },
-  { label: 'Time to Interactive', value: '< 3s' },
-  { label: 'Lighthouse Score', value: '90+ (Performance)' },
-  { label: 'Mobile-Friendly', value: 'Yes' },
-]
-
-// Tech Stack Data
-const techStacks = [
-  {
-    title: 'Frontend:',
-    items: [
-      'Vue 3 (Composition API)',
-      'Vuex 4 (State Management)',
-      'Vue Router 4 (SPA Routing)',
-      'Vuetify 3 (UI Framework)',
-      'Chart.js (Data Visualization)',
-      'Sass/SCSS (Styling)',
-    ],
-  },
-  {
-    title: 'Backend:',
-    items: ['Firebase Authentication', 'Cloud Firestore (Database)', 'Firebase Hosting'],
-  },
-  {
-    title: 'Development:',
-    items: [
-      'Vue CLI 5',
-      'Babel (Transpiling)',
-      'ESLint (Code Quality)',
-      'Webpack 5 (Bundling)',
-      'Git (Version Control)',
-    ],
-  },
-]
-
-// Tree Data for Diagrams
-const vueEcosystemTree = {
-  label: 'Vue 3 Ecosystem',
-  children: [
-    { label: 'Composition API (Reactive Programming)' },
-    { label: 'Vuex (State Management)' },
-    { label: 'Vue Router (SPA Navigation)' },
-    { label: 'Vuetify 3 (UI Framework)' },
-  ],
-}
-
-const firebaseTree = {
-  label: 'Firebase Services',
-  children: [
-    { label: 'Authentication (User Management)' },
-    { label: 'Firestore (Real-time Database)' },
-    { label: 'Hosting (Deployment)' },
-  ],
-}
-
-const responsiveTree = {
-  label: 'Breakpoints',
-  children: [
-    { label: 'Mobile: < 768px' },
-    { label: 'Tablet: 768px - 960px' },
-    { label: 'Desktop: > 960px' },
-  ],
-}
-
-const componentArchitectureTree = {
-  label: 'App.vue (Root)',
-  children: [
-    {
-      label: 'HeaderItem / NavigationBar',
-      children: [
-        { label: 'Logo' },
-        {
-          label: 'Navigation Items',
-          children: [
-            { label: 'Home' },
-            { label: 'Typing Bear (Typing Practice)' },
-            { label: 'Corrupt Type (Game Mode)' },
-            { label: 'Tester (Keyboard Tester)' },
-          ],
-        },
-        {
-          label: 'UserMenu',
-          children: [
-            { label: 'Profile Avatar' },
-            { label: 'Login Streak Display' },
-            {
-              label: 'Dropdown Menu',
-              children: [{ label: 'Dashboard' }, { label: 'Logout' }],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: 'Router View',
-      children: [
-        {
-          label: 'MainWindow (Home /)',
-          children: [
-            { label: 'Hero Section' },
-            { label: 'Feature Showcase' },
-            { label: 'Call-to-Action' },
-          ],
-        },
-        {
-          label: 'TypingContainer (/TypingBear)',
-          children: [
-            {
-              label: 'TypingWindow',
-              children: [
-                { label: 'ControlButtons' },
-                { label: 'TypeInput (Main Typing Area)' },
-                { label: 'TypingProgress' },
-                { label: 'TypingResult' },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'KeyboardTester (/Tester)',
-          children: [
-            { label: 'Keyboard Layout Display' },
-            { label: 'Key Press Visualization' },
-            { label: 'Switch Sound Player' },
-            { label: 'Test Statistics' },
-          ],
-        },
-        {
-          label: 'AuthPage (/auth)',
-          children: [{ label: 'Login' }, { label: 'Register' }],
-        },
-        {
-          label: 'Dashboard (/Dashboard)',
-          children: [
-            { label: 'User Profile Section' },
-            { label: 'Statistics Overview' },
-            { label: 'Performance Charts' },
-            { label: 'Achievements' },
-          ],
-        },
-      ],
-    },
-    { label: 'FooterItem' },
-  ],
-}
+// Data from JSON
+const performanceMetrics = modalData.performanceMetrics
+const techStacks = modalData.techStacks
+const componentArchitectureTree = modalData.treeData.componentArchitectureTree
 
 onMounted(() => {
   if (mockupContainerRef.value && mockupWrapperRef.value) {
@@ -747,7 +452,11 @@ onMounted(() => {
 
       const demoElement = achievementDemoRef.value.$el || achievementDemoRef.value
       // Check if element is in DOM
-      if (!demoElement || demoElement.offsetParent === null) {
+      if (
+        !demoElement ||
+        !(demoElement instanceof HTMLElement) ||
+        demoElement.offsetParent === null
+      ) {
         setTimeout(() => {
           setupDemoAnimation(achievementDemoRef.value)
         }, 100)
@@ -767,7 +476,11 @@ onMounted(() => {
       if (!modalOverlay) return
 
       const demoElement = typingDemoRef.value.$el || typingDemoRef.value
-      if (!demoElement || demoElement.offsetParent === null) {
+      if (
+        !demoElement ||
+        !(demoElement instanceof HTMLElement) ||
+        demoElement.offsetParent === null
+      ) {
         setTimeout(() => {
           setupDemoAnimation(typingDemoRef.value)
         }, 100)
@@ -787,7 +500,11 @@ onMounted(() => {
       if (!modalOverlay) return
 
       const demoElement = keyboardTesterDemoRef.value.$el || keyboardTesterDemoRef.value
-      if (!demoElement || demoElement.offsetParent === null) {
+      if (
+        !demoElement ||
+        !(demoElement instanceof HTMLElement) ||
+        demoElement.offsetParent === null
+      ) {
         setTimeout(() => {
           setupDemoAnimation(keyboardTesterDemoRef.value)
         }, 100)
@@ -807,7 +524,11 @@ onMounted(() => {
       if (!modalOverlay) return
 
       const demoElement = pixelBorderDemoRef.value.$el || pixelBorderDemoRef.value
-      if (!demoElement || demoElement.offsetParent === null) {
+      if (
+        !demoElement ||
+        !(demoElement instanceof HTMLElement) ||
+        demoElement.offsetParent === null
+      ) {
         setTimeout(() => {
           setupDemoAnimation(pixelBorderDemoRef.value)
         }, 100)
@@ -825,12 +546,7 @@ onMounted(() => {
       if (!modalOverlay) return
 
       // 주요 기능 섹션의 텍스트들
-      const featureTexts = [
-        featureText1Ref.value,
-        featureText2Ref.value,
-        featureText3Ref.value,
-        designFeatureTextRef.value,
-      ]
+      const featureTexts = [...featureTextRefs.value, designFeatureTextRef.value]
 
       featureTexts.forEach((textRef) => {
         if (!textRef) return
@@ -853,9 +569,21 @@ onMounted(() => {
       const modalOverlay = document.querySelector('.work-modal-overlay')
       if (!modalOverlay) return
 
-      // 모든 tech-block, roadmap-block, challenge-block, takeaway-block, feature-block 선택
+      // feature-block들
+      featureBlockRefs.value.forEach((blockRef, index) => {
+        if (!blockRef) return
+        if (blockRef.offsetParent === null) {
+          setTimeout(() => {
+            setupBlockAnimation(blockRef, index)
+          }, 100)
+          return
+        }
+        setupBlockAnimation(blockRef, index)
+      })
+
+      // 모든 tech-block, roadmap-block, challenge-block, takeaway-block 선택
       const blocks = document.querySelectorAll(
-        '.tech-block, .roadmap-block, .challenge-block, .takeaway-block, .feature-block',
+        '.tech-block, .roadmap-block, .challenge-block, .takeaway-block',
       )
 
       blocks.forEach((block, index) => {

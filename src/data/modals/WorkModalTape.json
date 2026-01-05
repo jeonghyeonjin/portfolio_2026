@@ -1,0 +1,194 @@
+{
+  "sections": {
+    "projectOverview": {
+      "title": "📌 Project Overview | 프로젝트 개요",
+      "paragraphs": {
+        "ko": "Tape는 비동기 비디오 메시징 도구로, 회의의 번거로움 없이 작업을 명확하게 공유하고, 신중한 피드백을 교환하며, 작업을 완료할 수 있도록 도와줍니다. Tape의 인터랙티브 기능은 협업을 원활하고 더욱 생산적으로 만듭니다.",
+        "en": "Tape is an asynchronous video messaging tool that helps you share your work with clarity, exchange thoughtful feedback, and accomplish tasks without the hassles of meetings. Tape's interactive features make collaboration seamless and extra-productive."
+      }
+    },
+    "techStack": {
+      "title": "🛠️ Tech Stack Summary"
+    },
+    "keyContributions": {
+      "title": "🎨 My Key Contributions"
+    },
+    "performanceImpact": {
+      "title": "📈 Performance Impact"
+    },
+    "keyTakeaways": {
+      "title": "🎯 Why This Matters"
+    }
+  },
+  "features": [
+    {
+      "title": "🥇 디자인 총괄 | Design Director",
+      "scope": {
+        "label": "Scope:",
+        "items": [
+          "<strong>AI 자막/요약 UI:</strong> 언어 선택 다이얼로그, Translate/Regenerate 버튼, Summary Export",
+          "<strong>텍스트 클립:</strong> TipTap Script 에디터, 코드블락 스타일, 포커스/줄바꿈 처리",
+          "<strong>커스텀 토스트:</strong> Element UI notify → vue-toastification 전환, 중복 방지",
+          "<strong>온보딩 시스템:</strong> Welcome 페이지, 툴팁 위치 조정, Progress Bar, 라우팅 전환 체크",
+          "<strong>녹화 UI:</strong> 전체 레이아웃 수정, Record type 선택, 타이머 표시 위치 변경",
+          "<strong>채널/인박스:</strong> 채널 헤더 영역, 외부 접속 CTA, 템플릿 버튼, 채널 아이콘",
+          "<strong>게스트 로그인:</strong> 팝업 문구, 이메일 가입 정합성, 이름 변경, 다운로드 제한",
+          "<strong>Notification:</strong> 기본값 설정, 디자인 개선, 퀵 레코드 비활성화",
+          "<strong>모바일 최적화:</strong> 채널 헤더, 툴팁, 가로/세로 비디오 고정, 레이아웃 버그 수정",
+          "<strong>단축키:</strong> 방향키 추가, 팝업 동작 개선",
+          "<strong>기타 UI/UX:</strong> 미팅 제목, 브라우저 탭 이름, 사이드바 여백, 폰트 사이즈, z-index"
+        ]
+      },
+      "deliverables": {
+        "label": "Key Deliverables:",
+        "items": [
+          "150+ Vue 컴포넌트의 디자인 및 레이아웃 작업",
+          "Element UI & Vuetify 커스터마이징",
+          "모바일 가로/세로에 따른 비디오 고정 변경",
+          "채널 헤더, 사이드바, 인박스 UI 개선",
+          "단축키 팝업, Notification 디자인 시스템"
+        ]
+      },
+      "impact": {
+        "label": "Impact:",
+        "items": [
+          "✅ 프로젝트 디자인 총괄",
+          "✅ UI 라이브러리 커스터마이징 능력",
+          "✅ 프로덕션 수준 반응형 디자인"
+        ]
+      }
+    },
+    {
+      "title": "🥈 이모지 피드백 개발 | Emoji Feedback System",
+      "challenge": {
+        "label": "Challenge:",
+        "items": [
+          "비디오 위에 실시간으로 표시되는 이모지 시각화",
+          "이모지 배경 투명도 조정으로 비디오 가독성 확보",
+          "게스트 사용자도 이모지 입력 가능하도록 UI 개선",
+          "모바일 환경에서의 이모지 리액션 화면 최적화"
+        ]
+      },
+      "solution": {
+        "label": "Solution:",
+        "items": [
+          "<strong>이모지 피드백 화면 로직 및 디자인 조정</strong> - 비디오 위 실시간 이모지 표시",
+          "<strong>Clip reaction 화면 수정</strong> - 배경 투명도 조정 및 곡률 제거",
+          "<strong>게스트 이모지 입력 기능</strong> - 비로그인 사용자 접근성 개선",
+          "<strong>모바일 최적화</strong> - 가로/세로 환경에 따른 레이아웃 조정",
+          "<strong>시간 기반 필터링</strong> - 성능 최적화 및 랜덤 액세스 지원"
+        ]
+      },
+      "impact": {
+        "label": "Impact:",
+        "items": [
+          "✅ 실시간 피드백 경험 개선",
+          "✅ 비디오 위 인터랙션 디자인 능력",
+          "✅ 접근성 고려 (게스트 사용자 지원)",
+          "✅ 시간 기반 필터링 로직 구현 (성능 최적화)"
+        ]
+      },
+      "codeKey": "emojiCode"
+    },
+    {
+      "title": "🥉 다양한 클립 타입 지원 | Multiple Clip Types Support",
+      "challenge": {
+        "label": "Challenge:",
+        "items": [
+          "비디오뿐만 아니라 다양한 타입의 클립 지원 필요",
+          "Upload, Text, Embed, Poll, Request 등 다양한 클립 타입 UI 구현",
+          "각 클립 타입별로 다른 레이아웃 및 인터랙션 디자인",
+          "클립 타입 선택 UI 및 생성 플로우 설계"
+        ]
+      },
+      "solution": {
+        "label": "Solution:",
+        "items": [
+          "<strong>다양한 클립 타입 UI 구현</strong> - Upload, Text, Embed, Poll, Request 클립 타입 지원",
+          "<strong>임베드 레이아웃 및 디자인 작업</strong> - Calendly, CodePen, Figma 임베드 대응",
+          "<strong>텍스트 클립 에디터 통합</strong> - TipTap 에디터 및 코드블락 스타일링",
+          "<strong>Fixed size embed width/height 자동 계산</strong> - 반응형 크기 조정",
+          "<strong>임베드 시 자막 버튼 처리</strong> - UI 충돌 방지",
+          "<strong>임베드 URL 풀 URL 처리</strong> - 사용자 편의성 개선"
+        ]
+      },
+      "impact": {
+        "label": "Impact:",
+        "items": [
+          "✅ 다양한 콘텐츠 타입 지원으로 플랫폼 확장성 확보",
+          "✅ 각 클립 타입별 최적화된 UI/UX 제공",
+          "✅ 외부 서비스 통합 및 에디터 구현 능력"
+        ]
+      },
+      "codeKey": "embedCode"
+    }
+  ],
+  "takeaways": [
+    {
+      "title": "Design & Frontend Leadership:",
+      "items": [
+        "<strong>Design System Ownership:</strong> 150+ Vue 컴포넌트의 전체 레이아웃 및 디자인 총괄",
+        "<strong>UI Library Mastery:</strong> Element UI & Vuetify 커스터마이징, vue-toastification 통합",
+        "<strong>Production-level UX:</strong> 온보딩 시스템, 게스트 로그인, 단축키 등 사용자 경험 개선",
+        "<strong>Responsive Design:</strong> 모바일/태블릿 환경 최적화, 가로/세로 레이아웃 대응",
+        "<strong>External Integration:</strong> Calendly, CodePen, Figma 임베드 UI 구현 및 동적 스크립트 로딩"
+      ]
+    },
+    {
+      "title": "Technical Skills:",
+      "items": [
+        "<strong>Vue 2 Ecosystem:</strong> Options API, Vuex, Vue Router, 150+ 컴포넌트 구조 설계",
+        "<strong>Rich Text Editor:</strong> TipTap 통합, 코드블락 스타일링, 포커스/줄바꿈 처리",
+        "<strong>Video UI/UX:</strong> 이모지 피드백 시스템, 자막 UI, 녹화 인터페이스 디자인",
+        "<strong>URL Processing:</strong> 서비스별 URL 파싱 및 변환 (Calendly/CodePen/Figma)",
+        "<strong>Accessibility:</strong> 게스트 사용자 지원, 권한 기반 UI, 다운로드 제한 처리"
+      ]
+    },
+    {
+      "title": "Business Impact:",
+      "items": [
+        "<strong>Product Hunt Success:</strong> Product Hunt 데일리 2등 달성 (February 23rd, 2023)",
+        "<strong>User Onboarding:</strong> 온보딩 시스템 구축으로 신규 사용자 경험 개선",
+        "<strong>Cross-platform Support:</strong> 모바일/데스크톱 반응형 디자인으로 사용자층 확대",
+        "<strong>External Tool Integration:</strong> Calendly/Figma 임베드로 협업 워크플로우 개선",
+        "<strong>UI Consistency:</strong> 커스텀 토스트 시스템으로 전체 앱 UX 일관성 확보",
+        "<strong>Accessibility First:</strong> 게스트 사용자 지원으로 진입 장벽 낮춤"
+      ]
+    },
+    {
+      "title": "Work Scope Summary:",
+      "items": [
+        "<strong>Total Components:</strong> 150+ Vue 컴포넌트 디자인 및 레이아웃",
+        "<strong>Feature Areas:</strong> 이모지 시스템, 임베드, AI 자막 UI, 텍스트 클립, 온보딩, 녹화 UI, 채널/인박스, 게스트 로그인, Notification, 단축키, 모바일 최적화",
+        "<strong>Tech Stack:</strong> Vue 2, Vuex, Element UI, Vuetify, TipTap, Video.js, vue-toastification",
+        "<strong>Role:</strong> Frontend Developer & UI/UX Designer (디자인 총괄)"
+      ]
+    }
+  ],
+  "techStacks": [
+    {
+      "title": "Frontend:",
+      "items": [
+        "Vue 2 (Options API)",
+        "Vuex (State Management)",
+        "Vue Router",
+        "Element UI & Vuetify",
+        "Video.js",
+        "TipTap (Rich Text)"
+      ]
+    },
+    {
+      "title": "External Integrations:",
+      "items": ["Calendly API", "CodePen Embed", "Figma Embed", "vue-toastification"]
+    }
+  ],
+  "performanceMetrics": [
+    { "label": "Components Designed", "value": "150+ Vue Components" },
+    { "label": "Feature Areas", "value": "12+ Major Features" },
+    { "label": "Product Hunt", "value": "Daily #2 (Feb 23, 2023)" }
+  ],
+  "codeSnippets": {
+    "emojiCode": "// 시간 기반 이모지 표시 로직\nasync displayEmoji(time) {\n  if (this.filteredEmojiList?.length === 0) return\n\n  for (let i = 0; i < this.filteredEmojiList?.length; i++) {\n    let emoji = this.filteredEmojiList[i]\n\n    // 현재 시간과 이모지 시간의 차이가 0.15초 이내면 표시\n    if (Math.abs(emoji.emojiTime - time) <= this.EMOJI_DISPLAY_TIME) {\n      this.filteredEmojiList.splice(i, 1)\n      i--\n      this.emojiFadeoutMap.set(emoji.emojiId, false)\n      this.addToDisplayingEmojiList({\n        id: emoji.emojiId,\n        type: this.getEmojiType(emoji.unicode),\n        top: emoji.positionY,\n        left: emoji.positionX,\n        time: emoji.emojiTime,\n      })\n    } else if (emoji.emojiTime < time) {\n      // 현재 시간보다 이전 이모지는 제거 (성능 최적화)\n      this.filteredEmojiList.splice(i, 1)\n      i--\n    } else {\n      break // 시간순 정렬되어 있으므로 이후는 확인 불필요\n    }\n  }\n}\n\n// 랜덤 액세스 처리\nonRandomAccess(time) {\n  this.resetDisplayingEmojiList()\n  this.filteredEmojiList = this.emojiList ? [...this.emojiList] : []\n  this.displayEmoji(time)\n}",
+    "embedCode": "// Service-specific URL conversion and embed handling\nif (this.url.indexOf('calendly.com') > -1) {\n  this.urlType = 'calendly'\n\n  // Dynamic script loading with duplicate prevention\n  if (document.querySelector('script[tag=\"calendly\"]')) {\n    document.querySelector('script[tag=\"calendly\"]')\n      .parentNode.removeChild(document.querySelector('script[tag=\"calendly\"]'))\n  }\n\n  let calendlyScript = document.createElement('script')\n  calendlyScript.setAttribute('tag', 'calendly')\n  calendlyScript.setAttribute('src',\n    'https://assets.calendly.com/assets/external/widget.js')\n  document.head.appendChild(calendlyScript)\n\n} else if (this.url.indexOf('codepen.io') > -1) {\n  this.url = this.url.replace('/pen/', '/embed/')\n\n} else if (this.url.indexOf('figma.com') > -1) {\n  // URL encoding for Figma embed\n  let prefix = 'https://www.figma.com/embed?embed_host=share&url='\n  this.url = this.url\n    .replaceAll('%', '%25')\n    .replaceAll(':', '%3A')\n    .replaceAll('/', '%2F')\n  this.url = prefix.concat(this.url)\n}"
+  }
+}

@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Shadow",
     "description": "AI meeting transcription app",
+    "modalComponent": "WorkModalShadow",
     "thumbnail": "../../assets/images/works/shadow/shadow_thumbnail2.png",
     "footer": {
       "externalLink": "https://shadow.do"
@@ -18,6 +19,7 @@
     "id": 2,
     "title": "Master Forge Pixel art",
     "description": "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter",
+    "modalComponent": "WorkModalMasterForge",
     "thumbnail": "../../assets/images/works/master-forge/m4g_pin.png",
     "chips": [
       { "label": "Side", "variant": "side" },
@@ -28,6 +30,7 @@
     "id": 3,
     "title": "Keebbear",
     "description": "Comprehensive Platform for Keyboard Lovers",
+    "modalComponent": "WorkModalKeebbear",
     "thumbnail": null,
     "videoSources": {
       "mp4": "/portfolio_2026/videos/keebbear_1.mp4",
@@ -49,6 +52,7 @@
     "id": 4,
     "title": "Tape",
     "description": "Asynchronous video messaging tool for collaborative workspace",
+    "modalComponent": "WorkModalTape",
     "thumbnail": "../../assets/images/works/tape/tape_thumbnail.png",
     "videoSources": {
       "mp4": "/portfolio_2026/videos/tape/tape_main.mp4",

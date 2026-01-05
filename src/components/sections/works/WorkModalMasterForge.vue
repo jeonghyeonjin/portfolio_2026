@@ -85,6 +85,7 @@ import imgPin from '@/assets/images/works/master-forge/m4g_pin.png'
 import imgMockup from '@/assets/images/works/master-forge/m4g_pin_mockup.png'
 import imgSticker from '@/assets/images/works/master-forge/m4g_sticker.png'
 import worksData from '@/data/works.json'
+import modalData from '@/data/modals/WorkModalMasterForge.json'
 
 gsap.registerPlugin(Flip)
 
@@ -120,41 +121,32 @@ const viewportHeight = ref(window.innerHeight)
 const isLandscape = computed(() => viewportWidth.value > viewportHeight.value)
 const heroImage = computed(() => (isLandscape.value ? imgHeroWide : imgHero))
 
-// Data
-const slides = computed(() => [
-  {
+// Data from JSON
+const slides = computed(() => {
+  const heroSlide = {
     image: heroImage.value,
     title: workData?.title?.toUpperCase() || 'MASTER FORGE',
     description: {
       en: workData?.description || "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
       ko: workData?.description || 'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
     },
-  },
-  {
-    image: imgPin,
-    title: 'PIN DESIGN',
-    description: {
-      en: 'A pin design expressing Master Forge keyboard identity through pixel art. Captures a retro sensibility and brand identity.',
-      ko: 'Master Forge 키보드의 아이덴티티를 픽셀 아트로 표현한 핀 디자인입니다. 레트로한 감성과 브랜드의 정체성을 담았습니다.',
-    },
-  },
-  {
-    image: imgMockup,
-    title: 'MOCKUP',
-    description: {
-      en: 'A mockup visualizing how it would look when produced as an actual product.',
-      ko: '실제 제품으로 제작되었을 때의 모습을 시각화한 목업입니다.',
-    },
-  },
-  {
-    image: imgSticker,
-    title: 'STICKER',
-    description: {
-      en: 'A sticker design that can be attached to various keyboards and accessories. Made in a cute style and infused with the charm of stickers.',
-      ko: '키보드와 다양한 액세서리에 부착할 수 있는 스티커 디자인입니다. 귀여운 스타일로 제작하고 스티커만의 매력을 살렸습니다.',
-    },
-  },
-])
+  }
+
+  // JSON에서 가져온 슬라이드 데이터를 이미지 import와 매핑
+  const imageMap = {
+    '@/assets/images/works/master-forge/m4g_pin.png': imgPin,
+    '@/assets/images/works/master-forge/m4g_pin_mockup.png': imgMockup,
+    '@/assets/images/works/master-forge/m4g_sticker.png': imgSticker,
+  }
+
+  const additionalSlides = modalData.slides.map((slide) => ({
+    image: imageMap[slide.imagePath] || slide.imagePath,
+    title: slide.title,
+    description: slide.description,
+  }))
+
+  return [heroSlide, ...additionalSlides]
+})
 
 const currentSlide = computed(() => slides.value[activeIndex.value])
 
