@@ -23,14 +23,18 @@
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section" v-if="modalData.sections?.projectOverview">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.projectOverview"
+        id="keeb-overview"
+      >
         <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
         <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
         <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
       </section>
 
       <!-- Key Features -->
-      <section class="content-section" v-if="modalData.sections?.keyFeatures">
+      <section class="content-section" v-if="modalData.sections?.keyFeatures" id="keeb-features">
         <h2 class="section-title">{{ modalData.sections.keyFeatures.title }}</h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
@@ -56,7 +60,7 @@
       </section>
 
       <!-- Design Features -->
-      <section class="content-section" v-if="modalData.sections?.designFeatures">
+      <section class="content-section" v-if="modalData.sections?.designFeatures" id="keeb-design">
         <h2 class="section-title">{{ modalData.sections.designFeatures.title }}</h2>
 
         <div class="feature-block" ref="designFeatureBlockRef">
@@ -84,7 +88,11 @@
       </section>
 
       <!-- Technical Highlights -->
-      <section class="content-section" v-if="modalData.sections?.technicalHighlights">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.technicalHighlights"
+        id="keeb-tech-highlights"
+      >
         <h2 class="section-title">{{ modalData.sections.technicalHighlights.title }}</h2>
 
         <template v-for="(techBlock, index) in modalData.techBlocks" :key="index">
@@ -101,13 +109,17 @@
       </section>
 
       <!-- Component Architecture -->
-      <section class="content-section" v-if="modalData.sections?.componentArchitecture">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.componentArchitecture"
+        id="keeb-architecture"
+      >
         <h2 class="section-title">{{ modalData.sections.componentArchitecture.title }}</h2>
         <TreeDiagram :data="componentArchitectureTree" />
       </section>
 
       <!-- Future Roadmap -->
-      <section class="content-section" v-if="modalData.sections?.futureRoadmap">
+      <section class="content-section" v-if="modalData.sections?.futureRoadmap" id="keeb-roadmap">
         <h2 class="section-title">{{ modalData.sections.futureRoadmap.title }}</h2>
         <div v-for="(phase, index) in modalData.roadmap" :key="index" class="roadmap-block">
           <h4 class="roadmap-phase">{{ phase.phase }}</h4>
@@ -118,7 +130,11 @@
       </section>
 
       <!-- Technical Challenges -->
-      <section class="content-section" v-if="modalData.sections?.technicalChallenges">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.technicalChallenges"
+        id="keeb-challenges"
+      >
         <h2 class="section-title">{{ modalData.sections.technicalChallenges.title }}</h2>
 
         <div
@@ -137,19 +153,23 @@
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section" v-if="modalData.sections?.performanceMetrics">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.performanceMetrics"
+        id="keeb-metrics"
+      >
         <h2 class="section-title">{{ modalData.sections.performanceMetrics.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Tech Stack -->
-      <section class="content-section" v-if="modalData.sections?.techStackSummary">
+      <section class="content-section" v-if="modalData.sections?.techStackSummary" id="keeb-tech">
         <h2 class="section-title">{{ modalData.sections.techStackSummary.title }}</h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Key Takeaways -->
-      <section class="content-section" v-if="modalData.sections?.keyTakeaways">
+      <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="keeb-takeaways">
         <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
 
         <div v-for="(takeaway, index) in modalData.takeaways" :key="index" class="takeaway-block">
@@ -160,6 +180,8 @@
         </div>
       </section>
     </div>
+
+    <WorkModalTOC :sections="tocSections" theme="light" />
   </div>
 </template>
 
@@ -172,6 +194,7 @@ import TreeDiagram from '@/components/common/TreeDiagram.vue'
 import CodeBlock from '@/components/common/CodeBlock.vue'
 import MetricsGrid from '@/components/common/MetricsGrid.vue'
 import TechStackGrid from '@/components/common/TechStackGrid.vue'
+import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
 import TypingDemo from './demos/TypingDemo.vue'
 import KeyboardTesterDemo from './demos/KeyboardTesterDemo.vue'
 import PixelBorderDemo from './demos/PixelBorderDemo.vue'
@@ -373,6 +396,19 @@ const setupBlockAnimation = (block, index = 0) => {
 const performanceMetrics = modalData.performanceMetrics
 const techStacks = modalData.techStacks
 const componentArchitectureTree = modalData.treeData.componentArchitectureTree
+
+const tocSections = [
+  { id: 'keeb-overview', label: 'Project Overview' },
+  { id: 'keeb-features', label: 'Key Features' },
+  { id: 'keeb-design', label: 'Design Features' },
+  { id: 'keeb-tech-highlights', label: 'Tech Highlights' },
+  { id: 'keeb-architecture', label: 'Architecture' },
+  { id: 'keeb-roadmap', label: 'Future Roadmap' },
+  { id: 'keeb-challenges', label: 'Tech Challenges' },
+  { id: 'keeb-metrics', label: 'Performance Metrics' },
+  { id: 'keeb-tech', label: 'Tech Stack' },
+  { id: 'keeb-takeaways', label: 'Key Takeaways' },
+]
 
 onMounted(() => {
   if (mockupContainerRef.value && mockupWrapperRef.value) {

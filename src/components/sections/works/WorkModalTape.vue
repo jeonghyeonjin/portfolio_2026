@@ -31,7 +31,7 @@
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section" v-if="modalData.sections?.projectOverview">
+      <section class="content-section" v-if="modalData.sections?.projectOverview" id="tape-overview">
         <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
         <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
         <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
@@ -66,13 +66,13 @@
       </section>
 
       <!-- Tech Stack -->
-      <section class="content-section" v-if="modalData.sections?.techStack">
+      <section class="content-section" v-if="modalData.sections?.techStack" id="tape-tech">
         <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Key Contributions -->
-      <section class="content-section" v-if="modalData.sections?.keyContributions">
+      <section class="content-section" v-if="modalData.sections?.keyContributions" id="tape-features">
         <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
@@ -159,13 +159,13 @@
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section" v-if="modalData.sections?.performanceImpact">
+      <section class="content-section" v-if="modalData.sections?.performanceImpact" id="tape-metrics">
         <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Key Takeaways -->
-      <section class="content-section" v-if="modalData.sections?.keyTakeaways">
+      <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="tape-takeaways">
         <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
 
         <div v-for="(takeaway, index) in modalData.takeaways" :key="index" class="takeaway-block">
@@ -176,6 +176,8 @@
         </div>
       </section>
     </div>
+
+    <WorkModalTOC :sections="tocSections" />
   </div>
 </template>
 
@@ -190,6 +192,7 @@ import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import EmojiFeedbackDemo from './demos/EmojiFeedbackDemo.vue'
 import ChannelListDemo from './demos/ChannelListDemo.vue'
 import VideoDetailDemo from './demos/VideoDetailDemo.vue'
+import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
 import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalTape.json'
 
@@ -416,6 +419,14 @@ const setupBlockAnimation = (block, index = 0) => {
 // Data from JSON
 const performanceMetrics = modalData.performanceMetrics
 const techStacks = modalData.techStacks
+
+const tocSections = [
+  { id: 'tape-overview', label: 'Project Overview' },
+  { id: 'tape-tech', label: 'Tech Stack' },
+  { id: 'tape-features', label: 'Key Contributions' },
+  { id: 'tape-metrics', label: 'Performance Metrics' },
+  { id: 'tape-takeaways', label: 'Key Takeaways' }
+]
 
 onMounted(() => {
   // Hero 이미지 스크롤 애니메이션 (WorkModal3 참고)

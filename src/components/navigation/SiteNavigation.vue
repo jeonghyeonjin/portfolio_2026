@@ -76,7 +76,7 @@
           class="search-results"
           role="listbox"
           :aria-label="`${filteredWorks.length}개의 검색 결과`"
-          @wheel.stop
+          @wheel.passive.stop
         >
           <div
             v-for="(work, index) in filteredWorks"

@@ -28,7 +28,7 @@
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section" v-if="modalData.sections?.projectOverview">
+      <section class="content-section" v-if="modalData.sections?.projectOverview" id="shadow-overview">
         <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
         <p
           v-for="(paragraph, index) in modalData.sections.projectOverview.paragraphs"
@@ -40,13 +40,13 @@
       </section>
 
       <!-- Tech Stack -->
-      <section class="content-section" v-if="modalData.sections?.techStack">
+      <section class="content-section" v-if="modalData.sections?.techStack" id="shadow-tech">
         <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Logo Design -->
-      <section class="content-section" v-if="modalData.sections?.logoDesign">
+      <section class="content-section" v-if="modalData.sections?.logoDesign" id="shadow-logo">
         <h2 class="section-title">{{ modalData.sections.logoDesign.title }}</h2>
         <p class="section-text">{{ modalData.sections.logoDesign.description }}</p>
         <div class="logo-evolution">
@@ -75,7 +75,7 @@
       </section>
 
       <!-- Key Features -->
-      <section class="content-section" v-if="modalData.sections?.keyContributions">
+      <section class="content-section" v-if="modalData.sections?.keyContributions" id="shadow-features">
         <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
@@ -122,13 +122,13 @@
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section" v-if="modalData.sections?.performanceImpact">
+      <section class="content-section" v-if="modalData.sections?.performanceImpact" id="shadow-metrics">
         <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Key Takeaways -->
-      <section class="content-section" v-if="modalData.sections?.keyTakeaways">
+      <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="shadow-takeaways">
         <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
 
         <div
@@ -143,6 +143,8 @@
         </div>
       </section>
     </div>
+
+    <WorkModalTOC :sections="tocSections" />
   </div>
 </template>
 
@@ -154,6 +156,7 @@ import { useResponsive } from '@/composables/useResponsive'
 import CodeBlock from '@/components/common/CodeBlock.vue'
 import MetricsGrid from '@/components/common/MetricsGrid.vue'
 import TechStackGrid from '@/components/common/TechStackGrid.vue'
+import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
 import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalShadow.json'
 import logo1 from '@/assets/images/works/shadow/logo1.png'
@@ -200,6 +203,15 @@ const setFeatureCodeRef = (el, index) => {
 // Data from JSON
 const performanceMetrics = modalData.performanceMetrics
 const techStacks = modalData.techStacks
+
+const tocSections = [
+  { id: 'shadow-overview', label: 'Project Overview' },
+  { id: 'shadow-tech', label: 'Tech Stack' },
+  { id: 'shadow-logo', label: 'Logo Design' },
+  { id: 'shadow-features', label: 'Key Features' },
+  { id: 'shadow-metrics', label: 'Performance Metrics' },
+  { id: 'shadow-takeaways', label: 'Key Takeaways' }
+]
 
 // Logo images
 const logoImages = [logo1, logo2, logo3, logo4]
