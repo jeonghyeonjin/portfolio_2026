@@ -42,39 +42,17 @@
           @mouseleave="(e) => handleWorkHover(e, work.id, false)"
         >
           <div class="work-image-container" aria-hidden="true">
-            <video
-              v-if="work.videoSources"
-              :ref="(el) => setVideoRef(el, work.id)"
-              class="work-video"
-              autoplay
-              loop
-              muted
-              playsinline
-              @error="(e) => handleVideoError(e, work.id)"
-            >
-              <!-- MP4를 우선 사용 (용량이 더 작고 모든 브라우저 지원) -->
-              <source
-                v-if="work.videoSources.mp4"
-                :src="getVideoUrl(work.videoSources.mp4)"
-                type="video/mp4"
-              />
-              <!-- WebM은 fallback으로만 사용 -->
-              <source
-                v-if="supportsWebM && work.videoSources.webm && !work.videoSources.mp4"
-                :src="getVideoUrl(work.videoSources.webm)"
-                type="video/webm"
-              />
+            <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
+              <source :src="getVideoUrl(work.videoSources.webm)" type="video/webm" />
+              <source :src="getVideoUrl(work.videoSources.mp4)" type="video/mp4" />
             </video>
             <img
-              v-if="work.thumbnail && (!work.videoSources || videoErrors[work.id])"
+              v-else-if="work.thumbnail"
               :src="getThumbnailUrl(work.thumbnail)"
               :alt="`${work.title} 대표 이미지`"
               class="work-image"
             />
-            <div
-              v-if="!work.thumbnail && (!work.videoSources || videoErrors[work.id])"
-              class="work-image-placeholder"
-            ></div>
+            <div v-else class="work-image-placeholder"></div>
             <div class="work-overlay"></div>
 
             <div v-if="work.chips && work.chips.length > 0" class="work-chips-container">
@@ -156,20 +134,20 @@
       :class="{ 'is-optimized': isFixed('work-modal-perf') }"
     ></div>
     <!-- Work Modal -->
-    <Teleport to="body">
-      <WorkModal
-        ref="workModalRef"
-        v-if="activeWorkId"
-        :work-id="activeWorkId"
-        :is-visible="isModalVisible"
-        @close="closeWorkModal"
-      />
-    </Teleport>
+    <!-- <Teleport to="body"> -->
+    <WorkModal
+      ref="workModalRef"
+      v-if="activeWorkId"
+      :work-id="activeWorkId"
+      :is-visible="isModalVisible"
+      @close="closeWorkModal"
+    />
+    <!-- </Teleport> -->
   </section>
 </template>
 
 <script setup>
-import { ref, inject, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { ref, inject, onMounted, onUnmounted, nextTick } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import WorkModal from './works/WorkModal.vue'
@@ -190,14 +168,12 @@ import {
 // 썸네일 이미지 import (Vite가 빌드 시 처리하도록)
 import imgShadowThumbnail from '@/assets/images/works/shadow/shadow_thumbnail2.png'
 import imgMasterForgePin from '@/assets/images/works/master-forge/m4g_pin.png'
-import imgKeebbearThumbnail from '@/assets/images/works/keebbear/keebbear_thumbnail1.png'
 import imgTapeThumbnail from '@/assets/images/works/tape/tape_thumbnail.png'
 
 // 썸네일 이미지 매핑
 const thumbnailMap = {
   '../../assets/images/works/shadow/shadow_thumbnail2.png': imgShadowThumbnail,
   '../../assets/images/works/master-forge/m4g_pin.png': imgMasterForgePin,
-  '../../assets/images/works/keebbear/keebbear_thumbnail1.png': imgKeebbearThumbnail,
   '../../assets/images/works/tape/tape_thumbnail.png': imgTapeThumbnail,
 }
 
@@ -210,7 +186,6 @@ const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
 // provide/inject로 works 데이터 및 콜백 공유
 const setWorksData = inject('setWorksData')
 const setSelectWorkCallback = inject('setSelectWorkCallback')
-const setWorkModalOpen = inject('setWorkModalOpen')
 
 const workTitleRef = ref(null)
 const workSectionRef = ref(null)
@@ -222,43 +197,15 @@ const isModalVisible = ref(false)
 const circleRevealRef = ref(null)
 const workModalRef = ref(null)
 const workItemRefs = ref({})
-const videoRefs = ref({})
-const videoErrors = ref({})
 let currentCircleScale = null
 
 const IS_VISIBLE_CLASS = 'is-visible'
 const WORK_MODAL_ID = 'work-modal'
 
-// WebM 지원 여부 확인 (fallback용)
-const supportsWebM = computed(() => {
-  if (typeof document === 'undefined') return false
-  const video = document.createElement('video')
-  return video.canPlayType('video/webm; codecs="vp9"') !== ''
-})
-
 // work-item ref 설정
 const setWorkItemRef = (el, workId) => {
   if (el) {
     workItemRefs.value[workId] = el
-  }
-}
-
-// video ref 설정
-const setVideoRef = (el, workId) => {
-  if (el) {
-    videoRefs.value[workId] = el
-  }
-}
-
-// 비디오 에러 핸들러 (모바일에서 비디오 로드 실패 시 썸네일로 fallback)
-const handleVideoError = (event, workId) => {
-  console.warn(`비디오 로드 실패 (workId: ${workId}):`, event)
-  videoErrors.value[workId] = true
-
-  // 비디오 요소 숨기기
-  const video = videoRefs.value[workId]
-  if (video) {
-    video.style.display = 'none'
   }
 }
 
@@ -541,11 +488,6 @@ const openWorkModal = async (workId, event = null) => {
     onComplete: () => {
       isModalVisible.value = true
       currentCircleScale = null // 애니메이션 완료 후 스케일 초기화
-
-      // 전역 모달 상태 업데이트 (배경 오버레이 활성화 - 애니메이션 완료 후)
-      if (setWorkModalOpen) {
-        setWorkModalOpen(true)
-      }
     },
   })
 
@@ -560,16 +502,8 @@ const openWorkModal = async (workId, event = null) => {
 }
 
 // 모달 닫기 (원형 애니메이션 역순)
-const closeWorkModal = async () => {
+const closeWorkModal = () => {
   const modalEl = workModalRef.value?.$el
-
-  // 전역 모달 상태 업데이트 (배경 오버레이 비활성화 - 애니메이션 시작 전)
-  if (setWorkModalOpen) {
-    setWorkModalOpen(false)
-  }
-
-  // 메인 컨텐츠가 다시 렌더링될 시간을 확보 (1프레임 대기)
-  await new Promise((resolve) => requestAnimationFrame(resolve))
 
   createCircleCloseAnimation(circleRevealRef.value, modalEl, currentCircleScale, {
     onComplete: () => {
@@ -678,21 +612,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  // 비디오 정리 (메모리 해제)
-  Object.values(videoRefs.value).forEach((video) => {
-    if (video) {
-      try {
-        video.pause()
-        video.src = ''
-        video.load()
-      } catch (error) {
-        console.warn('Video cleanup failed:', error)
-      }
-    }
-  })
-  videoRefs.value = {}
-  videoErrors.value = {}
-
   // ScrollTrigger 정리
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) trigger.kill()

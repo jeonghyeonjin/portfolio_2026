@@ -23,10 +23,8 @@
               preload="metadata"
               class="mockup-video"
             >
-              <!-- MP4를 우선 사용 (용량이 더 작고 모든 브라우저 지원) -->
+              <source :src="videoWebmUrl" type="video/webm" />
               <source :src="videoMp4Url" type="video/mp4" />
-              <!-- WebM은 fallback으로만 사용 -->
-              <source v-if="supportsWebM" :src="videoWebmUrl" type="video/webm" />
             </video>
           </div>
         </div>
@@ -202,7 +200,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, inject, computed, provide } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, inject, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
@@ -220,9 +218,6 @@ import modalData from '@/data/modals/WorkModalKeebbear.json'
 
 const workId = inject('workId', 3)
 
-// 모달 배경색을 provide로 제공 (기본값: WorkModal.vue의 overlay 배경색)
-provide('modalBackgroundColor', 'rgb(var(--white--1))')
-
 // ScrollTrigger instances management
 const scrollTriggers = ref([])
 const retryTimeouts = ref([])
@@ -230,13 +225,6 @@ const MAX_RETRY_ATTEMPTS = 3
 
 const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
-})
-
-// WebM 지원 여부 확인 (fallback용)
-const supportsWebM = computed(() => {
-  if (typeof document === 'undefined') return false
-  const video = document.createElement('video')
-  return video.canPlayType('video/webm; codecs="vp9"') !== ''
 })
 
 // 비디오 URL (public 폴더의 파일은 BASE_URL 사용)
@@ -475,8 +463,8 @@ const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
       scroller: modalOverlay,
       start: 'top 90%',
       end: 'top 60%',
-      // toggleActions: 'play none none reverse',
-      // invalidateOnRefresh: true,
+      toggleActions: 'play none none reverse',
+      invalidateOnRefresh: true,
     }
 
     // ScrollTrigger 파라미터 검증
@@ -530,8 +518,8 @@ onMounted(() => {
         if (isMobile.value) {
           // Simple scale animation
           const animation1 = gsap.to(mockupWrapperRef.value, {
-            scale: 0.8,
-            bottom: '-10%',
+            scale: 0.6,
+            bottom: '-5%',
             opacity: 1,
             scrollTrigger: {
               trigger: mockupContainerRef.value,
@@ -546,7 +534,7 @@ onMounted(() => {
           // Simple margin animation
           const animation2 = gsap.to(mockupContainerRef.value, {
             marginTop: '100vh',
-            height: isLandscape ? '' : '60vh',
+            height: isLandscape ? '' : '40vh',
             scrollTrigger: {
               trigger: mockupContainerRef.value,
               scroller: modalOverlay,
@@ -558,9 +546,7 @@ onMounted(() => {
           createScrollTrigger(animation2)
 
           // Fade out elements - consolidated
-          const elementsToFade = [workModalHeaderRef.value, mockupContainerInnerRef.value].filter(
-            Boolean,
-          )
+          const elementsToFade = [workModalHeaderRef.value].filter(Boolean)
           if (elementsToFade.length > 0) {
             const animation3 = gsap.to(elementsToFade, {
               opacity: 0,
@@ -677,17 +663,6 @@ onMounted(() => {
 
 // Cleanup on unmount
 onUnmounted(() => {
-  // 비디오 정리 (메모리 해제)
-  if (mockupVideoRef.value) {
-    try {
-      mockupVideoRef.value.pause()
-      mockupVideoRef.value.src = ''
-      mockupVideoRef.value.load()
-    } catch (error) {
-      console.warn('Video cleanup failed:', error)
-    }
-  }
-
   // Kill all ScrollTrigger instances
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) {

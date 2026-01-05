@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
@@ -88,7 +88,6 @@ gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 const { isTablet } = useResponsive()
-const isWorkModalOpen = inject('isWorkModalOpen')
 
 const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
@@ -183,20 +182,6 @@ onMounted(() => {
     }
   }
 })
-
-// 모달 상태에 따라 애니메이션 제어
-watch(
-  () => isWorkModalOpen?.value,
-  (isOpen) => {
-    if (heroBgPathAnimation) {
-      if (isOpen) {
-        heroBgPathAnimation.pause()
-      } else {
-        heroBgPathAnimation.play()
-      }
-    }
-  },
-)
 
 onUnmounted(() => {
   // ScrollTrigger 정리
