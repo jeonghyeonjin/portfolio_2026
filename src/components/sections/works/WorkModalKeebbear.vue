@@ -23,8 +23,10 @@
               preload="metadata"
               class="mockup-video"
             >
-              <source :src="videoWebmUrl" type="video/webm" />
+              <!-- MP4를 우선 사용 (용량이 더 작고 모든 브라우저 지원) -->
               <source :src="videoMp4Url" type="video/mp4" />
+              <!-- WebM은 fallback으로만 사용 -->
+              <source v-if="supportsWebM" :src="videoWebmUrl" type="video/webm" />
             </video>
           </div>
         </div>
@@ -228,6 +230,13 @@ const MAX_RETRY_ATTEMPTS = 3
 
 const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
+})
+
+// WebM 지원 여부 확인 (fallback용)
+const supportsWebM = computed(() => {
+  if (typeof document === 'undefined') return false
+  const video = document.createElement('video')
+  return video.canPlayType('video/webm; codecs="vp9"') !== ''
 })
 
 // 비디오 URL (public 폴더의 파일은 BASE_URL 사용)

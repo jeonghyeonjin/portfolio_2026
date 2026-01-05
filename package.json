@@ -13,7 +13,8 @@
     "deploy": "gh-pages -d dist",
     "preview": "vite preview",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "compress-videos": "node scripts/compress-videos.js"
   },
   "dependencies": {
     "@vueuse/core": "^14.1.0",
