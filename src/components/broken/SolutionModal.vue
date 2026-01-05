@@ -5,16 +5,16 @@
       class="solution-modal-overlay"
       @click="close"
       @wheel.passive.stop
-      @touchstart="handleOverlayTouchStart"
-      @touchmove="handleOverlayTouchMove"
+      @touchstart.passive="handleOverlayTouchStart"
+      @touchmove.passive="handleOverlayTouchMove"
     >
       <div
         ref="solutionModalRef"
         class="solution-modal"
         @click.stop
         @wheel.passive="handleModalWheel"
-        @touchstart.stop
-        @touchmove="handleModalTouchMove"
+        @touchstart.stop.passive
+        @touchmove.passive="handleModalTouchMove"
       >
         <Transition name="issue-marker">
           <div
@@ -276,11 +276,10 @@ const handleOverlayTouchStart = (e) => {
 const handleOverlayTouchMove = (e) => {
   // overlay에서 터치 이벤트는 완전히 차단
   // 모달 내부에서 발생한 이벤트는 허용
+  // CSS touch-action: none이 설정되어 있어 preventDefault 불필요
   const modal = e.target.closest('.solution-modal')
   if (!modal) {
-    e.preventDefault()
     e.stopPropagation()
-    return false
   }
 }
 

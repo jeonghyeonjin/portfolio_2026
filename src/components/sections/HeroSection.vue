@@ -95,6 +95,7 @@ const heroBgSvgRef = ref(null)
 const heroBgPathRef = ref(null)
 const mouseScrollRef = ref(null)
 let heroBgPathAnimation = null
+const scrollTriggers = ref([])
 
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
@@ -150,7 +151,7 @@ onMounted(() => {
 
   // hero-bg-svg 스크롤 애니메이션 (blur)
   // if (!tablet) {
-  gsap.to(heroBgSvgRef.value, {
+  const bgBlurTween = gsap.to(heroBgSvgRef.value, {
     filter: 'blur(100px)',
     scrollTrigger: {
       trigger: heroSectionRef.value,
@@ -159,11 +160,14 @@ onMounted(() => {
       scrub: true,
     },
   })
+  if (bgBlurTween.scrollTrigger) {
+    scrollTriggers.value.push(bgBlurTween.scrollTrigger)
+  }
   // }
 
   // 마우스 스크롤 애니메이션 숨김 처리
   if (mouseScrollRef.value) {
-    gsap.to(mouseScrollRef.value, {
+    const mouseScrollTween = gsap.to(mouseScrollRef.value, {
       opacity: 0,
       pointerEvents: 'none',
       scrollTrigger: {
@@ -173,10 +177,20 @@ onMounted(() => {
         scrub: true,
       },
     })
+    if (mouseScrollTween.scrollTrigger) {
+      scrollTriggers.value.push(mouseScrollTween.scrollTrigger)
+    }
   }
 })
 
 onUnmounted(() => {
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
+  // 애니메이션 정리
   if (heroBgPathAnimation) {
     heroBgPathAnimation.kill()
     heroBgPathAnimation = null
@@ -187,7 +201,12 @@ onUnmounted(() => {
   if (heroBgPathRef.value) {
     gsap.killTweensOf(heroBgPathRef.value)
   }
-  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+  if (heroImageRef.value) {
+    gsap.killTweensOf(heroImageRef.value)
+  }
+  if (mouseScrollRef.value) {
+    gsap.killTweensOf(mouseScrollRef.value)
+  }
 })
 </script>
 

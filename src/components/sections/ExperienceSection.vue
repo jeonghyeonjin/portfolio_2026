@@ -54,11 +54,18 @@ const experienceTitleRef = ref(null)
 const experienceSectionRef = ref(null)
 let titleAnimation = null
 let resizeHandler = null
+const scrollTriggers = ref([])
 
 const experiences = experiencesData
 
 const setupScrollTrigger = () => {
   if (!experienceTitleRef.value || !experienceSectionRef.value) return
+
+  // 기존 ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
 
   // 기존 애니메이션 kill
   if (titleAnimation) {
@@ -88,6 +95,9 @@ const setupScrollTrigger = () => {
         scrub: true,
       },
     })
+    if (titleAnimation.scrollTrigger) {
+      scrollTriggers.value.push(titleAnimation.scrollTrigger)
+    }
   } else {
     // 데스크톱/태블릿: 숨김
     gsap.set(experienceTitleRef.value, {
@@ -115,6 +125,12 @@ onUnmounted(() => {
     resizeHandler = null
   }
 
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
   // 애니메이션 정리
   if (titleAnimation) {
     titleAnimation.kill()
@@ -125,9 +141,6 @@ onUnmounted(() => {
   if (experienceTitleRef.value) {
     gsap.killTweensOf(experienceTitleRef.value)
   }
-
-  // ScrollTrigger 정리
-  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 </script>
 

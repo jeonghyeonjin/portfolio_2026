@@ -98,6 +98,7 @@ const props = defineProps({
 const experienceItemRef = ref(null)
 const isExpanded = ref(props.index === 0)
 let animation = null
+const scrollTriggers = ref([])
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
@@ -124,21 +125,28 @@ onMounted(() => {
       toggleActions: 'play none none none',
     },
   })
+  if (animation.scrollTrigger) {
+    scrollTriggers.value.push(animation.scrollTrigger)
+  }
 })
 
 onUnmounted(() => {
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
+  // 애니메이션 정리
   if (animation) {
     animation.kill()
     animation = null
   }
+
+  // GSAP 트윈 정리
   if (experienceItemRef.value) {
     gsap.killTweensOf(experienceItemRef.value)
   }
-  ScrollTrigger.getAll().forEach((trigger) => {
-    if (trigger.vars && trigger.vars.trigger === experienceItemRef.value) {
-      trigger.kill()
-    }
-  })
 })
 </script>
 

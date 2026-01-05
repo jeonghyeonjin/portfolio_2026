@@ -135,6 +135,7 @@ const aboutTitleRef = ref(null)
 const aboutSectionRef = ref(null)
 let titleAnimation = null
 let resizeHandler = null
+const scrollTriggers = ref([])
 
 // 이메일 복사 기능
 const email = 'j.hyeonjin@gmail.com'
@@ -224,6 +225,12 @@ const copyEmail = async () => {
 const setupScrollTrigger = () => {
   if (!aboutTitleRef.value || !aboutSectionRef.value) return
 
+  // 기존 ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
   // 기존 애니메이션 kill
   if (titleAnimation) {
     titleAnimation.kill()
@@ -252,6 +259,9 @@ const setupScrollTrigger = () => {
         scrub: true,
       },
     })
+    if (titleAnimation.scrollTrigger) {
+      scrollTriggers.value.push(titleAnimation.scrollTrigger)
+    }
   } else {
     // 데스크톱/태블릿: 숨김
     gsap.set(aboutTitleRef.value, {
@@ -273,14 +283,33 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
+  // 애니메이션 정리
   if (titleAnimation) {
     titleAnimation.kill()
+    titleAnimation = null
   }
+
+  // 리사이즈 핸들러 정리
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
   }
+
+  // 타임아웃 정리
   if (copyFeedbackTimeout) {
     clearTimeout(copyFeedbackTimeout)
+    copyFeedbackTimeout = null
+  }
+
+  // GSAP 트윈 정리
+  if (aboutTitleRef.value) {
+    gsap.killTweensOf(aboutTitleRef.value)
   }
 })
 </script>

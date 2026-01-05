@@ -68,41 +68,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import AchievementToast from './AchievementToast.vue'
 
-// Import icons again here for the grid display, or access from the child component efficiently.
-// Ideally we should share this data, but for now re-importing is safer and cleaner than hacky refs.
-import imgStreak7 from '@/assets/images/works/keebbear/streak7.png'
-import imgStreak30 from '@/assets/images/works/keebbear/streak30.png'
-import imgStreak100 from '@/assets/images/works/keebbear/streak100.png'
+// Lazy import icons - only load the ones we actually need
 import imgStreak365 from '@/assets/images/works/keebbear/streak365.png'
 import imgLightning from '@/assets/images/works/keebbear/lightning.png'
 import imgGodHand from '@/assets/images/works/keebbear/godhand.png'
-import imgClockHand from '@/assets/images/works/keebbear/clockhand.png'
 import imgSundial from '@/assets/images/works/keebbear/sundial.png'
 import imgSharply from '@/assets/images/works/keebbear/sharply.png'
-import imgSteady from '@/assets/images/works/keebbear/consistency.png'
 import imgBird from '@/assets/images/works/keebbear/bird.png'
 import imgOwl from '@/assets/images/works/keebbear/owl.png'
-import imgSession1 from '@/assets/images/works/keebbear/session1.png'
-import imgSession2 from '@/assets/images/works/keebbear/session2.png'
-import imgSession3 from '@/assets/images/works/keebbear/session3.png'
 import imgBlank from '@/assets/images/works/keebbear/blank.png'
 
 const localIcons = {
-  login_week: imgStreak7,
-  login_month: imgStreak30,
-  login_hundreddays: imgStreak100,
   login_year: imgStreak365,
-  practice_beginner: imgSession1,
-  practice_intermediate: imgSession2,
-  practice_advanced: imgSession3,
   speed_master: imgLightning,
   god_hand: imgGodHand,
   accuracy_master: imgSharply,
-  consistency_master: imgSteady,
-  time_basic: imgClockHand,
   time_master: imgSundial,
   early_bird: imgBird,
   night_owl: imgOwl,
@@ -190,6 +173,15 @@ const showSingleAchievement = async (achievement) => {
   // Wait for the duration of the toast (4500ms defined in Toast) plus transition
   await new Promise((resolve) => setTimeout(resolve, 5000))
 }
+
+// Cleanup on unmount
+onUnmounted(() => {
+  // Clear queue and stop any ongoing sequences
+  achievementQueue.value = []
+  processingQueue.value = false
+  sequencePlaying.value = false
+  currentAchievement.value = null
+})
 </script>
 
 <style scoped>

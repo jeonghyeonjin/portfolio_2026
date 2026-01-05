@@ -4,18 +4,18 @@
     class="work-modal-overlay"
     @click.self="handleClose"
     @wheel.passive.stop
-    @touchstart="handleOverlayTouchStart"
-    @touchmove="handleOverlayTouchMove"
+    @touchstart.passive="handleOverlayTouchStart"
+    @touchmove.passive="handleOverlayTouchMove"
   >
     <div
       ref="workModalContainerRef"
       class="work-modal-container"
       @click.stop
       @wheel.passive="handleModalWheel"
-      @touchstart.stop
-      @touchmove="handleModalTouchMove"
+      @touchstart.stop.passive
+      @touchmove.passive="handleModalTouchMove"
     >
-      <IconButton size="large" class="work-modal-close" aria-label="닫기" @click="handleClose">
+      <button class="work-modal-close" aria-label="닫기" @click="handleClose">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M18 6L6 18M6 6L18 18"
@@ -25,7 +25,7 @@
             stroke-linejoin="round"
           />
         </svg>
-      </IconButton>
+      </button>
       <Transition name="issue-marker">
         <div
           v-if="!isFixed('work-modal-lazy-load') && isMarkersReady"
@@ -44,7 +44,6 @@
 <script setup>
 import { shallowRef, ref, onMounted, onUnmounted, provide, computed, watch } from 'vue'
 import { gsap } from 'gsap'
-import IconButton from '@/components/common/IconButton.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
@@ -136,11 +135,10 @@ const handleOverlayTouchStart = (e) => {
 const handleOverlayTouchMove = (e) => {
   // overlay에서 터치 이벤트는 완전히 차단
   // 모달 내부에서 발생한 이벤트는 허용
+  // CSS touch-action: none이 설정되어 있어 preventDefault 불필요
   const container = e.target.closest('.work-modal-container')
   if (!container) {
-    e.preventDefault()
     e.stopPropagation()
-    return false
   }
 }
 
@@ -212,13 +210,32 @@ onUnmounted(() => {
   top: 40px;
   right: 40px;
   z-index: 10000;
-  background-color: rgba(var(--white--1), 0.9);
-  backdrop-filter: blur(8px);
+  background: none;
+  border: none;
+  padding: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--white--1));
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  width: auto;
+  height: auto;
+  flex-shrink: 0;
+  mix-blend-mode: difference;
 }
 
 .work-modal-close:hover {
-  background-color: rgba(var(--white--0), 1);
-  box-shadow: 0 4px 12px rgba(var(--gray--0), 0.3);
+  opacity: 0.8;
+}
+
+.work-modal-close svg {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 /* Tablet: --tablet */

@@ -130,6 +130,7 @@ let titleAnimation = null
 let cardAnimations = []
 let highlightTriggers = []
 let resizeHandler = null
+const scrollTriggers = ref([])
 
 // 이미지 경로를 computed로 메모이제이션
 const skillGroupImages = computed(() => {
@@ -152,6 +153,12 @@ const skillGroupImages = computed(() => {
 
 const setupScrollTrigger = () => {
   if (!skillTitleRef.value || !skillSectionRef.value) return
+
+  // 기존 ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
 
   // 기존 애니메이션 kill
   if (titleAnimation) {
@@ -194,6 +201,9 @@ const setupScrollTrigger = () => {
         scrub: true,
       },
     })
+    if (titleAnimation.scrollTrigger) {
+      scrollTriggers.value.push(titleAnimation.scrollTrigger)
+    }
 
     // 카드들 초기 상태 설정
     skillCards.forEach((card) => {
@@ -219,6 +229,9 @@ const setupScrollTrigger = () => {
         },
       })
       cardAnimations.push(animation)
+      if (animation.scrollTrigger) {
+        scrollTriggers.value.push(animation.scrollTrigger)
+      }
     })
   } else {
     // 데스크톱/태블릿: 타이틀 숨김
@@ -250,6 +263,9 @@ const setupScrollTrigger = () => {
         },
       })
       cardAnimations.push(animation)
+      if (animation.scrollTrigger) {
+        scrollTriggers.value.push(animation.scrollTrigger)
+      }
     })
   }
 
@@ -264,6 +280,7 @@ const setupScrollTrigger = () => {
       onLeaveBack: () => highlight.classList.remove('active'),
     })
     highlightTriggers.push(trigger)
+    scrollTriggers.value.push(trigger)
   })
 }
 
@@ -285,6 +302,12 @@ onUnmounted(() => {
     resizeHandler = null
   }
 
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
   // 애니메이션 정리
   if (titleAnimation) {
     titleAnimation.kill()
@@ -304,9 +327,6 @@ onUnmounted(() => {
   if (developerCardRef.value) gsap.killTweensOf(developerCardRef.value)
   if (designerCardRef.value) gsap.killTweensOf(designerCardRef.value)
   if (creatorCardRef.value) gsap.killTweensOf(creatorCardRef.value)
-
-  // ScrollTrigger 정리
-  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 </script>
 

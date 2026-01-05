@@ -190,6 +190,7 @@ const setSelectWorkCallback = inject('setSelectWorkCallback')
 const workTitleRef = ref(null)
 const workSectionRef = ref(null)
 let titleAnimation = null
+const scrollTriggers = ref([])
 
 const activeWorkId = ref(null)
 const isModalVisible = ref(false)
@@ -283,6 +284,12 @@ const getLinkCount = (footer) => {
 const setupScrollTrigger = () => {
   if (!workTitleRef.value || !workSectionRef.value) return
 
+  // 기존 ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
   // 기존 애니메이션 kill
   if (titleAnimation) {
     titleAnimation.kill()
@@ -313,6 +320,9 @@ const setupScrollTrigger = () => {
         scrub: true,
       },
     })
+    if (titleAnimation.scrollTrigger) {
+      scrollTriggers.value.push(titleAnimation.scrollTrigger)
+    }
   } else {
     // 데스크톱/태블릿: 숨김
     gsap.set(workTitleRef.value, {
@@ -602,6 +612,13 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  // ScrollTrigger 정리
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) trigger.kill()
+  })
+  scrollTriggers.value = []
+
+  // 애니메이션 정리
   if (titleAnimation) {
     titleAnimation.kill()
     titleAnimation = null
@@ -609,7 +626,6 @@ onUnmounted(() => {
   if (workTitleRef.value) {
     gsap.killTweensOf(workTitleRef.value)
   }
-  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 
   // 이벤트 리스너 제거
   window.removeEventListener('hashchange', handleHashChange)

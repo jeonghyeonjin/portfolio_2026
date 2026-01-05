@@ -165,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, inject, computed } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, inject, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
@@ -181,6 +181,11 @@ import logo3 from '@/assets/images/works/shadow/logo3.png'
 import logo4 from '@/assets/images/works/shadow/logo4.png'
 
 const workId = inject('workId', 1)
+
+// ScrollTrigger instances management
+const scrollTriggers = ref([])
+const retryTimeouts = ref([])
+const MAX_RETRY_ATTEMPTS = 3
 
 const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
@@ -232,13 +237,38 @@ const tocSections = [
 // Logo images
 const logoImages = [logo1, logo2, logo3, logo4]
 
-const setupFeatureTextAnimation = (textRef) => {
+// Helper function to create and track ScrollTrigger
+const createScrollTrigger = (animation) => {
+  if (!animation || !animation.scrollTrigger) return
+  scrollTriggers.value.push(animation.scrollTrigger)
+}
+
+// Helper function to add retry timeout
+const addRetryTimeout = (timeoutId) => {
+  retryTimeouts.value.push(timeoutId)
+}
+
+const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
+
+  // Mobile: skip complex animations
+  if (isMobile.value) {
+    gsap.set(textRef, { x: 0, opacity: 1 })
+    return
+  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
+  // 요소가 실제로 DOM에 있고 크기가 있는지 확인
   if (!textRef.offsetParent && textRef.offsetWidth === 0 && textRef.offsetHeight === 0) {
+    // Retry with limit
+    if (retryCount < MAX_RETRY_ATTEMPTS) {
+      const timeoutId = setTimeout(() => {
+        setupFeatureTextAnimation(textRef, retryCount + 1)
+      }, 100)
+      addRetryTimeout(timeoutId)
+    }
     return
   }
 
@@ -258,28 +288,45 @@ const setupFeatureTextAnimation = (textRef) => {
     }
 
     if (!scrollTriggerConfig.trigger || !scrollTriggerConfig.scroller) {
+      console.warn('ScrollTrigger params are not set properly')
       return
     }
 
-    gsap.to(textRef, {
+    const animation = gsap.to(textRef, {
       x: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
       scrollTrigger: scrollTriggerConfig,
     })
+
+    createScrollTrigger(animation)
   } catch (error) {
     console.warn('Feature text animation setup failed:', error)
   }
 }
 
-const setupFeatureCodeAnimation = (codeRef, textRef) => {
+const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
   if (!codeRef || !textRef) return
+
+  // Mobile: skip complex animations
+  if (isMobile.value) {
+    gsap.set(codeRef, { x: 0, opacity: 1 })
+    return
+  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
+  // 요소가 실제로 DOM에 있고 크기가 있는지 확인
   if (!codeRef.offsetParent && codeRef.offsetWidth === 0 && codeRef.offsetHeight === 0) {
+    // Retry with limit
+    if (retryCount < MAX_RETRY_ATTEMPTS) {
+      const timeoutId = setTimeout(() => {
+        setupFeatureCodeAnimation(codeRef, textRef, retryCount + 1)
+      }, 100)
+      addRetryTimeout(timeoutId)
+    }
     return
   }
 
@@ -300,28 +347,45 @@ const setupFeatureCodeAnimation = (codeRef, textRef) => {
     }
 
     if (!scrollTriggerConfig.trigger || !scrollTriggerConfig.scroller) {
+      console.warn('ScrollTrigger params are not set properly')
       return
     }
 
-    gsap.to(codeRef, {
+    const animation = gsap.to(codeRef, {
       x: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
       scrollTrigger: scrollTriggerConfig,
     })
+
+    createScrollTrigger(animation)
   } catch (error) {
     console.warn('Feature code animation setup failed:', error)
   }
 }
 
-const setupFeatureBlockAnimation = (blockRef, index = 0) => {
+const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
   if (!blockRef) return
+
+  // Mobile: skip complex animations
+  if (isMobile.value) {
+    gsap.set(blockRef, { y: 0, opacity: 1 })
+    return
+  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
+  // 요소가 실제로 DOM에 있고 크기가 있는지 확인
   if (!blockRef.offsetParent && blockRef.offsetWidth === 0 && blockRef.offsetHeight === 0) {
+    // Retry with limit
+    if (retryCount < MAX_RETRY_ATTEMPTS) {
+      const timeoutId = setTimeout(() => {
+        setupFeatureBlockAnimation(blockRef, index, retryCount + 1)
+      }, 100)
+      addRetryTimeout(timeoutId)
+    }
     return
   }
 
@@ -334,16 +398,18 @@ const setupFeatureBlockAnimation = (blockRef, index = 0) => {
     const scrollTriggerConfig = {
       trigger: blockRef,
       scroller: modalOverlay,
-      start: isMobile.value ? 'top bottom' : 'center bottom',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
 
     if (!scrollTriggerConfig.trigger || !scrollTriggerConfig.scroller) {
+      console.warn('ScrollTrigger params are not set properly')
       return
     }
 
-    gsap.to(blockRef, {
+    const animation = gsap.to(blockRef, {
       y: 0,
       opacity: 1,
       duration: 0.8,
@@ -351,18 +417,34 @@ const setupFeatureBlockAnimation = (blockRef, index = 0) => {
       delay: index * 0.1,
       scrollTrigger: scrollTriggerConfig,
     })
+
+    createScrollTrigger(animation)
   } catch (error) {
     console.warn('Feature block animation setup failed:', error)
   }
 }
 
-const setupBlockAnimation = (block, index = 0) => {
+const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
+
+  // Mobile: skip complex animations
+  if (isMobile.value) {
+    gsap.set(block, { y: 0, opacity: 1 })
+    return
+  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
+  // 요소가 실제로 DOM에 있고 크기가 있는지 확인
   if (!block.offsetParent && block.offsetWidth === 0 && block.offsetHeight === 0) {
+    // Retry with limit
+    if (retryCount < MAX_RETRY_ATTEMPTS) {
+      const timeoutId = setTimeout(() => {
+        setupBlockAnimation(block, index, retryCount + 1)
+      }, 100)
+      addRetryTimeout(timeoutId)
+    }
     return
   }
 
@@ -382,10 +464,11 @@ const setupBlockAnimation = (block, index = 0) => {
     }
 
     if (!scrollTriggerConfig.trigger || !scrollTriggerConfig.scroller) {
+      console.warn('ScrollTrigger params are not set properly')
       return
     }
 
-    gsap.to(block, {
+    const animation = gsap.to(block, {
       y: 0,
       opacity: 1,
       duration: 0.8,
@@ -393,6 +476,8 @@ const setupBlockAnimation = (block, index = 0) => {
       delay: index * 0.1,
       scrollTrigger: scrollTriggerConfig,
     })
+
+    createScrollTrigger(animation)
   } catch (error) {
     console.warn('Block animation setup failed:', error)
   }
@@ -405,61 +490,108 @@ onMounted(() => {
 
     if (modalOverlay && heroImageContainerRef.value) {
       try {
-        const scrollTriggerConfig1 = {
-          trigger: heroImageContainerRef.value,
-          scroller: modalOverlay,
-          start: 'top top',
-          end: 'bottom center',
-          scrub: 0.1,
-        }
-
-        if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
-          gsap.to(heroImageWrapperRef.value, {
-            scale: isTablet.value ? (isMobile.value ? 0.95 : 0.7) : 0.9,
-            bottom: isTablet.value ? (isMobile.value ? '-5%' : '0%') : '-8%',
+        // Mobile: simplified animations with less scrub
+        if (isMobile.value) {
+          const animation1 = gsap.to(heroImageWrapperRef.value, {
+            scale: 0.6,
+            bottom: '-5%',
             opacity: 1,
-            scrollTrigger: scrollTriggerConfig1,
+            scrollTrigger: {
+              trigger: heroImageContainerRef.value,
+              scroller: modalOverlay,
+              start: 'top top',
+              end: 'bottom center',
+              scrub: 0.5,
+            },
           })
-        }
+          createScrollTrigger(animation1)
 
-        const scrollTriggerConfig2 = {
-          trigger: heroImageContainerRef.value,
-          scroller: modalOverlay,
-          start: 'top top',
-          end: 'bottom center',
-          scrub: 0.1,
-        }
-
-        if (scrollTriggerConfig2.trigger && scrollTriggerConfig2.scroller) {
-          const isLandscape = window.innerWidth > window.innerHeight
-          gsap.to(heroImageContainerRef.value, {
+          const animation2 = gsap.to(heroImageContainerRef.value, {
             marginTop: '100vh',
-            height: isLandscape ? '' : '40vh',
-            scrollTrigger: scrollTriggerConfig2,
+            height: window.innerWidth > window.innerHeight ? '' : '40vh',
+            scrollTrigger: {
+              trigger: heroImageContainerRef.value,
+              scroller: modalOverlay,
+              start: 'top top',
+              end: 'bottom center',
+              scrub: 0.5,
+            },
           })
-        }
+          createScrollTrigger(animation2)
 
-        const scrollTriggerConfig3 = {
-          trigger: heroImageContainerRef.value,
-          scroller: modalOverlay,
-          start: 'top 0px',
-          end: '30px',
-          scrub: 1,
-        }
-
-        if (scrollTriggerConfig3.trigger && scrollTriggerConfig3.scroller) {
-          if (heroImageOverlayRef.value) {
-            gsap.to(heroImageOverlayRef.value, {
+          // Fade out elements - consolidated
+          const elementsToFade = [workModalHeaderRef.value].filter(Boolean)
+          if (elementsToFade.length > 0) {
+            const animation3 = gsap.to(elementsToFade, {
               opacity: 0,
-              scrollTrigger: scrollTriggerConfig3,
+              scrollTrigger: {
+                trigger: heroImageContainerRef.value,
+                scroller: modalOverlay,
+                start: 'top 0px',
+                end: '50px',
+                scrub: 1,
+              },
             })
+            createScrollTrigger(animation3)
+          }
+        } else {
+          // Desktop: full animations
+          const scrollTriggerConfig1 = {
+            trigger: heroImageContainerRef.value,
+            scroller: modalOverlay,
+            start: 'top top',
+            end: 'bottom center',
+            scrub: 0.1,
           }
 
-          if (workModalHeaderRef.value) {
-            gsap.to(workModalHeaderRef.value, {
-              opacity: 0,
-              scrollTrigger: scrollTriggerConfig3,
+          if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
+            const animation1 = gsap.to(heroImageWrapperRef.value, {
+              scale: isTablet.value ? 0.7 : 0.9,
+              bottom: isTablet.value ? '0%' : '-8%',
+              opacity: 1,
+              scrollTrigger: scrollTriggerConfig1,
             })
+            createScrollTrigger(animation1)
+          }
+
+          const scrollTriggerConfig2 = {
+            trigger: heroImageContainerRef.value,
+            scroller: modalOverlay,
+            start: 'top top',
+            end: 'bottom center',
+            scrub: 0.1,
+          }
+
+          if (scrollTriggerConfig2.trigger && scrollTriggerConfig2.scroller) {
+            const isLandscape = window.innerWidth > window.innerHeight
+            const animation2 = gsap.to(heroImageContainerRef.value, {
+              marginTop: '100vh',
+              height: isLandscape ? '' : '40vh',
+              scrollTrigger: scrollTriggerConfig2,
+            })
+            createScrollTrigger(animation2)
+          }
+
+          const scrollTriggerConfig3 = {
+            trigger: heroImageContainerRef.value,
+            scroller: modalOverlay,
+            start: 'top 0px',
+            end: '30px',
+            scrub: 1,
+          }
+
+          if (scrollTriggerConfig3.trigger && scrollTriggerConfig3.scroller) {
+            // Consolidate fade-out animations into single ScrollTrigger
+            const elementsToFade = [heroImageOverlayRef.value, workModalHeaderRef.value].filter(
+              Boolean,
+            )
+            if (elementsToFade.length > 0) {
+              const animation3 = gsap.to(elementsToFade, {
+                opacity: 0,
+                scrollTrigger: scrollTriggerConfig3,
+              })
+              createScrollTrigger(animation3)
+            }
           }
         }
       } catch (error) {
@@ -468,82 +600,52 @@ onMounted(() => {
     }
   }
 
-  // Feature blocks animation (카드 컨테이너)
+  // Feature blocks and texts animation - single nextTick
   nextTick(() => {
-    nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-container')
-      if (!modalOverlay) return
-
-      featureBlockRefs.value.forEach((blockRef, index) => {
-        if (!blockRef) return
-
-        if (blockRef.offsetParent === null) {
-          setTimeout(() => {
-            setupFeatureBlockAnimation(blockRef, index)
-          }, 100)
-          return
-        }
-
+    // Feature blocks
+    featureBlockRefs.value.forEach((blockRef, index) => {
+      if (blockRef) {
         setupFeatureBlockAnimation(blockRef, index)
-      })
+      }
     })
-  })
 
-  // Feature texts animation
-  nextTick(() => {
-    nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-container')
-      if (!modalOverlay) return
-
-      featureTextRefs.value.forEach((textRef, index) => {
-        if (!textRef) return
-
-        const codeRef = featureCodeRefs.value[index]
-
-        if (textRef.offsetParent === null) {
-          setTimeout(() => {
-            setupFeatureTextAnimation(textRef)
-            if (codeRef) {
-              setupFeatureCodeAnimation(codeRef, textRef)
-            }
-          }, 100)
-          return
-        }
-
+    // Feature texts and code
+    featureTextRefs.value.forEach((textRef, index) => {
+      if (textRef) {
         setupFeatureTextAnimation(textRef)
+        const codeRef = featureCodeRefs.value[index]
         if (codeRef) {
           setupFeatureCodeAnimation(codeRef, textRef)
         }
-      })
+      }
+    })
+
+    // Other blocks
+    const blocks = document.querySelectorAll('.takeaway-block, .tech-stack-grid')
+    blocks.forEach((block, index) => {
+      setupBlockAnimation(block, index)
     })
   })
+})
 
-  // Blocks animation
-  nextTick(() => {
-    nextTick(() => {
-      const modalOverlay = document.querySelector('.work-modal-container')
-      if (!modalOverlay) return
-
-      const blocks = document.querySelectorAll('.takeaway-block, .tech-stack-grid')
-
-      blocks.forEach((block, index) => {
-        if (
-          !block ||
-          (!block.offsetParent && block.offsetWidth === 0 && block.offsetHeight === 0)
-        ) {
-          setTimeout(
-            () => {
-              setupBlockAnimation(block, index)
-            },
-            100 + index * 50,
-          )
-          return
-        }
-
-        setupBlockAnimation(block, index)
-      })
-    })
+// Cleanup on unmount
+onUnmounted(() => {
+  // Kill all ScrollTrigger instances
+  scrollTriggers.value.forEach((trigger) => {
+    if (trigger) {
+      trigger.kill()
+    }
   })
+  scrollTriggers.value = []
+
+  // Clear all retry timeouts
+  retryTimeouts.value.forEach((timeoutId) => {
+    clearTimeout(timeoutId)
+  })
+  retryTimeouts.value = []
+
+  // Refresh ScrollTrigger to clean up
+  ScrollTrigger.refresh()
 })
 </script>
 

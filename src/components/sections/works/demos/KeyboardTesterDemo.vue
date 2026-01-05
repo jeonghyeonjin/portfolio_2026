@@ -33,23 +33,33 @@ const activeKeys = ref(new Set())
 const handleKeydown = (e) => {
   if (keys.some((k) => k.code === e.code)) {
     e.preventDefault()
-    activeKeys.value.add(e.code)
+    // Use Set methods properly to trigger reactivity
+    const newSet = new Set(activeKeys.value)
+    newSet.add(e.code)
+    activeKeys.value = newSet
   }
 }
 
 const handleKeyup = (e) => {
   if (activeKeys.value.has(e.code)) {
-    activeKeys.value.delete(e.code)
+    // Use Set methods properly to trigger reactivity
+    const newSet = new Set(activeKeys.value)
+    newSet.delete(e.code)
+    activeKeys.value = newSet
   }
 }
 
 const simulatePress = (code) => {
-  activeKeys.value.add(code)
+  const newSet = new Set(activeKeys.value)
+  newSet.add(code)
+  activeKeys.value = newSet
 }
 
 const simulateRelease = (code) => {
   if (activeKeys.value.has(code)) {
-    activeKeys.value.delete(code)
+    const newSet = new Set(activeKeys.value)
+    newSet.delete(code)
+    activeKeys.value = newSet
   }
 }
 
