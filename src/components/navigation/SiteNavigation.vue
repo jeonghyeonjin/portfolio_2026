@@ -963,7 +963,7 @@ onUnmounted(() => {
   right: calc(30px + var(--scrollbar-width, 0px));
   z-index: 1000;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr 0.5fr;
   align-items: center;
   gap: 0;
   transition:
@@ -1007,6 +1007,7 @@ onUnmounted(() => {
 }
 
 .menu-list {
+  position: absolute;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -1020,10 +1021,6 @@ onUnmounted(() => {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(var(--white--0), 0.2);
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   opacity: 1;
   pointer-events: auto;
 }
@@ -1034,7 +1031,6 @@ onUnmounted(() => {
 }
 
 .menu-item {
-  font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);
   color: rgba(var(--gray--2), 0.8);
@@ -1102,7 +1098,7 @@ onUnmounted(() => {
     top: 20px;
     left: 30px;
     right: calc(30px + var(--scrollbar-width, 0px));
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0.5fr 1fr 0.5fr;
   }
 }
 
@@ -1152,9 +1148,6 @@ onUnmounted(() => {
 .search-container {
   height: 100%;
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
   /* width는 menuListWidth로 동적으로 설정 */

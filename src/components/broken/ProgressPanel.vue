@@ -23,7 +23,26 @@
         <span class="button-count-separator">/</span>
         <span class="button-count-total">{{ totalIssues }}</span>
       </div>
+      <!-- 모바일에서는 직접 button 사용 -->
+      <button
+        v-if="isMobile"
+        class="help-button-mobile"
+        aria-label="Help"
+        @click.stop="toggleHelpPanel"
+      >
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <!-- 데스크톱/태블릿에서는 IconButton 사용 -->
       <IconButton
+        v-else
         size="small"
         aria-label="Help"
         class="help-icon-button"
@@ -443,6 +462,18 @@ onUnmounted(() => {
 .progress-panel-wrapper {
   position: relative;
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
+
+@media (--mobile) {
+  .progress-panel-wrapper {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+  }
 }
 
 .progress-button {
@@ -468,8 +499,28 @@ onUnmounted(() => {
     color: rgb(var(--gray--2)) !important;
   }
 
-  .help-icon-button svg {
+  .help-button-mobile {
+    background: none;
+    border: none;
+    padding: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: rgb(var(--gray--2));
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    min-width: 44px;
+    min-height: 44px;
+    width: auto;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .help-button-mobile svg {
+    width: 24px;
+    height: 24px;
+    display: block;
   }
 }
 
