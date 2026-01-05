@@ -42,15 +42,7 @@
           @mouseleave="(e) => handleWorkHover(e, work.id, false)"
         >
           <div class="work-image-container" aria-hidden="true">
-            <video
-              v-if="work.videoSources"
-              class="work-video"
-              :autoplay="!isMobile"
-              loop
-              muted
-              playsinline
-              preload="metadata"
-            >
+            <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
               <!-- MP4를 우선 사용 (용량이 더 작고 모든 브라우저 지원) -->
               <source
                 v-if="work.videoSources.mp4"
