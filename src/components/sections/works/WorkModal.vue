@@ -4,6 +4,7 @@
     class="work-modal-overlay"
     @click.self="handleClose"
     @wheel.passive.stop
+    @touchstart="handleOverlayTouchStart"
     @touchmove="handleOverlayTouchMove"
   >
     <div
@@ -11,7 +12,8 @@
       class="work-modal-container"
       @click.stop
       @wheel.passive.stop="handleModalWheel"
-      @touchmove="handleModalTouchMove"
+      @touchstart.stop
+      @touchmove.stop="handleModalTouchMove"
     >
       <IconButton size="large" class="work-modal-close" aria-label="닫기" @click="handleClose">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,11 +42,12 @@
 </template>
 
 <script setup>
-import { shallowRef, ref, onMounted, provide, computed } from 'vue'
+import { shallowRef, ref, onMounted, onUnmounted, provide, computed, watch } from 'vue'
 import { gsap } from 'gsap'
 import IconButton from '@/components/common/IconButton.vue'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
 import worksData from '@/data/works.json'
 // 모든 모달 컴포넌트를 명시적으로 import (Vite 빌드 시 정적 분석을 위해)
 import WorkModalShadow from './WorkModalShadow.vue'
@@ -53,6 +56,9 @@ import WorkModalKeebbear from './WorkModalKeebbear.vue'
 import WorkModalTape from './WorkModalTape.vue'
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
+const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
+
+const WORK_MODAL_ID = 'work-modal'
 
 const props = defineProps({
   workId: {
@@ -129,20 +135,41 @@ const handleModalWheel = (e) => {
   e.stopPropagation()
 }
 
-const handleOverlayTouchMove = (e) => {
-  // overlay에서 터치 이벤트는 기본적으로 차단
-  // 단, 모달 내부에서 발생한 이벤트는 허용
+const handleOverlayTouchStart = (e) => {
+  // overlay에서 터치 시작 이벤트 차단
   const container = e.target.closest('.work-modal-container')
   if (!container) {
-    e.preventDefault()
     e.stopPropagation()
   }
 }
 
-const handleModalTouchMove = () => {
-  // 모달 내부에서는 터치 스크롤 허용 (touch-action CSS로 처리)
-  // 이벤트 전파는 허용하여 정상적인 스크롤 동작 보장
+const handleOverlayTouchMove = (e) => {
+  // overlay에서 터치 이벤트는 완전히 차단
+  // 모달 내부에서 발생한 이벤트는 허용
+  const container = e.target.closest('.work-modal-container')
+  if (!container) {
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
 }
+
+const handleModalTouchMove = () => {
+  // 모달 내부에서는 터치 스크롤 허용
+  // 이벤트 전파를 차단하여 overlay로 전파되지 않도록 함
+  // 하지만 모달 내부에서는 정상적으로 스크롤 가능
+}
+
+watch(
+  () => props.isVisible,
+  (isVisible) => {
+    if (isVisible) {
+      lockBodyScroll(WORK_MODAL_ID)
+    } else {
+      unlockBodyScroll(WORK_MODAL_ID)
+    }
+  },
+)
 
 onMounted(() => {
   loadWorkComponent()
@@ -150,6 +177,10 @@ onMounted(() => {
   if (modalOverlayRef.value) {
     gsap.set(modalOverlayRef.value, { autoAlpha: 0 })
   }
+})
+
+onUnmounted(() => {
+  unlockBodyScroll(WORK_MODAL_ID)
 })
 </script>
 

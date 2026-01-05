@@ -5,6 +5,7 @@
       class="solution-modal-overlay"
       @click="close"
       @wheel.passive.stop
+      @touchstart="handleOverlayTouchStart"
       @touchmove="handleOverlayTouchMove"
     >
       <div
@@ -12,7 +13,8 @@
         class="solution-modal"
         @click.stop
         @wheel.passive.stop="handleModalWheel"
-        @touchmove="handleModalTouchMove"
+        @touchstart.stop
+        @touchmove.stop="handleModalTouchMove"
       >
         <Transition name="issue-marker">
           <div
@@ -273,19 +275,29 @@ const handleModalWheel = (e) => {
   e.stopPropagation()
 }
 
-const handleOverlayTouchMove = (e) => {
-  // overlay에서 터치 이벤트는 기본적으로 차단
-  // 단, 모달 내부에서 발생한 이벤트는 허용
+const handleOverlayTouchStart = (e) => {
+  // overlay에서 터치 시작 이벤트 차단
   const modal = e.target.closest('.solution-modal')
   if (!modal) {
-    e.preventDefault()
     e.stopPropagation()
   }
 }
 
+const handleOverlayTouchMove = (e) => {
+  // overlay에서 터치 이벤트는 완전히 차단
+  // 모달 내부에서 발생한 이벤트는 허용
+  const modal = e.target.closest('.solution-modal')
+  if (!modal) {
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
+}
+
 const handleModalTouchMove = () => {
-  // 모달 내부에서는 터치 스크롤 허용 (touch-action CSS로 처리)
-  // 이벤트 전파는 허용하여 정상적인 스크롤 동작 보장
+  // 모달 내부에서는 터치 스크롤 허용
+  // 이벤트 전파를 차단하여 overlay로 전파되지 않도록 함
+  // 하지만 모달 내부에서는 정상적으로 스크롤 가능
 }
 
 // 포커스 트랩 함수
