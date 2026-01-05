@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
-    "compress-videos": "node scripts/compress-videos.js"
+    "compress-videos": "node scripts/compress-videos.js",
+    "compress-images": "node scripts/compress-images.js"
   },
   "dependencies": {
     "@vueuse/core": "^14.1.0",
@@ -35,6 +36,7 @@
     "postcss": "^8.4.47",
     "postcss-custom-media": "^10.0.2",
     "prettier": "3.6.2",
+    "sharp": "^0.34.5",
     "vite": "^7.2.4",
     "vite-plugin-vue-devtools": "^8.0.5"
   }

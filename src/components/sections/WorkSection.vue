@@ -178,12 +178,14 @@ import {
 // 썸네일 이미지 import (Vite가 빌드 시 처리하도록)
 import imgShadowThumbnail from '@/assets/images/works/shadow/shadow_thumbnail2.png'
 import imgMasterForgePin from '@/assets/images/works/master-forge/m4g_pin.png'
+import imgKeebbearThumbnail from '@/assets/images/works/keebbear/keebbear_thumbnail1.png'
 import imgTapeThumbnail from '@/assets/images/works/tape/tape_thumbnail.png'
 
 // 썸네일 이미지 매핑
 const thumbnailMap = {
   '../../assets/images/works/shadow/shadow_thumbnail2.png': imgShadowThumbnail,
   '../../assets/images/works/master-forge/m4g_pin.png': imgMasterForgePin,
+  '../../assets/images/works/keebbear/keebbear_thumbnail1.png': imgKeebbearThumbnail,
   '../../assets/images/works/tape/tape_thumbnail.png': imgTapeThumbnail,
 }
 

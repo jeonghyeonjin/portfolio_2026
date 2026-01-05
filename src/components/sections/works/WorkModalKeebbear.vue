@@ -475,8 +475,8 @@ const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
       scroller: modalOverlay,
       start: 'top 90%',
       end: 'top 60%',
-      toggleActions: 'play none none reverse',
-      invalidateOnRefresh: true,
+      // toggleActions: 'play none none reverse',
+      // invalidateOnRefresh: true,
     }
 
     // ScrollTrigger 파라미터 검증
@@ -530,8 +530,8 @@ onMounted(() => {
         if (isMobile.value) {
           // Simple scale animation
           const animation1 = gsap.to(mockupWrapperRef.value, {
-            scale: 0.6,
-            bottom: '-5%',
+            scale: 0.8,
+            bottom: '-10%',
             opacity: 1,
             scrollTrigger: {
               trigger: mockupContainerRef.value,
@@ -546,7 +546,7 @@ onMounted(() => {
           // Simple margin animation
           const animation2 = gsap.to(mockupContainerRef.value, {
             marginTop: '100vh',
-            height: isLandscape ? '' : '40vh',
+            height: isLandscape ? '' : '60vh',
             scrollTrigger: {
               trigger: mockupContainerRef.value,
               scroller: modalOverlay,
@@ -558,7 +558,9 @@ onMounted(() => {
           createScrollTrigger(animation2)
 
           // Fade out elements - consolidated
-          const elementsToFade = [workModalHeaderRef.value].filter(Boolean)
+          const elementsToFade = [workModalHeaderRef.value, mockupContainerInnerRef.value].filter(
+            Boolean,
+          )
           if (elementsToFade.length > 0) {
             const animation3 = gsap.to(elementsToFade, {
               opacity: 0,

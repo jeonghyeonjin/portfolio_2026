@@ -31,7 +31,7 @@
     "title": "Keebbear",
     "description": "Comprehensive Platform for Keyboard Lovers",
     "modalComponent": "WorkModalKeebbear",
-    "thumbnail": null,
+    "thumbnail": "../../assets/images/works/keebbear/keebbear_thumbnail1.png",
     "videoSources": {
       "mp4": "/portfolio_2026/videos/keebbear_1.mp4",
       "webm": "/portfolio_2026/videos/keebbear_1.webm"
