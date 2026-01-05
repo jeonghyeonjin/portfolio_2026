@@ -42,7 +42,16 @@
           @mouseleave="(e) => handleWorkHover(e, work.id, false)"
         >
           <div class="work-image-container" aria-hidden="true">
-            <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
+            <!-- 모든 환경에서 뷰포트 기반 재생 (리소스 최적화) -->
+            <video
+              v-if="work.videoSources"
+              :ref="(el) => setWorkVideoRef(el, work.id)"
+              class="work-video"
+              loop
+              muted
+              playsinline
+              preload="metadata"
+            >
               <source :src="getVideoUrl(work.videoSources.webm)" type="video/webm" />
               <source :src="getVideoUrl(work.videoSources.mp4)" type="video/mp4" />
             </video>
@@ -198,6 +207,8 @@ const isModalVisible = ref(false)
 const circleRevealRef = ref(null)
 const workModalRef = ref(null)
 const workItemRefs = ref({})
+const workVideoRefs = ref({})
+const videoObservers = ref({}) // Observer 정리를 위해 저장
 let currentCircleScale = null
 
 const IS_VISIBLE_CLASS = 'is-visible'
@@ -207,6 +218,13 @@ const WORK_MODAL_ID = 'work-modal'
 const setWorkItemRef = (el, workId) => {
   if (el) {
     workItemRefs.value[workId] = el
+  }
+}
+
+// work-video ref 설정
+const setWorkVideoRef = (el, workId) => {
+  if (el) {
+    workVideoRefs.value[workId] = el
   }
 }
 
@@ -568,6 +586,117 @@ onMounted(async () => {
     gsap.set(circleRevealRef.value, { autoAlpha: 0 })
   }
 
+  // 모든 환경에서 비디오 최적화: IntersectionObserver로 뷰포트에 들어올 때만 재생
+  // refs가 설정될 때까지 대기
+  await nextTick()
+  await nextTick()
+
+  // 약간의 딜레이를 주어 refs가 완전히 설정되도록 함
+  setTimeout(() => {
+    Object.values(workVideoRefs.value).forEach((video) => {
+      if (!video) return
+
+      try {
+        // 비디오가 준비될 때까지 대기
+        const setupVideoObserver = () => {
+          let isPlaying = false
+          let observer = null
+
+          observer = new IntersectionObserver(
+            async (entries) => {
+              for (const entry of entries) {
+                const currentVideo = entry.target
+                if (!currentVideo || currentVideo !== video) {
+                  if (observer) {
+                    observer.disconnect()
+                    observer = null
+                  }
+                  return
+                }
+
+                try {
+                  if (entry.isIntersecting) {
+                    if (!isPlaying && currentVideo.readyState >= 2) {
+                      isPlaying = true
+                      try {
+                        await currentVideo.play()
+                      } catch (error) {
+                        // AbortError나 NotAllowedError는 무시
+                        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
+                          console.warn('Video play failed:', error)
+                        }
+                        isPlaying = false
+                      }
+                    }
+                  } else {
+                    if (isPlaying) {
+                      isPlaying = false
+                      try {
+                        currentVideo.pause()
+                      } catch (error) {
+                        console.warn('Video pause failed:', error)
+                      }
+                    }
+                  }
+                } catch (error) {
+                  console.warn('Video observer error:', error)
+                  isPlaying = false
+                }
+              }
+            },
+            { threshold: 0.1 },
+          )
+
+          if (video.readyState >= 2) {
+            observer.observe(video)
+            // Observer 정리를 위해 저장
+            const workId = Object.keys(workVideoRefs.value).find(
+              (id) => workVideoRefs.value[id] === video,
+            )
+            if (workId) {
+              videoObservers.value[workId] = observer
+            }
+          } else {
+            const handleLoadedMetadata = () => {
+              if (observer && video) {
+                observer.observe(video)
+                // Observer 정리를 위해 저장
+                const workId = Object.keys(workVideoRefs.value).find(
+                  (id) => workVideoRefs.value[id] === video,
+                )
+                if (workId) {
+                  videoObservers.value[workId] = observer
+                }
+              }
+              video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+              video.removeEventListener('error', handleVideoError)
+            }
+
+            const handleVideoError = () => {
+              video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+              video.removeEventListener('error', handleVideoError)
+            }
+
+            video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true })
+            video.addEventListener('error', handleVideoError, { once: true })
+
+            // 타임아웃 설정
+            setTimeout(() => {
+              if (video && video.readyState < 2) {
+                video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+                video.removeEventListener('error', handleVideoError)
+              }
+            }, 10000)
+          }
+        }
+
+        setupVideoObserver()
+      } catch (error) {
+        console.warn('Video optimization setup failed:', error)
+      }
+    })
+  }, 100)
+
   // 초기 해시 확인 (새로고침 또는 직접 URL 접근)
   const initialWorkId = getWorkIdFromHash()
   if (initialWorkId) {
@@ -640,6 +769,29 @@ onUnmounted(() => {
   if (workTitleRef.value) {
     gsap.killTweensOf(workTitleRef.value)
   }
+
+  // 비디오 Observer 정리
+  Object.values(videoObservers.value).forEach((observer) => {
+    if (observer) {
+      try {
+        observer.disconnect()
+      } catch (error) {
+        console.warn('Video observer cleanup failed:', error)
+      }
+    }
+  })
+  videoObservers.value = {}
+
+  // 비디오 일시정지
+  Object.values(workVideoRefs.value).forEach((video) => {
+    if (video) {
+      try {
+        video.pause()
+      } catch (error) {
+        console.warn('Video pause on unmount failed:', error)
+      }
+    }
+  })
 
   // 이벤트 리스너 제거
   window.removeEventListener('hashchange', handleHashChange)
