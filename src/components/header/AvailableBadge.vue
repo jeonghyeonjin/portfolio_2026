@@ -34,6 +34,9 @@ const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
   background-color: rgba(var(--white--1), 0.9);
   border-radius: 12px;
   position: relative;
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 .badge-dot {

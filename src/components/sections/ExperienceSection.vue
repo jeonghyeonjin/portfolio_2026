@@ -150,6 +150,9 @@ onUnmounted(() => {
   width: 100%;
   padding: 120px 40px;
   position: relative;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .experience-container {
@@ -158,6 +161,8 @@ onUnmounted(() => {
   grid-template-rows: auto;
   gap: 40px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .experience-title {
@@ -165,7 +170,6 @@ onUnmounted(() => {
   height: auto;
   max-width: 200px;
   display: block;
-  margin: 0 0 60px 0;
   grid-column: 1;
   grid-row: 1;
 }
@@ -198,10 +202,6 @@ onUnmounted(() => {
     gap: 30px;
   }
 
-  .experience-title {
-    margin-bottom: 40px;
-  }
-
   .experience-title-text {
     font-size: var(--display--2);
     font-weight: var(--font-weight--bold);
@@ -225,7 +225,6 @@ onUnmounted(() => {
   }
 
   .experience-title {
-    margin-bottom: 30px;
     grid-column: 1;
     grid-row: 1;
   }

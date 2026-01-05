@@ -644,6 +644,10 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  height: auto;
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 @media (--mobile) {

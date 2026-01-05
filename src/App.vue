@@ -60,6 +60,8 @@ provide('setSelectWorkCallback', (callback) => {
   align-items: center;
   justify-content: center;
   background-color: rgb(var(--white--1));
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Skip link for accessibility */
@@ -97,9 +99,13 @@ provide('setSelectWorkCallback', (callback) => {
 header {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 main {
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 </style>

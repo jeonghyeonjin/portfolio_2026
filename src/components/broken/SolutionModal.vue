@@ -1,149 +1,186 @@
 <template>
-  <div v-if="isOpen" class="solution-modal-overlay" @click="close" @wheel.passive.stop @touchmove.stop>
-    <div ref="solutionModalRef" class="solution-modal" @click.stop @wheel.passive.stop="handleModalWheel">
-      <Transition name="issue-marker">
-        <div
-          v-if="
-            !isFixed('modal-focus-trap') && activeIssue !== 'modal-focus-trap' && isMarkersReady
-          "
-          class="issue-marker-wrapper high-z"
-          style="top: 28px; right: 68px"
-          @click.stop="openIssue('modal-focus-trap')"
-        >
-          <IssueMarker />
-        </div>
-      </Transition>
-      <!-- Header -->
-      <div class="modal-header">
-        <div class="badges">
-          <BaseBadge type="difficulty" :difficulty="issue.difficulty.toLowerCase()">
-            {{ issueDifficulty }}
-          </BaseBadge>
-          <BaseBadge type="category">{{ issue.category }}</BaseBadge>
-        </div>
-        <h3 class="modal-title">{{ issue.title }}</h3>
-        <p class="modal-subtitle">{{ issue.subtitle }}</p>
-      </div>
-
-      <!-- Content -->
-      <div class="modal-content">
-        <!-- Problem -->
-        <div class="section problem">
-          <div class="section-label">
+  <Transition name="modal">
+    <div
+      v-if="isOpen"
+      class="solution-modal-overlay"
+      @click="close"
+      @wheel.passive.stop
+      @touchmove.stop
+    >
+      <div
+        ref="solutionModalRef"
+        class="solution-modal"
+        @click.stop
+        @wheel.passive.stop="handleModalWheel"
+      >
+        <Transition name="issue-marker">
+          <div
+            v-if="
+              !isFixed('modal-focus-trap') && activeIssue !== 'modal-focus-trap' && isMarkersReady
+            "
+            class="issue-marker-wrapper high-z"
+            style="top: 28px; right: 68px"
+            @click.stop="openIssue('modal-focus-trap')"
+          >
+            <IssueMarker />
+          </div>
+        </Transition>
+        <!-- Header -->
+        <div class="modal-header">
+          <button class="modal-close-button" aria-label="닫기" @click="close">
             <svg
-              class="section-icon"
-              width="16"
-              height="16"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M12 8.4502V12.4502M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 15.4502V15.5502L11.9502 15.5498V15.4502H12.0498Z"
+                d="M18 6L6 18M6 6L18 18"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
             </svg>
-            문제
+          </button>
+          <div class="badges">
+            <BaseBadge type="difficulty" :difficulty="issue.difficulty.toLowerCase()">
+              {{ issueDifficulty }}
+            </BaseBadge>
+            <BaseBadge type="category">{{ issue.category }}</BaseBadge>
           </div>
-          <div class="section-body">
-            <p>{{ issue.problem }}</p>
+          <h3 class="modal-title">{{ issue.title }}</h3>
+          <p class="modal-subtitle">{{ issue.subtitle }}</p>
+        </div>
+
+        <!-- Content -->
+        <div class="modal-content">
+          <!-- Problem -->
+          <div class="section problem">
+            <div class="section-label">
+              <svg
+                class="section-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 8.4502V12.4502M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 15.4502V15.5502L11.9502 15.5498V15.4502H12.0498Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              문제
+            </div>
+            <div class="section-body">
+              <p>{{ issue.problem }}</p>
+            </div>
+          </div>
+
+          <!-- Solution -->
+          <div class="section solution">
+            <div class="section-label">
+              <svg
+                class="section-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 11V16M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 8V8.1L11.9502 8.1002V8H12.0498Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              해결
+            </div>
+            <div class="section-body">
+              <p>{{ issue.solution }}</p>
+            </div>
+          </div>
+
+          <!-- Impact -->
+          <div class="section impact">
+            <div class="section-label">
+              <svg
+                class="section-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 21H15M12 3C8.68629 3 6 5.68629 6 9C6 10.2145 6.36084 11.3447 6.98117 12.2893C7.93507 13.7418 8.41161 14.4676 8.47352 14.5761C9.02428 15.541 8.92287 15.2007 8.99219 16.3096C8.99998 16.4342 9 16.6229 9 17C9 17.5523 9.44772 18 10 18L14 18C14.5523 18 15 17.5523 15 17C15 16.6229 15 16.4342 15.0078 16.3096C15.0771 15.2007 14.9751 15.541 15.5259 14.5761C15.5878 14.4676 16.0651 13.7418 17.019 12.2893C17.6394 11.3447 18.0002 10.2145 18.0002 9C18.0002 5.68629 15.3137 3 12 3Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              효과
+            </div>
+            <div class="section-body">
+              <p class="impact-text">{{ issue.impact }}</p>
+            </div>
+          </div>
+
+          <!-- Code -->
+          <div class="section code">
+            <div class="section-label">
+              <svg
+                class="section-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 7L20 12L15 17M9 17L4 12L9 7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              코드
+            </div>
+            <CodeBlock :code="issue.code" />
           </div>
         </div>
 
-        <!-- Solution -->
-        <div class="section solution">
-          <div class="section-label">
-            <svg
-              class="section-icon"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 11V16M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 8V8.1L11.9502 8.1002V8H12.0498Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            해결
-          </div>
-          <div class="section-body">
-            <p>{{ issue.solution }}</p>
-          </div>
+        <!-- Footer -->
+        <div class="modal-footer">
+          <CommonButton
+            variant="primary"
+            size="large"
+            class="modal-footer-btn-fix"
+            @click="handleFix"
+          >
+            Fix Issue
+          </CommonButton>
+          <CommonButton
+            variant="secondary"
+            size="large"
+            class="modal-footer-btn-close"
+            @click="close"
+          >
+            Close
+          </CommonButton>
         </div>
-
-        <!-- Impact -->
-        <div class="section impact">
-          <div class="section-label">
-            <svg
-              class="section-icon"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 21H15M12 3C8.68629 3 6 5.68629 6 9C6 10.2145 6.36084 11.3447 6.98117 12.2893C7.93507 13.7418 8.41161 14.4676 8.47352 14.5761C9.02428 15.541 8.92287 15.2007 8.99219 16.3096C8.99998 16.4342 9 16.6229 9 17C9 17.5523 9.44772 18 10 18L14 18C14.5523 18 15 17.5523 15 17C15 16.6229 15 16.4342 15.0078 16.3096C15.0771 15.2007 14.9751 15.541 15.5259 14.5761C15.5878 14.4676 16.0651 13.7418 17.019 12.2893C17.6394 11.3447 18.0002 10.2145 18.0002 9C18.0002 5.68629 15.3137 3 12 3Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            효과
-          </div>
-          <div class="section-body">
-            <p class="impact-text">{{ issue.impact }}</p>
-          </div>
-        </div>
-
-        <!-- Code -->
-        <div class="section code">
-          <div class="section-label">
-            <svg
-              class="section-icon"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15 7L20 12L15 17M9 17L4 12L9 7"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            코드
-          </div>
-          <CodeBlock :code="issue.code" />
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer">
-        <CommonButton
-          variant="primary"
-          size="large"
-          class="modal-footer-btn-fix"
-          @click="handleFix"
-        >
-          Fix Issue
-        </CommonButton>
-        <CommonButton variant="secondary" size="large" @click="close">Close</CommonButton>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script setup>
@@ -293,6 +330,13 @@ const trapFocus = (modalEl) => {
   backdrop-filter: blur(4px);
 }
 
+@media (max-width: 799px) {
+  .solution-modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+}
+
 .solution-modal {
   background: rgb(var(--white--0));
   border-radius: 20px;
@@ -303,8 +347,55 @@ const trapFocus = (modalEl) => {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 799px) {
+  .solution-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
 .modal-header {
   padding: 28px 28px 0 28px;
+  position: relative;
+}
+
+.modal-close-button {
+  display: none;
+}
+
+@media (max-width: 799px) {
+  .modal-close-button {
+    display: flex;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 10004;
+    color: rgb(var(--gray--2));
+  }
+
+  .modal-close-button:hover {
+    color: rgb(var(--gray--1));
+  }
+
+  .modal-close-button svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
 }
 
 .badges {
@@ -329,6 +420,14 @@ const trapFocus = (modalEl) => {
 
 .modal-content {
   padding: 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@media (max-width: 799px) {
+  .modal-content {
+    padding-bottom: 100px;
+  }
 }
 
 .section {
@@ -407,7 +506,52 @@ const trapFocus = (modalEl) => {
   gap: 12px;
 }
 
+@media (max-width: 799px) {
+  .modal-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: rgb(var(--white--0));
+    border-top: 1px solid rgba(var(--gray--5s), 0.2);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10003;
+  }
+
+  .modal-footer-btn-close {
+    display: none;
+  }
+}
+
 .modal-footer-btn-fix {
   flex: 1;
+}
+
+/* Modal Transition */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-enter-active .solution-modal-overlay,
+.modal-leave-active .solution-modal-overlay {
+  transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-enter-active .solution-modal,
+.modal-leave-active .solution-modal {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .solution-modal,
+.modal-leave-to .solution-modal {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.95);
 }
 </style>

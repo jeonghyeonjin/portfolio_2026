@@ -2,6 +2,25 @@
   <section id="about" class="about-section" ref="aboutSectionRef" aria-labelledby="about-heading">
     <div class="about-container">
       <h2 id="about-heading" class="visually-hidden">About Me</h2>
+      <svg
+        ref="aboutTitleRef"
+        class="about-title"
+        viewBox="0 0 335 70"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <text
+          class="about-title-text"
+          x="0"
+          y="50"
+          font-family="Wanted Sans Variable, Wanted Sans, sans-serif"
+          font-size="56"
+          font-weight="700"
+          letter-spacing="-0.02em"
+        >
+          About
+        </text>
+      </svg>
 
       <div class="about-content">
         <!-- Introduction -->
@@ -273,6 +292,9 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   padding: 120px 40px;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .about-container {
@@ -281,6 +303,8 @@ onUnmounted(() => {
   grid-template-rows: auto;
   gap: 40px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Visually hidden but accessible to screen readers */
@@ -302,7 +326,6 @@ onUnmounted(() => {
   width: 100%;
   max-width: 400px;
   height: auto;
-  margin-bottom: 40px;
   overflow: visible;
 }
 
@@ -700,13 +723,24 @@ onUnmounted(() => {
 
   .about-container {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    grid-template-rows: repeat(2, auto);
     gap: 24px;
+  }
+
+  .about-title {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .about-title-text {
+    font-size: var(--title--1);
+    font-weight: var(--font-weight--bold);
   }
 
   .about-content {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 2;
     gap: 50px;
   }
 

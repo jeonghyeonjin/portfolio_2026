@@ -1,5 +1,5 @@
 <template>
-  <nav class="navigation">
+  <nav class="navigation" :class="{ 'has-scrolled': isScrolled }">
     <div class="nav-left">
       <div class="logo-container" ref="logoContainerRef">
         <img src="@/assets/images/logo.png" alt="Logo" class="logo" />
@@ -151,24 +151,74 @@
     <div class="nav-right">
       <ProgressPanel />
     </div>
-    <button class="hamburger-button" ref="hamburgerButtonRef" aria-label="메뉴">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
+    <button
+      class="hamburger-button"
+      ref="hamburgerButtonRef"
+      aria-label="메뉴"
+      @click="toggleMobileMenu"
+    >
+      <img src="@/assets/images/icons/menu.svg" alt="메뉴" />
     </button>
   </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <Teleport to="body">
+    <Transition name="mobile-menu">
+      <div v-if="isMobileMenuOpen" class="mobile-menu-overlay" @click="closeMobileMenu">
+        <div class="mobile-menu-content" @click.stop>
+          <button class="mobile-menu-close" @click="closeMobileMenu" aria-label="닫기">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 18L12 12M12 12L6 6M12 12L18 6M12 12L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <nav class="mobile-menu-nav">
+            <ul ref="mobileMenuListRef" class="mobile-menu-list">
+              <li
+                class="mobile-menu-item"
+                :class="{ active: activeSection === 'skill' }"
+                @click="handleMobileMenuClick('skill')"
+              >
+                <span class="mobile-menu-text">Skill</span>
+              </li>
+              <li
+                class="mobile-menu-item"
+                :class="{ active: activeSection === 'work' }"
+                @click="handleMobileMenuClick('work')"
+              >
+                <span class="mobile-menu-text">Work</span>
+              </li>
+              <li
+                class="mobile-menu-item"
+                :class="{ active: activeSection === 'experience' }"
+                @click="handleMobileMenuClick('experience')"
+              >
+                <span class="mobile-menu-text">Experience</span>
+              </li>
+              <li
+                class="mobile-menu-item"
+                :class="{ active: activeSection === 'about' }"
+                @click="handleMobileMenuClick('about')"
+              >
+                <span class="mobile-menu-text">About</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
@@ -220,6 +270,7 @@ const hamburgerButtonRef = ref(null)
 const navCenterRef = ref(null)
 const searchContainerRef = ref(null)
 const searchInputRef = ref(null)
+const mobileMenuListRef = ref(null)
 const activeSection = ref('')
 const menuListWidth = ref(null)
 
@@ -230,6 +281,12 @@ const debouncedSearchQuery = refDebounced(searchQuery, 300) // 300ms debounce
 const selectedIndex = ref(0)
 const resultRefs = ref([])
 const isAnimating = ref(false)
+
+// 모바일 메뉴 상태
+const isMobileMenuOpen = ref(false)
+
+// 스크롤 상태 (모바일용)
+const isScrolled = ref(false)
 
 // 검색 결과 필터링 (debounced query 사용)
 const filteredWorks = computed(() => {
@@ -248,6 +305,7 @@ const filteredWorks = computed(() => {
 const sections = SECTION_IDS.map((id) => ({ id, element: null }))
 let scrollTriggers = []
 let resizeHandler = null
+let scrollHandler = null
 
 // 섹션 요소 찾기
 const findSections = () => {
@@ -264,32 +322,32 @@ const scrollToSection = (sectionId) => {
   const section = sections.find((s) => s.id === sectionId)
   if (!section?.element) return
 
-  // skill 섹션은 하단이 화면 하단에 오도록 스크롤
-  // if (sectionId === 'skill') {
-  const rect = section.element.getBoundingClientRect()
-  const elementTop = rect.top + window.scrollY
-  const elementHeight = rect.height
-  const windowHeight = window.innerHeight
-  const targetScrollY = elementTop + elementHeight - windowHeight
+  // 모바일에서는 섹션 상단이 화면 상단에 오도록 스크롤
+  if (isMobile.value) {
+    gsap.to(window, {
+      duration: SCROLL_DURATION,
+      scrollTo: {
+        y: section.element,
+        offsetY: 0,
+      },
+      ease: SCROLL_EASE,
+    })
+  } else {
+    // 데스크톱에서는 하단이 화면 하단에 오도록 스크롤
+    const rect = section.element.getBoundingClientRect()
+    const elementTop = rect.top + window.scrollY
+    const elementHeight = rect.height
+    const windowHeight = window.innerHeight
+    const targetScrollY = elementTop + elementHeight - windowHeight
 
-  gsap.to(window, {
-    duration: SCROLL_DURATION,
-    scrollTo: {
-      y: targetScrollY,
-    },
-    ease: SCROLL_EASE,
-  })
-  // } else {
-  //   // 다른 섹션은 상단이 화면 상단에 오도록 스크롤
-  //   gsap.to(window, {
-  //     duration: SCROLL_DURATION,
-  //     scrollTo: {
-  //       y: section.element,
-  //       offsetY: 0,
-  //     },
-  //     ease: SCROLL_EASE,
-  //   })
-  // }
+    gsap.to(window, {
+      duration: SCROLL_DURATION,
+      scrollTo: {
+        y: targetScrollY,
+      },
+      ease: SCROLL_EASE,
+    })
+  }
 }
 
 // 활성 섹션 업데이트
@@ -700,6 +758,15 @@ watch(
   { flush: 'post' },
 )
 
+// 모바일 메뉴 열림/닫힘 감지하여 애니메이션 실행
+watch(isMobileMenuOpen, (isOpen) => {
+  if (isOpen) {
+    nextTick(() => {
+      animateMobileMenuItems(true)
+    })
+  }
+})
+
 // '/' 키로 검색창 열기
 const handleKeydown = (event) => {
   // '/' 키 처리 - 이슈가 해결된 경우에만 동작
@@ -724,6 +791,68 @@ const handleKeydown = (event) => {
       openSearch()
     }
   }
+}
+
+// 모바일 메뉴 애니메이션
+const animateMobileMenuItems = (isOpening) => {
+  if (!mobileMenuListRef.value) return
+
+  const menuItems = mobileMenuListRef.value.querySelectorAll('.mobile-menu-item')
+
+  if (isOpening) {
+    // 메뉴 열릴 때: 위에서부터 순차적으로 등장
+    gsap.set(menuItems, {
+      opacity: 0,
+    })
+
+    gsap.to(menuItems, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.1,
+      ease: 'power2.out',
+      delay: 0.2, // 오버레이 애니메이션 후 시작
+    })
+  } else {
+    // 메뉴 닫힐 때: 역순으로 사라짐
+    gsap.to(menuItems, {
+      opacity: 0,
+      ease: 'power2.in',
+    })
+  }
+}
+
+// 모바일 메뉴 토글
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+  // 메뉴가 열릴 때 body 스크롤 방지
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}
+
+// 모바일 메뉴 닫기
+const closeMobileMenu = () => {
+  animateMobileMenuItems(false)
+  setTimeout(() => {
+    isMobileMenuOpen.value = false
+    document.body.style.overflow = ''
+  }, 300)
+}
+
+// 모바일 메뉴 아이템 클릭 처리
+const handleMobileMenuClick = (sectionId) => {
+  scrollToSection(sectionId)
+  closeMobileMenu()
+}
+
+// 스크롤 핸들러 (모바일용)
+const handleScroll = () => {
+  if (!isMobile.value) return
+  // 스크롤이 조금만 내려가도 배경색 표시 (예: 10px 이상)
+  isScrolled.value = window.scrollY > 10
 }
 
 // 외부에서 열 수 있도록 expose (imperative methods only)
@@ -774,6 +903,14 @@ onMounted(() => {
 
   // '/' 키 이벤트 리스너
   window.addEventListener('keydown', handleKeydown)
+
+  // 모바일에서 스크롤 이벤트 리스너
+  if (isMobile.value) {
+    scrollHandler = handleScroll
+    window.addEventListener('scroll', scrollHandler, { passive: true })
+    // 초기 스크롤 상태 확인
+    handleScroll()
+  }
 })
 
 onUnmounted(() => {
@@ -789,8 +926,17 @@ onUnmounted(() => {
 
   window.removeEventListener('keydown', handleKeydown)
 
+  // 스크롤 이벤트 리스너 제거
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler)
+    scrollHandler = null
+  }
+
   // 모든 ScrollTrigger 제거
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+
+  // body overflow 복원
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -820,6 +966,9 @@ onUnmounted(() => {
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
   gap: 0;
+  transition:
+    background-color 0.3s ease,
+    backdrop-filter 0.3s ease;
 }
 
 .nav-left {
@@ -830,9 +979,10 @@ onUnmounted(() => {
 
 .logo-container {
   display: flex;
-  justify-content: flex-start;
-  width: auto;
-  padding: 10px 10px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
 }
 
 .nav-center {
@@ -940,7 +1090,7 @@ onUnmounted(() => {
   color: rgb(var(--gray--1));
 }
 
-.hamburger-button svg {
+.hamburger-button img {
   display: block;
   width: 24px;
   height: 24px;
@@ -959,11 +1109,22 @@ onUnmounted(() => {
 /* Mobile: --mobile */
 @media (--mobile) {
   .navigation {
-    top: 40px;
-    left: 40px;
-    right: calc(40px + var(--scrollbar-width, 0px));
+    top: 20px;
+    left: 20px;
+    right: calc(20px + var(--scrollbar-width, 0px));
     grid-template-columns: auto 1fr auto;
     justify-content: space-between;
+    padding: 0 10px;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+  }
+
+  .navigation.has-scrolled {
+    top: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
   }
 
   .nav-center {
@@ -972,11 +1133,6 @@ onUnmounted(() => {
 
   .nav-right {
     justify-content: flex-end;
-  }
-
-  .logo-container {
-    width: auto;
-    padding: 0;
   }
 
   .logo {
@@ -1092,29 +1248,183 @@ onUnmounted(() => {
   }
 }
 
-/* Mobile: --mobile */
+/* Mobile: --mobile - 검색 컨테이너 스타일 */
 @media (--mobile) {
   .search-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
     max-width: 100%;
+    transform: none;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
   }
 
   .search-input-wrapper {
-    min-width: 200px;
-    padding: 8px 10px;
+    min-width: auto;
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.15);
+    margin-bottom: 16px;
   }
 
   .search-results {
-    max-height: 300px;
+    flex: 1;
+    max-height: none;
     border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .search-result {
-    padding: 10px 12px;
+    padding: 12px 16px;
   }
 
   .search-result-title {
     font-size: var(--headline--2);
     font-weight: var(--font-weight--medium);
+    color: rgba(255, 255, 255, 0.9);
   }
+
+  .search-result-description {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .search-result:hover,
+  .search-result.active {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 30px;
+}
+
+.mobile-menu-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: none;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  z-index: 10000;
+  color: rgb(var(--white--1));
+}
+
+.mobile-menu-close:hover {
+  transform: rotate(90deg);
+}
+
+.mobile-menu-close svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.mobile-menu-nav {
+  width: 100%;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.mobile-menu-item {
+  font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif;
+  font-size: clamp(32px, 8vw, 48px);
+  font-weight: var(--font-weight--medium);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 12px 24px;
+  border-radius: 12px;
+}
+
+.mobile-menu-item:hover,
+.mobile-menu-item.active {
+  color: rgb(var(--white--1));
+}
+
+.mobile-menu-text {
+  display: block;
+  text-align: center;
+}
+
+/* Mobile Menu Transitions */
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-enter-active .mobile-menu-content,
+.mobile-menu-leave-active .mobile-menu-content {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+}
+
+.mobile-menu-enter-from .mobile-menu-content,
+.mobile-menu-leave-to .mobile-menu-content {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.mobile-menu-enter-to,
+.mobile-menu-leave-from {
+  opacity: 1;
+}
+
+.mobile-menu-enter-to .mobile-menu-content,
+.mobile-menu-leave-from .mobile-menu-content {
+  transform: scale(1);
+  opacity: 1;
 }
 </style>

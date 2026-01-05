@@ -22,16 +22,16 @@
       <div ref="heroImageContainerRef" class="hero-image-container">
         <div ref="heroImageWrapperRef" class="hero-image-wrapper">
           <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
-          <img
-            :src="heroThumbnailUrl"
-            alt="Tape Dashboard"
-            class="hero-image"
-          />
+          <img :src="heroThumbnailUrl" alt="Tape Dashboard" class="hero-image" />
         </div>
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section" v-if="modalData.sections?.projectOverview" id="tape-overview">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.projectOverview"
+        id="tape-overview"
+      >
         <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
         <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
         <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
@@ -72,7 +72,11 @@
       </section>
 
       <!-- Key Contributions -->
-      <section class="content-section" v-if="modalData.sections?.keyContributions" id="tape-features">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.keyContributions"
+        id="tape-features"
+      >
         <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
@@ -141,7 +145,7 @@
               </div>
               <div class="feature-image-wrapper">
                 <ChannelListDemo v-if="index === 0" ref="channelListDemoRef" />
-                <VideoDetailDemo v-if="index === 0" ref="videoDetailDemoRef" />
+                <VideoDetailDemo v-if="index === 0 && !isMobile" ref="videoDetailDemoRef" />
                 <EmojiFeedbackDemo v-if="index === 1" ref="emojiFeedbackDemoRef" />
                 <img
                   v-if="index === 2"
@@ -159,7 +163,11 @@
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section" v-if="modalData.sections?.performanceImpact" id="tape-metrics">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.performanceImpact"
+        id="tape-metrics"
+      >
         <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
@@ -177,7 +185,7 @@
       </section>
     </div>
 
-    <WorkModalTOC :sections="tocSections" />
+    <WorkModalTOC v-if="!isMobile" :sections="tocSections" />
   </div>
 </template>
 
@@ -430,7 +438,7 @@ const tocSections = [
   { id: 'tape-tech', label: 'Tech Stack' },
   { id: 'tape-features', label: 'Key Contributions' },
   { id: 'tape-metrics', label: 'Performance Metrics' },
-  { id: 'tape-takeaways', label: 'Key Takeaways' }
+  { id: 'tape-takeaways', label: 'Key Takeaways' },
 ]
 
 onMounted(() => {
@@ -451,7 +459,7 @@ onMounted(() => {
 
         if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
           gsap.to(heroImageWrapperRef.value, {
-            scale: isTablet.value ? (isMobile.value ? 0.7 : 0.83) : 1.1,
+            scale: isTablet.value ? (isMobile.value ? 0.95 : 0.83) : 1.1,
             bottom: isTablet.value ? (isMobile.value ? '-5%' : '0%') : '-12%',
             opacity: 1,
             scrollTrigger: scrollTriggerConfig1,
@@ -481,7 +489,7 @@ onMounted(() => {
           trigger: heroImageContainerRef.value,
           scroller: modalOverlay,
           start: 'top 0px',
-          end: '50px',
+          end: '10px',
           scrub: 1,
         }
 
@@ -1028,6 +1036,14 @@ p {
 
 /* Mobile: --mobile */
 @media (--mobile) {
+  .work-modal-body {
+    padding-bottom: 130px;
+  }
+
+  .work-modal-header {
+    padding: 0 30px;
+  }
+
   .work-modal-title {
     font-size: var(--hero--3);
     font-weight: var(--font-weight--bold);
@@ -1057,6 +1073,15 @@ p {
 
   .section-title {
     font-size: var(--title--3);
+  }
+
+  .section-text {
+    font-size: var(--body--1--normal);
+    font-weight: var(--font-weight--regular);
+  }
+
+  .feature-block {
+    padding: 20px;
   }
 
   .feature-content {

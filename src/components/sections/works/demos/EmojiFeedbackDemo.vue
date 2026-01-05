@@ -140,9 +140,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@import '@/assets/styles/breakpoints.css';
+
 .emoji-demo {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 1;
   background-color: #0e1519;
   border-radius: 12px;
   overflow: hidden;

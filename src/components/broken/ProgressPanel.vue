@@ -39,6 +39,23 @@
     <!-- 설명 판넬 (absolute 팝업) -->
     <Transition name="panel">
       <div v-if="isHelpPanelOpen" class="help-panel" @click.stop>
+        <button class="help-panel-close" aria-label="닫기" @click="toggleHelpPanel">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6L6 18M6 6L18 18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
         <div class="help-panel-content">
           <div class="help-header">
             <div class="help-title">Broken Portfolio</div>
@@ -72,33 +89,36 @@
               </p>
             </div>
 
-            <div class="help-section">
-              <div class="progress-display">
-                <span class="progress-number">{{ animatedProgress }}</span>
-                <span class="progress-separator">/</span>
-                <span class="progress-number">{{ totalIssues }}</span>
-                <span class="progress-label">issues found</span>
-              </div>
-            </div>
-
             <div v-if="allFixed" class="completion-message">🎉 all issues found!</div>
-
-            <div class="help-section">
-              <CommonButton
-                variant="secondary"
-                size="medium"
-                :disabled="progress === 0"
-                class="reset-button"
-                @click="handleReset"
-              >
-                Reset Progress
-              </CommonButton>
-            </div>
           </div>
         </div>
 
-        <!-- 프로그레스바 (하단 여백 없이) -->
-        <ProgressBar :progress="animatedProgress" :total="totalIssues" />
+        <!-- 하단 고정 영역 (프로그레스 표시, 리셋 버튼, 프로그레스바) -->
+        <div class="help-panel-footer">
+          <div class="help-section">
+            <div class="progress-display">
+              <span class="progress-number">{{ animatedProgress }}</span>
+              <span class="progress-separator">/</span>
+              <span class="progress-number">{{ totalIssues }}</span>
+              <span class="progress-label">issues found</span>
+            </div>
+          </div>
+
+          <div class="help-section">
+            <CommonButton
+              variant="secondary"
+              size="medium"
+              :disabled="progress === 0"
+              class="reset-button"
+              @click="handleReset"
+            >
+              Reset Progress
+            </CommonButton>
+          </div>
+
+          <!-- 프로그레스바 -->
+          <ProgressBar :progress="animatedProgress" :total="totalIssues" />
+        </div>
       </div>
     </Transition>
 
@@ -285,6 +305,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@import '@/assets/styles/breakpoints.css';
+
 .progress-panel-wrapper {
   position: relative;
   pointer-events: auto;
@@ -300,6 +322,14 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+@media (--mobile) {
+  .progress-button {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 .button-icon {
@@ -346,7 +376,7 @@ onUnmounted(() => {
   background: rgb(var(--white--0));
   border-radius: 12px;
   min-width: 280px;
-  max-width: 320px;
+  max-width: 400px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   border: 1px solid rgba(var(--gray--5s), 0.2);
   z-index: 100;
@@ -354,8 +384,89 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
+@media (--mobile) {
+  .help-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: auto;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+.help-panel-close {
+  display: none;
+}
+
+@media (--mobile) {
+  .help-panel-close {
+    display: flex;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 10000;
+    color: rgb(var(--gray--2));
+  }
+
+  .help-panel-close:hover {
+    color: rgb(var(--gray--1));
+  }
+
+  .help-panel-close svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+}
+
 .help-panel-content {
   padding: 20px;
+}
+
+@media (--mobile) {
+  .help-panel-content {
+    padding: 30px 30px 20px 30px;
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+.help-panel-footer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (--mobile) {
+  .help-panel-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgb(var(--white--0));
+    padding: 20px 30px;
+    z-index: 10001;
+  }
 }
 
 .help-header {

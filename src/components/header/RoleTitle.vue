@@ -15,6 +15,9 @@
   flex-direction: column;
   gap: 4px;
   margin-top: 16px;
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 .role-wrapper {

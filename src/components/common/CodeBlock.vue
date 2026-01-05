@@ -57,6 +57,7 @@ watch(() => props.code, highlightCode)
 
 <style scoped>
 @import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+@import '@/assets/styles/breakpoints.css';
 
 .code-block {
   border: 1px solid rgba(var(--white--1), 0.1);
@@ -73,6 +74,13 @@ watch(() => props.code, highlightCode)
   max-height: 280px;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile: --mobile */
+@media (--mobile) {
+  .code-scroll-wrapper {
+    max-height: none;
+  }
 }
 
 /* Custom Scrollbar Styles */

@@ -213,10 +213,10 @@ const setupScrollTrigger = () => {
         delay: index * 0.15,
         scrollTrigger: {
           trigger: card,
-          start: 'bottom bottom',
+          start: 'center bottom',
           toggleActions: 'play none none none',
+          // markers: true,
         },
-        markers: true,
       })
       cardAnimations.push(animation)
     })
@@ -259,7 +259,7 @@ const setupScrollTrigger = () => {
     highlight.classList.remove('active')
     const trigger = ScrollTrigger.create({
       trigger: highlight,
-      start: 'top 85%',
+      start: 'top 70%',
       onEnter: () => highlight.classList.add('active'),
       onLeaveBack: () => highlight.classList.remove('active'),
     })
@@ -329,6 +329,9 @@ onUnmounted(() => {
   width: 100%;
   padding: 120px 40px;
   position: relative;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .skill-container {
@@ -337,6 +340,8 @@ onUnmounted(() => {
   grid-template-rows: auto;
   gap: 40px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .skill-title {
@@ -487,13 +492,13 @@ onUnmounted(() => {
 /* Mobile: --mobile */
 @media (--mobile) {
   .skill-section {
-    padding: 0px 20px;
+    padding: 30px 20px;
   }
 
   .skill-container {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, auto);
-    gap: 24px;
+    gap: 10px;
   }
 
   .skill-title {

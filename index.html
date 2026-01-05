@@ -21,6 +21,25 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
     />
+    <script>
+      // 스크롤바 너비를 즉시 계산하여 CSS 변수로 설정
+      (function() {
+        const outer = document.createElement('div');
+        outer.style.visibility = 'hidden';
+        outer.style.overflow = 'scroll';
+        outer.style.msOverflowStyle = 'scrollbar';
+        document.documentElement.appendChild(outer);
+
+        const inner = document.createElement('div');
+        outer.appendChild(inner);
+
+        const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+
+        outer.parentNode.removeChild(outer);
+
+        document.documentElement.style.setProperty('--scrollbar-width', scrollbarWidth + 'px');
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

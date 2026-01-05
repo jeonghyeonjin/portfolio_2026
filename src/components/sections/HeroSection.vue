@@ -80,7 +80,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import { useResponsive } from '@/composables/useResponsive'
-import { useMobileViewport } from '@/composables/useMobileViewport'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import SolutionModal from '@/components/broken/SolutionModal.vue'
 import heroShapes from '@/data/heroShapes.json'
@@ -88,7 +87,7 @@ import heroShapes from '@/data/heroShapes.json'
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
 
 const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
-const { isMobile, isTablet } = useResponsive()
+const { isTablet } = useResponsive()
 
 const heroSectionRef = ref(null)
 const heroImageRef = ref(null)
@@ -97,18 +96,8 @@ const heroBgPathRef = ref(null)
 const mouseScrollRef = ref(null)
 let heroBgPathAnimation = null
 
-// 모바일 뷰포트 높이 관리
-const { setupListeners, cleanup: cleanupViewport } = useMobileViewport({
-  elementRef: heroSectionRef,
-  isMobile,
-  offset: 40,
-})
-
 onMounted(() => {
   if (!heroImageRef.value || !heroSectionRef.value) return
-
-  // 모바일 뷰포트 높이 설정
-  setupListeners()
 
   // 페이지 로딩 시 hero-image 등장 애니메이션 (아래에서 위로)
   gsap.fromTo(
@@ -188,9 +177,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  // 모바일 뷰포트 리스너 정리
-  cleanupViewport()
-
   if (heroBgPathAnimation) {
     heroBgPathAnimation.kill()
     heroBgPathAnimation = null
@@ -211,14 +197,18 @@ onUnmounted(() => {
 
 .hero-section {
   width: 100%;
-  /* 모바일에서는 dvh 사용, fallback으로 vh */
+  /* fallback for older browsers */
+  height: 100vh;
+  /* 모바일에서는 dvh 사용 */
   height: 100dvh;
-  height: 100vh; /* fallback for older browsers */
   display: flex;
   align-items: center;
   position: relative;
   padding: 10px;
   overflow: hidden;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-section-container {
@@ -398,27 +388,6 @@ onUnmounted(() => {
   fill: rgb(var(--white--1)) !important;
 }
 
-/* Tablet: --tablet */
-@media (--tablet) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-grid-item-empty {
-    display: none;
-  }
-
-  .hero-grid-item-image {
-    grid-column: 1;
-  }
-}
-
-@media (--mobile) {
-  .hero-grid-item-image {
-    padding: 20px;
-  }
-}
-
 .mouse-scroll {
   position: absolute;
   bottom: 40px;
@@ -491,7 +460,32 @@ onUnmounted(() => {
   }
 }
 
+/* Tablet: --tablet */
+@media (--tablet) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-grid-item-empty {
+    display: none;
+  }
+
+  .hero-grid-item-image {
+    grid-column: 1;
+  }
+}
+
 @media (--mobile) {
+  .hero-section {
+    /* padding: 0; */
+  }
+  .hero-section-container::after {
+  }
+  .hero-grid-item-image {
+    height: 100dvh;
+    padding: 20px;
+  }
+
   .mouse-scroll {
     display: none;
   }

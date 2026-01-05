@@ -1,8 +1,8 @@
 <template>
   <div class="name-title" ref="nameTitleRef">
     <div ref="nameTextRef" class="name-text">
-      <div ref="firstLineRef" class="name-line">Jeong</div>
-      <div ref="secondLineRef" class="name-line">Hyeon-jin</div>
+      <div ref="firstLineRef" class="name-line" style="opacity: 1">Jeong</div>
+      <div ref="secondLineRef" class="name-line" style="opacity: 1">Hyeon-jin</div>
     </div>
   </div>
 </template>
