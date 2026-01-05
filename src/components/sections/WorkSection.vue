@@ -134,15 +134,15 @@
       :class="{ 'is-optimized': isFixed('work-modal-perf') }"
     ></div>
     <!-- Work Modal -->
-    <!-- <Teleport to="body"> -->
-    <WorkModal
-      ref="workModalRef"
-      v-if="activeWorkId"
-      :work-id="activeWorkId"
-      :is-visible="isModalVisible"
-      @close="closeWorkModal"
-    />
-    <!-- </Teleport> -->
+    <Teleport to="html">
+      <WorkModal
+        ref="workModalRef"
+        v-if="activeWorkId"
+        :work-id="activeWorkId"
+        :is-visible="isModalVisible"
+        @close="closeWorkModal"
+      />
+    </Teleport>
   </section>
 </template>
 
