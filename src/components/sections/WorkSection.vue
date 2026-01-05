@@ -43,8 +43,8 @@
         >
           <div class="work-image-container" aria-hidden="true">
             <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
-              <source :src="work.videoSources.webm" type="video/webm" />
-              <source :src="work.videoSources.mp4" type="video/mp4" />
+              <source :src="getVideoUrl(work.videoSources.webm)" type="video/webm" />
+              <source :src="getVideoUrl(work.videoSources.mp4)" type="video/mp4" />
             </video>
             <img
               v-else-if="work.thumbnail"
@@ -245,6 +245,30 @@ const getThumbnailUrl = (thumbnailPath) => {
 
   // 그 외의 경우 그대로 반환
   return thumbnailPath
+}
+
+// 비디오 URL 처리 함수 (public 폴더의 파일은 BASE_URL 사용)
+const getVideoUrl = (videoPath) => {
+  if (!videoPath) return null
+
+  // 이미 절대 URL인 경우 그대로 반환
+  if (videoPath.startsWith('http://') || videoPath.startsWith('https://')) {
+    return videoPath
+  }
+
+  // /portfolio_2026/videos/... 형식의 경로를 처리
+  if (videoPath.startsWith('/portfolio_2026/')) {
+    const relativePath = videoPath.replace('/portfolio_2026/', '')
+    return `${import.meta.env.BASE_URL}${relativePath}`
+  }
+
+  // 이미 /로 시작하는 절대 경로인 경우 BASE_URL 추가
+  if (videoPath.startsWith('/')) {
+    return `${import.meta.env.BASE_URL}${videoPath.slice(1)}`
+  }
+
+  // 그 외의 경우 그대로 반환
+  return videoPath
 }
 
 // 링크 개수 계산 함수

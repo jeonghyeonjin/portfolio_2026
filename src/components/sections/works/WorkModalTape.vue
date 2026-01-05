@@ -23,7 +23,7 @@
         <div ref="heroImageWrapperRef" class="hero-image-wrapper">
           <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
           <img
-            src="/videos/tape/tape_thumbnail-front.png"
+            :src="`${import.meta.env.BASE_URL}videos/tape/tape_thumbnail-front.png`"
             alt="Tape Dashboard"
             class="hero-image"
           />

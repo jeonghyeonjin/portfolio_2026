@@ -15,8 +15,8 @@
           <div class="mockup-screen">
             <div ref="mockupContainerInnerRef" class="mockup-container-inner"></div>
             <video autoplay loop muted playsinline class="mockup-video">
-              <source src="/portfolio_2026/videos/keebbear_1.webm" type="video/webm" />
-              <source src="/portfolio_2026/videos/keebbear_1.mp4" type="video/mp4" />
+              <source :src="videoWebmUrl" type="video/webm" />
+              <source :src="videoMp4Url" type="video/mp4" />
             </video>
           </div>
         </div>
@@ -206,6 +206,15 @@ const workId = inject('workId', 3)
 
 const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
+})
+
+// 비디오 URL (public 폴더의 파일은 BASE_URL 사용)
+const videoWebmUrl = computed(() => {
+  return `${import.meta.env.BASE_URL}videos/keebbear_1.webm`
+})
+
+const videoMp4Url = computed(() => {
+  return `${import.meta.env.BASE_URL}videos/keebbear_1.mp4`
 })
 
 gsap.registerPlugin(ScrollTrigger)
