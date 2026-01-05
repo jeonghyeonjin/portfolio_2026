@@ -16,7 +16,7 @@
             <div ref="mockupContainerInnerRef" class="mockup-container-inner"></div>
             <video
               ref="mockupVideoRef"
-              autoplay
+              :autoplay="!isMobile"
               loop
               muted
               playsinline
@@ -247,6 +247,9 @@ const achievementDemoRef = ref(null)
 const designFeatureBlockRef = ref(null)
 const designFeatureTextRef = ref(null)
 const { isMobile, isTablet } = useResponsive()
+
+// Video observer cleanup
+const videoObserverRef = ref(null)
 
 // Dynamic refs for features
 const featureBlockRefs = ref([])
@@ -507,45 +510,119 @@ const tocSections = [
 onMounted(() => {
   // Video optimization: pause video on mobile to save resources
   if (mockupVideoRef.value && isMobile.value) {
-    try {
-      // Set a lower quality on mobile if possible
-      mockupVideoRef.value.playbackRate = 1
-      // Optionally pause until user scrolls to it
-      let isPlaying = false
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(async (entry) => {
-            const video = mockupVideoRef.value
-            if (!video) return
+    const setupVideoObserver = () => {
+      const video = mockupVideoRef.value
+      if (!video) return null
 
-            if (entry.isIntersecting) {
-              if (!isPlaying) {
-                isPlaying = true
-                try {
-                  await video.play()
-                } catch (error) {
-                  // AbortError는 play()가 pause()에 의해 중단된 경우이므로 무시
-                  if (error.name !== 'AbortError') {
-                    console.warn('Video play failed:', error)
+      // 비디오가 준비될 때까지 대기
+      const handleVideoReady = () => {
+        try {
+          // 비디오 속성 설정 (안전하게)
+          if (video && typeof video.playbackRate !== 'undefined') {
+            video.playbackRate = 1
+          }
+
+          let isPlaying = false
+          let observer = null
+
+          observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach(async (entry) => {
+                const currentVideo = mockupVideoRef.value
+                if (!currentVideo) {
+                  // 비디오가 언마운트된 경우 observer 정리
+                  if (observer) {
+                    observer.disconnect()
+                    observer = null
                   }
+                  return
+                }
+
+                try {
+                  if (entry.isIntersecting) {
+                    if (!isPlaying) {
+                      isPlaying = true
+                      try {
+                        // 비디오가 준비되었는지 확인
+                        if (currentVideo.readyState >= 2) {
+                          await currentVideo.play()
+                        }
+                      } catch (error) {
+                        // AbortError는 play()가 pause()에 의해 중단된 경우이므로 무시
+                        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
+                          console.warn('Video play failed:', error)
+                        }
+                        isPlaying = false
+                      }
+                    }
+                  } else {
+                    if (isPlaying) {
+                      isPlaying = false
+                      try {
+                        currentVideo.pause()
+                      } catch (error) {
+                        console.warn('Video pause failed:', error)
+                      }
+                    }
+                  }
+                } catch (error) {
+                  console.warn('Video observer error:', error)
                   isPlaying = false
                 }
-              }
-            } else {
-              if (isPlaying) {
-                isPlaying = false
-                video.pause()
-              }
-            }
-          })
-        },
-        { threshold: 0.1 },
-      )
-      if (mockupVideoRef.value) {
-        observer.observe(mockupVideoRef.value)
+              })
+            },
+            { threshold: 0.1 },
+          )
+
+          if (video) {
+            observer.observe(video)
+            videoObserverRef.value = observer
+          }
+
+          return observer
+        } catch (error) {
+          console.warn('Video observer setup failed:', error)
+          return null
+        }
       }
+
+      // 비디오가 이미 로드된 경우
+      if (video.readyState >= 2) {
+        return handleVideoReady()
+      }
+
+      // 비디오 로드 대기
+      const handleLoadedMetadata = () => {
+        handleVideoReady()
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+        video.removeEventListener('error', handleVideoError)
+      }
+
+      const handleVideoError = (e) => {
+        console.warn('Video load error:', e)
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+        video.removeEventListener('error', handleVideoError)
+      }
+
+      video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true })
+      video.addEventListener('error', handleVideoError, { once: true })
+
+      // 타임아웃 설정 (10초 후에도 로드되지 않으면 포기)
+      setTimeout(() => {
+        if (video.readyState < 2) {
+          console.warn('Video metadata load timeout')
+          video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+          video.removeEventListener('error', handleVideoError)
+        }
+      }, 10000)
+
+      return null
+    }
+
+    try {
+      setupVideoObserver()
     } catch (error) {
-      console.warn('Video optimization failed:', error)
+      console.warn('Video optimization setup failed:', error)
     }
   }
 
@@ -703,6 +780,25 @@ onMounted(() => {
 
 // Cleanup on unmount
 onUnmounted(() => {
+  // Cleanup video observer
+  if (videoObserverRef.value) {
+    try {
+      videoObserverRef.value.disconnect()
+      videoObserverRef.value = null
+    } catch (error) {
+      console.warn('Video observer cleanup failed:', error)
+    }
+  }
+
+  // Pause video if playing
+  if (mockupVideoRef.value) {
+    try {
+      mockupVideoRef.value.pause()
+    } catch (error) {
+      console.warn('Video pause on unmount failed:', error)
+    }
+  }
+
   // Kill all ScrollTrigger instances
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) {
