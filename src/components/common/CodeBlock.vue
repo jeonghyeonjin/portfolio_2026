@@ -63,7 +63,7 @@ watch(() => props.code, highlightCode)
   border: 1px solid rgba(var(--white--1), 0.1);
   background: rgb(var(--gray--1));
   border-radius: 12px;
-  margin: 20px 0;
+  /* margin: 20px 0; */
   overflow: hidden;
 }
 

@@ -28,7 +28,11 @@
       </div>
 
       <!-- Project Overview -->
-      <section class="content-section" v-if="modalData.sections?.projectOverview" id="shadow-overview">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.projectOverview"
+        id="shadow-overview"
+      >
         <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
         <p
           v-for="(paragraph, index) in modalData.sections.projectOverview.paragraphs"
@@ -75,7 +79,11 @@
       </section>
 
       <!-- Key Features -->
-      <section class="content-section" v-if="modalData.sections?.keyContributions" id="shadow-features">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.keyContributions"
+        id="shadow-features"
+      >
         <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
@@ -122,13 +130,21 @@
       </section>
 
       <!-- Performance Metrics -->
-      <section class="content-section" v-if="modalData.sections?.performanceImpact" id="shadow-metrics">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.performanceImpact"
+        id="shadow-metrics"
+      >
         <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Key Takeaways -->
-      <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="shadow-takeaways">
+      <section
+        class="content-section"
+        v-if="modalData.sections?.keyTakeaways"
+        id="shadow-takeaways"
+      >
         <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
 
         <div
@@ -144,7 +160,7 @@
       </section>
     </div>
 
-    <WorkModalTOC :sections="tocSections" />
+    <WorkModalTOC v-if="!isMobile" :sections="tocSections" />
   </div>
 </template>
 
@@ -210,7 +226,7 @@ const tocSections = [
   { id: 'shadow-logo', label: 'Logo Design' },
   { id: 'shadow-features', label: 'Key Features' },
   { id: 'shadow-metrics', label: 'Performance Metrics' },
-  { id: 'shadow-takeaways', label: 'Key Takeaways' }
+  { id: 'shadow-takeaways', label: 'Key Takeaways' },
 ]
 
 // Logo images
@@ -318,8 +334,7 @@ const setupFeatureBlockAnimation = (blockRef, index = 0) => {
     const scrollTriggerConfig = {
       trigger: blockRef,
       scroller: modalOverlay,
-      start: 'top 90%',
-      end: 'top 60%',
+      start: isMobile.value ? 'top bottom' : 'center bottom',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -400,7 +415,7 @@ onMounted(() => {
 
         if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
           gsap.to(heroImageWrapperRef.value, {
-            scale: isTablet.value ? (isMobile.value ? 0.7 : 0.7) : 0.9,
+            scale: isTablet.value ? (isMobile.value ? 0.95 : 0.7) : 0.9,
             bottom: isTablet.value ? (isMobile.value ? '-5%' : '0%') : '-8%',
             opacity: 1,
             scrollTrigger: scrollTriggerConfig1,
@@ -866,12 +881,24 @@ onMounted(() => {
     margin-bottom: 60px;
   }
 
+  .logo-evolution {
+    margin-top: 35px;
+  }
+
   .logo-timeline {
     gap: 15px;
+    margin-top: 25px;
+  }
+
+  .logo-item {
+    width: 140px;
+    height: auto;
+    min-height: 140px;
   }
 
   .logo-image {
-    max-width: 140px;
+    width: 140px;
+    height: 140px;
     padding: 15px;
   }
 
@@ -900,25 +927,54 @@ onMounted(() => {
   }
 
   .feature-block {
+    padding: 20px;
     margin-bottom: 40px;
   }
 
+  .logo-evolution {
+    margin-top: 30px;
+  }
+
   .logo-timeline {
-    gap: 10px;
+    display: flex;
+    align-items: start;
+    gap: 4px;
+    margin-top: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .logo-timeline::-webkit-scrollbar {
+    display: none;
+  }
+
+  .logo-item {
+    width: 70px;
+    height: auto;
+    min-height: 70px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .logo-image {
-    max-width: 100px;
-    padding: 12px;
+    width: 70px;
+    height: 70px;
+    padding: 8px;
+    border-radius: 10px;
   }
 
   .logo-arrow {
-    font-size: 1.2rem;
-    margin: 0 3px;
+    font-size: 1rem;
+    margin: 0 2px;
+    flex-shrink: 0;
+    align-self: center;
   }
 
   .logo-label {
     font-size: var(--caption--1);
+    line-height: 1.3;
   }
 
   .demo-gif {

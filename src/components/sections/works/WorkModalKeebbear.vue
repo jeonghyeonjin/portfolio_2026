@@ -51,7 +51,10 @@
               </div>
               <div class="feature-image-wrapper">
                 <TypingDemo v-if="index === 0" ref="typingDemoRef" />
-                <KeyboardTesterDemo v-else-if="index === 1" ref="keyboardTesterDemoRef" />
+                <KeyboardTesterDemo
+                  v-else-if="index === 1 && !isMobile"
+                  ref="keyboardTesterDemoRef"
+                />
                 <AchievementDemo v-else-if="index === 2" ref="achievementDemoRef" />
               </div>
             </div>
@@ -165,7 +168,7 @@
       <!-- Tech Stack -->
       <section class="content-section" v-if="modalData.sections?.techStackSummary" id="keeb-tech">
         <h2 class="section-title">{{ modalData.sections.techStackSummary.title }}</h2>
-        <TechStackGrid :stacks="techStacks" />
+        <TechStackGrid :stacks="techStacks" theme="light" />
       </section>
 
       <!-- Key Takeaways -->
@@ -181,7 +184,7 @@
       </section>
     </div>
 
-    <WorkModalTOC :sections="tocSections" theme="light" />
+    <WorkModalTOC v-if="!isMobile" :sections="tocSections" theme="light" />
   </div>
 </template>
 
@@ -329,7 +332,7 @@ const setupFeatureTextAnimation = (textRef) => {
     const scrollTriggerConfig = {
       trigger: textRef,
       scroller: modalOverlay,
-      start: 'top 80%',
+      start: isMobile.value ? 'top bottom' : 'top 80%',
       end: 'top 50%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
@@ -775,10 +778,10 @@ onMounted(() => {
 /* Feature Blocks */
 .feature-block {
   margin-bottom: 60px;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.02);
   border-radius: 20px;
   padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .feature-content {
@@ -845,10 +848,10 @@ onMounted(() => {
 /* Tech Blocks */
 .tech-block {
   margin-bottom: 40px;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.02);
   border-radius: 20px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tech-title {
@@ -868,10 +871,10 @@ onMounted(() => {
 /* Roadmap Blocks */
 .roadmap-block {
   margin-bottom: 30px;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.02);
   border-radius: 20px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .roadmap-phase {
@@ -884,10 +887,10 @@ onMounted(() => {
 /* Challenge Blocks */
 .challenge-block {
   margin-bottom: 40px;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.02);
   border-radius: 20px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .challenge-title {
@@ -900,10 +903,10 @@ onMounted(() => {
 /* Takeaway Blocks */
 .takeaway-block {
   margin-bottom: 30px;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.02);
   border-radius: 20px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .takeaway-title {
@@ -959,6 +962,11 @@ p {
 
   .section-title {
     font-size: var(--title--3);
+    margin-bottom: 16px;
+  }
+
+  .feature-block {
+    padding: 20px;
   }
 
   .feature-content {

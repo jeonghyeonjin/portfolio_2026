@@ -127,8 +127,12 @@ const slides = computed(() => {
     image: heroImage.value,
     title: workData?.title?.toUpperCase() || 'MASTER FORGE',
     description: {
-      en: workData?.description || "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
-      ko: workData?.description || 'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
+      en:
+        workData?.description ||
+        "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
+      ko:
+        workData?.description ||
+        'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
     },
   }
 
@@ -866,8 +870,8 @@ onUnmounted(() => {
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(4, 1fr);
   }
 
   .content-title {
@@ -879,7 +883,7 @@ onUnmounted(() => {
   }
 
   .thumbnails {
-    display: none;
+    top: 100px;
   }
 }
 </style>
