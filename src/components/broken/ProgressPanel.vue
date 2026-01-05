@@ -23,7 +23,12 @@
         <span class="button-count-separator">/</span>
         <span class="button-count-total">{{ totalIssues }}</span>
       </div>
-      <IconButton size="small" aria-label="Help" @click.stop="toggleHelpPanel">
+      <IconButton
+        size="small"
+        aria-label="Help"
+        class="help-icon-button"
+        @click.stop="toggleHelpPanel"
+      >
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z"
@@ -37,7 +42,93 @@
     </div>
 
     <!-- 설명 판넬 (absolute 팝업) -->
-    <Transition name="panel">
+    <Teleport v-if="isMobile" to="body">
+      <Transition name="panel">
+        <div v-if="isHelpPanelOpen" class="help-panel" @click.stop>
+          <button class="help-panel-close" aria-label="닫기" @click="toggleHelpPanel">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6L6 18M6 6L18 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <div class="help-panel-content">
+            <div class="help-header">
+              <div class="help-title">Broken Portfolio</div>
+              <div class="help-subtitle">Find and fix issues</div>
+            </div>
+
+            <div class="help-content">
+              <div class="help-section">
+                <div class="help-label">
+                  <svg
+                    class="help-label-icon"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 21H15M12 3C8.68629 3 6 5.68629 6 9C6 10.2145 6.36084 11.3447 6.98117 12.2893C7.93507 13.7418 8.41161 14.4676 8.47352 14.5761C9.02428 15.541 8.92287 15.2007 8.99219 16.3096C8.99998 16.4342 9 16.6229 9 17C9 17.5523 9.44772 18 10 18L14 18C14.5523 18 15 17.5523 15 17C15 16.6229 15 16.4342 15.0078 16.3096C15.0771 15.2007 14.9751 15.541 15.5259 14.5761C15.5878 14.4676 16.0651 13.7418 17.019 12.2893C17.6394 11.3447 18.0002 10.2145 18.0002 9C18.0002 5.68629 15.3137 3 12 3Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  How to play
+                </div>
+                <p class="help-text">
+                  Look for strange elements on the page and click on them to discover issues. Each
+                  issue can be fixed by understanding the problem and applying the solution.
+                </p>
+              </div>
+
+              <div v-if="allFixed" class="completion-message">🎉 all issues found!</div>
+            </div>
+          </div>
+
+          <!-- 하단 고정 영역 (프로그레스 표시, 리셋 버튼, 프로그레스바) -->
+          <div class="help-panel-footer">
+            <div class="help-section">
+              <div class="progress-display">
+                <span class="progress-number">{{ animatedProgress }}</span>
+                <span class="progress-separator">/</span>
+                <span class="progress-number">{{ totalIssues }}</span>
+                <span class="progress-label">issues found</span>
+              </div>
+            </div>
+
+            <div class="help-section">
+              <CommonButton
+                variant="secondary"
+                size="medium"
+                :disabled="progress === 0"
+                class="reset-button"
+                @click="handleReset"
+              >
+                Reset Progress
+              </CommonButton>
+            </div>
+
+            <!-- 프로그레스바 -->
+            <ProgressBar :progress="animatedProgress" :total="totalIssues" />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+    <Transition v-if="!isMobile" name="panel">
       <div v-if="isHelpPanelOpen" class="help-panel" @click.stop>
         <button class="help-panel-close" aria-label="닫기" @click="toggleHelpPanel">
           <svg
@@ -147,11 +238,15 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
+import { useBodyScrollLock } from '@/composables/useBodyScrollLock'
+import { useResponsive } from '@/composables/useResponsive'
 import CommonButton from '@/components/common/CommonButton.vue'
 import IconButton from '@/components/common/IconButton.vue'
 import ProgressBar from '@/components/common/ProgressBar.vue'
 
 const { progress, totalIssues, allFixed, fixedIssues, resetProgress } = useBrokenPortfolio()
+const { lock, unlock } = useBodyScrollLock()
+const { isMobile } = useResponsive()
 
 const isHelpPanelOpen = ref(false)
 const isResetModalOpen = ref(false)
@@ -161,9 +256,15 @@ let animationFrameId = null
 
 const AUTO_CLOSE_DELAY = 3000 // 3초 후 자동 접기
 const ANIMATION_DURATION = 600 // 애니메이션 지속 시간 (ms)
+const MODAL_ID = 'progress-panel-help'
 
 const toggleHelpPanel = async () => {
   if (!isHelpPanelOpen.value) {
+    // 모바일에서 body 스크롤 잠금
+    if (isMobile.value) {
+      lock(MODAL_ID)
+    }
+
     // 판넬 열기
     isHelpPanelOpen.value = true
     await nextTick()
@@ -173,6 +274,12 @@ const toggleHelpPanel = async () => {
   } else {
     // 판넬 닫기
     isHelpPanelOpen.value = false
+
+    // 모바일에서 스크롤 해제
+    if (isMobile.value) {
+      unlock(MODAL_ID)
+    }
+
     scheduleAutoClose()
   }
 }
@@ -186,6 +293,12 @@ const confirmReset = () => {
   animatedProgress.value = 0
   isHelpPanelOpen.value = false
   isResetModalOpen.value = false
+
+  // 모바일에서 스크롤 해제
+  if (isMobile.value) {
+    unlock(MODAL_ID)
+  }
+
   clearAutoClose()
 }
 
@@ -228,6 +341,11 @@ const openHelpPanel = async (previousProgress = null) => {
   const toProgress = progress.value
 
   if (!isHelpPanelOpen.value) {
+    // 모바일에서 body 스크롤 잠금
+    if (isMobile.value) {
+      lock(MODAL_ID)
+    }
+
     // 초기값을 이전 progress로 설정
     animatedProgress.value = fromProgress
     isHelpPanelOpen.value = true
@@ -249,6 +367,11 @@ const scheduleAutoClose = () => {
   clearAutoClose()
   autoCloseTimeout = setTimeout(() => {
     isHelpPanelOpen.value = false
+
+    // 모바일에서 스크롤 해제
+    if (isMobile.value) {
+      unlock(MODAL_ID)
+    }
   }, AUTO_CLOSE_DELAY)
 }
 
@@ -286,6 +409,12 @@ watch(
 const handleClickOutside = (event) => {
   if (isHelpPanelOpen.value && !event.target.closest('.progress-panel-wrapper')) {
     isHelpPanelOpen.value = false
+
+    // 모바일에서 스크롤 해제
+    if (isMobile.value) {
+      unlock(MODAL_ID)
+    }
+
     clearAutoClose()
   }
 }
@@ -300,6 +429,10 @@ onUnmounted(() => {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)
     animationFrameId = null
+  }
+  // 컴포넌트가 언마운트될 때 스크롤 해제
+  if (isMobile.value) {
+    unlock(MODAL_ID)
   }
 })
 </script>
@@ -329,6 +462,14 @@ onUnmounted(() => {
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+
+  .help-icon-button {
+    color: rgb(var(--gray--2)) !important;
+  }
+
+  .help-icon-button svg {
+    color: rgb(var(--gray--2));
   }
 }
 
@@ -401,6 +542,12 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    /* iOS Safari에서 position: fixed가 제대로 작동하도록 */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    /* 스크롤 위치와 무관하게 항상 화면 상단에 고정 */
+    margin: 0;
+    padding: 0;
   }
 }
 
