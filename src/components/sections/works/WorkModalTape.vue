@@ -23,7 +23,7 @@
         <div ref="heroImageWrapperRef" class="hero-image-wrapper">
           <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
           <img
-            :src="`${import.meta.env.BASE_URL}videos/tape/tape_thumbnail-front.png`"
+            :src="heroThumbnailUrl"
             alt="Tape Dashboard"
             class="hero-image"
           />
@@ -200,6 +200,11 @@ const workId = inject('workId', 4)
 
 const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
+})
+
+// 히어로 이미지 URL (public 폴더의 파일은 BASE_URL 사용)
+const heroThumbnailUrl = computed(() => {
+  return `${import.meta.env.BASE_URL}videos/tape/tape_thumbnail-front.png`
 })
 
 gsap.registerPlugin(ScrollTrigger)
