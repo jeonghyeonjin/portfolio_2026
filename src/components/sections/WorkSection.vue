@@ -134,15 +134,15 @@
       :class="{ 'is-optimized': isFixed('work-modal-perf') }"
     ></div>
     <!-- Work Modal -->
-    <!-- <Teleport to="body"> -->
-    <WorkModal
-      ref="workModalRef"
-      v-if="activeWorkId"
-      :work-id="activeWorkId"
-      :is-visible="isModalVisible"
-      @close="closeWorkModal"
-    />
-    <!-- </Teleport> -->
+    <Teleport to="body">
+      <WorkModal
+        ref="workModalRef"
+        v-if="activeWorkId"
+        :work-id="activeWorkId"
+        :is-visible="isModalVisible"
+        @close="closeWorkModal"
+      />
+    </Teleport>
   </section>
 </template>
 
@@ -186,6 +186,7 @@ const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
 // provide/inject로 works 데이터 및 콜백 공유
 const setWorksData = inject('setWorksData')
 const setSelectWorkCallback = inject('setSelectWorkCallback')
+const setWorkModalOpen = inject('setWorkModalOpen')
 
 const workTitleRef = ref(null)
 const workSectionRef = ref(null)
@@ -488,6 +489,11 @@ const openWorkModal = async (workId, event = null) => {
     onComplete: () => {
       isModalVisible.value = true
       currentCircleScale = null // 애니메이션 완료 후 스케일 초기화
+
+      // 전역 모달 상태 업데이트 (배경 오버레이 활성화 - 애니메이션 완료 후)
+      if (setWorkModalOpen) {
+        setWorkModalOpen(true)
+      }
     },
   })
 
@@ -502,8 +508,16 @@ const openWorkModal = async (workId, event = null) => {
 }
 
 // 모달 닫기 (원형 애니메이션 역순)
-const closeWorkModal = () => {
+const closeWorkModal = async () => {
   const modalEl = workModalRef.value?.$el
+
+  // 전역 모달 상태 업데이트 (배경 오버레이 비활성화 - 애니메이션 시작 전)
+  if (setWorkModalOpen) {
+    setWorkModalOpen(false)
+  }
+
+  // 메인 컨텐츠가 다시 렌더링될 시간을 확보 (1프레임 대기)
+  await new Promise((resolve) => requestAnimationFrame(resolve))
 
   createCircleCloseAnimation(circleRevealRef.value, modalEl, currentCircleScale, {
     onComplete: () => {

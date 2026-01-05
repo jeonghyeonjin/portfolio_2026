@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
+import { ref, computed, onMounted, onUnmounted, inject, provide } from 'vue'
 import { gsap } from 'gsap'
 import { Flip } from 'gsap/all'
 import imgHero from '@/assets/images/works/master-forge/20241120_214422.jpg'
@@ -91,6 +91,9 @@ gsap.registerPlugin(Flip)
 
 const workId = inject('workId', 2)
 const workData = worksData.find((work) => work.id === workId) || null
+
+// 모달 배경색을 provide로 제공
+provide('modalBackgroundColor', '#111')
 
 // Refs
 const containerRef = ref(null)

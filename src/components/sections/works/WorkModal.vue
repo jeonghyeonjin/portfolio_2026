@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { shallowRef, ref, onMounted, onUnmounted, provide, computed, watch } from 'vue'
+import { shallowRef, ref, onMounted, onUnmounted, provide, computed, watch, inject } from 'vue'
 import { gsap } from 'gsap'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
@@ -58,6 +58,7 @@ const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
 const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useBodyScrollLock()
 
 const WORK_MODAL_ID = 'work-modal'
+const setModalBackgroundColor = inject('setModalBackgroundColor', null)
 
 const props = defineProps({
   workId: {
@@ -98,6 +99,14 @@ const workData = computed(() => {
   return worksData.find((work) => work.id === props.workId) || null
 })
 
+// 각 모달 컴포넌트의 배경색 매핑
+const modalBackgroundColors = {
+  WorkModalShadow: 'rgb(var(--gray--0))',
+  WorkModalTape: 'rgb(29, 41, 47)',
+  WorkModalKeebbear: 'rgb(var(--white--1))',
+  WorkModalMasterForge: '#111',
+}
+
 // modalComponent 이름에 따라 해당 컴포넌트 로드
 const loadWorkComponent = () => {
   const modalComponent = workData.value?.modalComponent
@@ -113,6 +122,12 @@ const loadWorkComponent = () => {
   }
 
   workComponent.value = component
+
+  // 모달 배경색을 App.vue에 전달
+  const backgroundColor = modalBackgroundColors[modalComponent] || 'rgb(var(--white--1))'
+  if (setModalBackgroundColor) {
+    setModalBackgroundColor(backgroundColor)
+  }
 }
 
 const handleClose = () => {
@@ -152,6 +167,12 @@ watch(
   (isVisible) => {
     if (isVisible) {
       lockBodyScroll(WORK_MODAL_ID)
+      // 모달이 보일 때 배경색 업데이트
+      const modalComponent = workData.value?.modalComponent
+      if (modalComponent && setModalBackgroundColor) {
+        const backgroundColor = modalBackgroundColors[modalComponent] || 'rgb(var(--white--1))'
+        setModalBackgroundColor(backgroundColor)
+      }
     } else {
       unlockBodyScroll(WORK_MODAL_ID)
     }

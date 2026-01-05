@@ -11,6 +11,8 @@ import ExperienceSection from './components/sections/ExperienceSection.vue'
 // Works 데이터 및 메서드를 provide로 공유
 const works = ref([])
 const selectWorkCallback = ref(null)
+const isWorkModalOpen = ref(false)
+const modalBackgroundColor = ref('rgb(var(--white--1))') // 기본값
 
 // Works 데이터 제공
 provide('works', readonly(works))
@@ -31,23 +33,40 @@ provide('selectWork', (workId) => {
 provide('setSelectWorkCallback', (callback) => {
   selectWorkCallback.value = callback
 })
+
+// Work Modal 상태 제공
+provide('isWorkModalOpen', readonly(isWorkModalOpen))
+provide('setWorkModalOpen', (isOpen) => {
+  isWorkModalOpen.value = isOpen
+})
+
+// Work Modal 배경색 제공
+provide('setModalBackgroundColor', (color) => {
+  modalBackgroundColor.value = color
+})
 </script>
 
 <template>
   <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="app-layout">
     <h1 class="visually-hidden">Jeong Hyeon-jin - Portfolio</h1>
-    <header>
+    <header :class="{ 'is-hidden': isWorkModalOpen }" :inert="isWorkModalOpen">
       <SiteNavigation />
       <PortfolioHeader />
     </header>
-    <main id="main-content">
+    <main id="main-content" :class="{ 'is-hidden': isWorkModalOpen }" :inert="isWorkModalOpen">
       <HeroSection />
       <SkillSection />
       <WorkSection />
       <ExperienceSection />
       <AboutSection />
     </main>
+    <div
+      v-if="isWorkModalOpen"
+      class="app-overlay"
+      :style="{ backgroundColor: modalBackgroundColor }"
+      aria-hidden="true"
+    ></div>
   </div>
 </template>
 
@@ -62,6 +81,23 @@ provide('setSelectWorkCallback', (callback) => {
   background-color: rgb(var(--white--1));
   overflow-x: hidden;
   max-width: 100%;
+}
+
+.app-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(var(--white--1)); /* 모달 배경색과 동일하게 */
+  z-index: 9990; /* 모달(9999)보다 낮게, 헤더/메인보다 높게 */
+}
+
+.is-hidden {
+  /* 접근성 및 렌더링 최적화를 위해 숨김 처리 */
+  /* display: none을 쓰면 스크롤 위치가 날아갈 수 있으므로 visibility 사용 권장 */
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Skip link for accessibility */

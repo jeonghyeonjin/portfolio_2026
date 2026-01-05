@@ -200,7 +200,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, inject, computed } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, inject, computed, provide } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useResponsive } from '@/composables/useResponsive'
@@ -217,6 +217,9 @@ import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalKeebbear.json'
 
 const workId = inject('workId', 3)
+
+// 모달 배경색을 provide로 제공 (기본값: WorkModal.vue의 overlay 배경색)
+provide('modalBackgroundColor', 'rgb(var(--white--1))')
 
 // ScrollTrigger instances management
 const scrollTriggers = ref([])
