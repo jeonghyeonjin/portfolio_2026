@@ -139,20 +139,9 @@ const handleOverlayTouchMove = (e) => {
   }
 }
 
-const handleModalTouchMove = (e) => {
-  // 모달 내부의 스크롤 가능한 영역에서는 터치 스크롤 허용
-  const target = e.target
-  const codeBlock = target.closest('.code-block')
-  const container = target.closest('.work-modal-container')
-  const modalContent = target.closest('.work-modal-content')
-
-  // 코드 블록, 모달 컨텐츠, 또는 컨테이너가 스크롤 가능한 경우 이벤트 전파 허용
-  if (codeBlock || modalContent || (container && container.scrollHeight > container.clientHeight)) {
-    return
-  }
-
-  // 그 외의 경우 이벤트 전파 차단
-  e.stopPropagation()
+const handleModalTouchMove = () => {
+  // 모달 내부에서는 터치 스크롤 허용 (touch-action CSS로 처리)
+  // 이벤트 전파는 허용하여 정상적인 스크롤 동작 보장
 }
 
 onMounted(() => {
@@ -175,10 +164,10 @@ onMounted(() => {
   height: 100vh;
   background-color: rgb(var(--white--1));
   z-index: 9999;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
+  touch-action: none;
 }
 
 .work-modal-overlay.is-visible {
@@ -191,6 +180,11 @@ onMounted(() => {
   width: 100%;
   min-height: 100vh;
   padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 .work-modal-close {

@@ -283,20 +283,9 @@ const handleOverlayTouchMove = (e) => {
   }
 }
 
-const handleModalTouchMove = (e) => {
-  // 모달 내부의 스크롤 가능한 영역에서는 터치 스크롤 허용
-  const target = e.target
-  const codeBlock = target.closest('.code-block')
-  const modal = target.closest('.solution-modal')
-  const modalContent = target.closest('.modal-content')
-
-  // 코드 블록, 모달 컨텐츠, 또는 모달 자체가 스크롤 가능한 경우 이벤트 전파 허용
-  if (codeBlock || modalContent || (modal && modal.scrollHeight > modal.clientHeight)) {
-    return
-  }
-
-  // 그 외의 경우 이벤트 전파 차단
-  e.stopPropagation()
+const handleModalTouchMove = () => {
+  // 모달 내부에서는 터치 스크롤 허용 (touch-action CSS로 처리)
+  // 이벤트 전파는 허용하여 정상적인 스크롤 동작 보장
 }
 
 // 포커스 트랩 함수
@@ -355,6 +344,8 @@ const trapFocus = (modalEl) => {
   padding: 24px;
   z-index: 10002;
   backdrop-filter: blur(4px);
+  overflow: hidden;
+  touch-action: none;
 }
 
 @media (max-width: 799px) {
@@ -372,6 +363,8 @@ const trapFocus = (modalEl) => {
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 799px) {
@@ -382,7 +375,8 @@ const trapFocus = (modalEl) => {
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
@@ -449,6 +443,8 @@ const trapFocus = (modalEl) => {
   padding: 28px;
   overflow-y: auto;
   flex: 1;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 799px) {
