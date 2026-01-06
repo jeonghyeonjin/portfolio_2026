@@ -16,16 +16,16 @@
           <span class="producthunt-badge-date">February 23rd, 2023</span>
         </div>
       </div>
+      <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
+    </div>
+
+    <div ref="heroImageContainerRef" class="hero-image-container">
+      <div ref="heroImageWrapperRef" class="hero-image-wrapper">
+        <img :src="heroThumbnailUrl" alt="Tape Dashboard" class="hero-image" />
+      </div>
     </div>
 
     <div class="work-modal-body">
-      <div ref="heroImageContainerRef" class="hero-image-container">
-        <div ref="heroImageWrapperRef" class="hero-image-wrapper">
-          <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
-          <img :src="heroThumbnailUrl" alt="Tape Dashboard" class="hero-image" />
-        </div>
-      </div>
-
       <!-- Project Overview -->
       <section
         class="content-section"
@@ -227,7 +227,7 @@ const producthuntBadgeRef = ref(null)
 const heroImageContainerRef = ref(null)
 const heroImageOverlayRef = ref(null)
 const heroImageWrapperRef = ref(null)
-const { isMobile, isTablet } = useResponsive()
+const { isMobile } = useResponsive()
 const emojiFeedbackDemoRef = ref(null)
 const channelListDemoRef = ref(null)
 const videoDetailDemoRef = ref(null)
@@ -261,12 +261,6 @@ const addRetryTimeout = (timeoutId) => {
 
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(textRef, { x: 0, opacity: 1 })
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -319,15 +313,6 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 
 const setupDemoAnimation = (demoRef, retryCount = 0) => {
   if (!demoRef) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    const demoElement = demoRef.$el || demoRef
-    if (demoElement instanceof HTMLElement) {
-      gsap.set(demoElement, { x: 0, opacity: 1 })
-    }
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -397,12 +382,6 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
   if (!blockRef) return
 
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(blockRef, { y: 0, opacity: 1 })
-    return
-  }
-
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
@@ -455,12 +434,6 @@ const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
 
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(block, { y: 0, opacity: 1 })
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -529,116 +502,41 @@ onMounted(() => {
   if (heroImageContainerRef.value && heroImageWrapperRef.value) {
     const modalOverlay = document.querySelector('.work-modal-container')
 
+    gsap.set(heroImageWrapperRef.value, { scale: isMobile.value ? 7 : 8 })
+
     if (modalOverlay && heroImageContainerRef.value) {
       try {
-        // Mobile: simplified animations with less scrub
-        if (isMobile.value) {
-          const animation1 = gsap.to(heroImageWrapperRef.value, {
-            scale: 0.7,
-            opacity: 1,
-            scrollTrigger: {
-              trigger: heroImageContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5,
-            },
-          })
-          createScrollTrigger(animation1)
-
-          const animation2 = gsap.to(heroImageContainerRef.value, {
-            marginTop: '100vh',
-            height: window.innerWidth > window.innerHeight ? '' : '40vh',
-            scrollTrigger: {
-              trigger: heroImageContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5,
-            },
-          })
-          createScrollTrigger(animation2)
-
-          // Fade out elements - consolidated
-          const elementsToFade = [
-            heroImageOverlayRef.value,
-            workModalHeaderRef.value,
-            producthuntBadgeRef.value,
-          ].filter(Boolean)
-          if (elementsToFade.length > 0) {
-            const animation3 = gsap.to(elementsToFade, {
-              opacity: 0,
-              scrollTrigger: {
-                trigger: heroImageContainerRef.value,
-                scroller: modalOverlay,
-                start: 'top 0px',
-                end: '50px',
-                scrub: 1,
-              },
-            })
-            createScrollTrigger(animation3)
-          }
-        } else {
-          // Desktop: full animations
-          const scrollTriggerConfig1 = {
+        const animation1 = gsap.to(heroImageWrapperRef.value, {
+          scale: 1,
+          scrollTrigger: {
             trigger: heroImageContainerRef.value,
             scroller: modalOverlay,
             start: 'top top',
             end: 'bottom center',
-            scrub: 0.1,
-          }
-
-          if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
-            const animation1 = gsap.to(heroImageWrapperRef.value, {
-              scale: isTablet.value ? 0.83 : 1.1,
-              bottom: isTablet.value ? '0%' : '-12%',
-              opacity: 1,
-              scrollTrigger: scrollTriggerConfig1,
-            })
-            createScrollTrigger(animation1)
-          }
-
-          const scrollTriggerConfig2 = {
-            trigger: heroImageContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top top',
-            end: 'bottom center',
-            scrub: 0.1,
-          }
-
-          if (scrollTriggerConfig2.trigger && scrollTriggerConfig2.scroller) {
-            const isLandscape = window.innerWidth > window.innerHeight
-            const animation2 = gsap.to(heroImageContainerRef.value, {
-              marginTop: '100vh',
-              height: isLandscape ? '' : '40vh',
-              scrollTrigger: scrollTriggerConfig2,
-            })
-            createScrollTrigger(animation2)
-          }
-
-          const scrollTriggerConfig3 = {
-            trigger: heroImageContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top 0px',
-            end: '30px',
             scrub: 1,
-          }
+            pin: true,
+          },
+        })
+        createScrollTrigger(animation1)
 
-          if (scrollTriggerConfig3.trigger && scrollTriggerConfig3.scroller) {
-            // Consolidate fade-out animations into single ScrollTrigger
-            const elementsToFade = [
-              heroImageOverlayRef.value,
-              workModalHeaderRef.value,
-              producthuntBadgeRef.value,
-            ].filter(Boolean)
-            if (elementsToFade.length > 0) {
-              const animation3 = gsap.to(elementsToFade, {
-                opacity: 0,
-                scrollTrigger: scrollTriggerConfig3,
-              })
-              createScrollTrigger(animation3)
-            }
-          }
+        // Fade out elements - consolidated
+        const elementsToFade = [
+          heroImageOverlayRef.value,
+          workModalHeaderRef.value,
+          producthuntBadgeRef.value,
+        ].filter(Boolean)
+        if (elementsToFade.length > 0) {
+          const animation3 = gsap.to(elementsToFade, {
+            opacity: 0,
+            scrollTrigger: {
+              trigger: heroImageContainerRef.value,
+              scroller: modalOverlay,
+              start: 'top 0px',
+              end: '50px',
+              scrub: 1,
+            },
+          })
+          createScrollTrigger(animation3)
         }
       } catch (error) {
         console.warn('Hero image animation setup failed:', error)
@@ -702,15 +600,15 @@ onUnmounted(() => {
 .work-modal-content {
   width: 100%;
   min-height: 100vh;
-  padding: 0px 0px;
   background-color: rgb(29, 41, 47);
 }
 
 .work-modal-header {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1000;
   width: 100%;
   height: auto;
@@ -719,6 +617,17 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--gray--0), 0.8);
 }
 
 .producthunt-badge {
@@ -760,12 +669,14 @@ onUnmounted(() => {
   font-weight: var(--font-weight--bold);
   color: rgb(var(--white--1));
   letter-spacing: -0.02em;
+  z-index: 1001;
 }
 
 .work-modal-subtitle {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);
   color: rgb(var(--white--3));
+  z-index: 1001;
 }
 
 .work-modal-body {
@@ -778,26 +689,7 @@ onUnmounted(() => {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: rgb(29, 41, 47);
-}
-
-.hero-image-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(var(--gray--0), 0.8);
-  z-index: 3;
-}
-
-.hero-image-wrapper {
-  position: relative;
-  height: auto;
-  transform: scale(4);
+  align-items: flex-end;
 }
 
 .hero-image {
@@ -1065,10 +957,6 @@ p {
 
 /* Mobile: --mobile */
 @media (--mobile) {
-  .work-modal-body {
-    padding-bottom: 130px;
-  }
-
   .work-modal-header {
     padding: 0 30px;
   }
@@ -1096,8 +984,14 @@ p {
     font-size: var(--label--1--normal);
   }
 
+  .work-modal-body {
+    padding: 0px;
+    margin-top: 50px;
+  }
+
   .content-section {
-    padding: 30px 20px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
   }
 
   .section-title {
@@ -1111,6 +1005,7 @@ p {
 
   .feature-block {
     padding: 20px;
+    margin-bottom: 20px;
   }
 
   .feature-content {

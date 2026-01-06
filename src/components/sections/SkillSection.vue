@@ -286,22 +286,10 @@ const setupScrollTrigger = () => {
 
 onMounted(() => {
   setupScrollTrigger()
-
-  // resize 이벤트 리스너 등록
-  resizeHandler = () => {
-    setupScrollTrigger()
-    ScrollTrigger.refresh()
-  }
   window.addEventListener('resize', resizeHandler)
 })
 
 onUnmounted(() => {
-  // resize 이벤트 리스너 정리
-  if (resizeHandler) {
-    window.removeEventListener('resize', resizeHandler)
-    resizeHandler = null
-  }
-
   // ScrollTrigger 정리
   scrollTriggers.value.forEach((trigger) => {
     if (trigger) trigger.kill()

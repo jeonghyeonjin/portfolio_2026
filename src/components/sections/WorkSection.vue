@@ -43,7 +43,6 @@
         >
           <div class="work-image-container" aria-hidden="true">
             <video v-if="work.videoSources" class="work-video" autoplay loop muted playsinline>
-              <source :src="getVideoUrl(work.videoSources.webm)" type="video/webm" />
               <source :src="getVideoUrl(work.videoSources.mp4)" type="video/mp4" />
             </video>
             <img
@@ -134,7 +133,7 @@
       :class="{ 'is-optimized': isFixed('work-modal-perf') }"
     ></div>
     <!-- Work Modal -->
-    <Teleport to="html">
+    <Teleport to="body">
       <WorkModal
         ref="workModalRef"
         v-if="activeWorkId"
@@ -336,6 +335,7 @@ const setupScrollTrigger = () => {
 const handleWorkHover = (_event, workId, isEntering) => {
   const workItem = workItemRefs.value[workId]
   if (!workItem) return
+  if (isMobile.value) return
 
   const overlay = workItem.querySelector('.work-overlay')
   const chipsContainer = workItem.querySelector('.work-chips-container')

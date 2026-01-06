@@ -4,32 +4,23 @@
       <h1 class="work-modal-title">{{ workData?.title || '' }}</h1>
       <p class="work-modal-subtitle">{{ workData?.description || '' }}</p>
     </div>
-    <div class="work-modal-body">
-      <div ref="mockupContainerRef" class="mockup-container">
-        <div ref="mockupWrapperRef" class="mockup-wrapper">
-          <img
-            src="@/assets/images/mockup/mockup_ipad_pro.png"
-            alt="iPad Pro Mockup"
-            class="mockup-frame"
-          />
-          <div class="mockup-screen">
-            <div ref="mockupContainerInnerRef" class="mockup-container-inner"></div>
-            <video
-              ref="mockupVideoRef"
-              autoplay
-              loop
-              muted
-              playsinline
-              preload="metadata"
-              class="mockup-video"
-            >
-              <source :src="videoWebmUrl" type="video/webm" />
-              <source :src="videoMp4Url" type="video/mp4" />
-            </video>
-          </div>
+    <div ref="mockupContainerRef" class="mockup-container">
+      <div ref="mockupWrapperRef" class="mockup-wrapper">
+        <img
+          src="@/assets/images/mockup/mockup_ipad_pro.png"
+          alt="iPad Pro Mockup"
+          class="mockup-frame"
+        />
+        <div class="mockup-screen">
+          <div ref="mockupContainerInnerRef" class="mockup-container-inner"></div>
+          <video ref="mockupVideoRef" autoplay muted loop playsinline class="mockup-video">
+            <!-- <source :src="videoWebmUrl" type="video/webm" /> -->
+            <source :src="videoMp4Url" type="video/mp4" />
+          </video>
         </div>
       </div>
-
+    </div>
+    <div class="work-modal-body">
       <!-- Project Overview -->
       <section
         class="content-section"
@@ -249,7 +240,7 @@ const pixelBorderDemoRef = ref(null)
 const achievementDemoRef = ref(null)
 const designFeatureBlockRef = ref(null)
 const designFeatureTextRef = ref(null)
-const { isMobile, isTablet } = useResponsive()
+const { isMobile } = useResponsive()
 
 // Dynamic refs for features
 const featureBlockRefs = ref([])
@@ -266,8 +257,6 @@ const setFeatureTextRef = (el, index) => {
     featureTextRefs.value[index] = el
   }
 }
-
-const isLandscape = window.innerWidth > window.innerHeight
 
 // Helper function to create and track ScrollTrigger
 const createScrollTrigger = (animation) => {
@@ -291,15 +280,6 @@ const addRetryTimeout = (timeoutId) => {
 
 const setupDemoAnimation = (demoRef, retryCount = 0) => {
   if (!demoRef) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    const demoElement = demoRef.$el || demoRef
-    if (demoElement instanceof HTMLElement) {
-      gsap.set(demoElement, { x: 0, opacity: 1 })
-    }
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -369,12 +349,6 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
 
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(textRef, { x: 0, opacity: 1 })
-    return
-  }
-
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
@@ -429,12 +403,6 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(block, { y: 0, opacity: 1 })
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -509,117 +477,40 @@ const tocSections = [
 
 onMounted(() => {
   // Mockup animations and other setups
-  if (mockupContainerRef.value && mockupWrapperRef.value) {
+  if (mockupContainerRef.value && mockupWrapperRef.value && mockupVideoRef.value) {
     const modalOverlay = document.querySelector('.work-modal-container')
+
+    gsap.set(mockupWrapperRef.value, { scale: isMobile.value ? 5 : 7.5 })
 
     if (modalOverlay && mockupContainerRef.value) {
       try {
-        // Mobile: simplified animations with less scrub
-        if (isMobile.value) {
-          // Simple scale animation
-          const animation1 = gsap.to(mockupWrapperRef.value, {
-            scale: 0.6,
-            bottom: '-5%',
-            opacity: 1,
-            scrollTrigger: {
-              trigger: mockupContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5, // Lighter scrub for mobile
-            },
-          })
-          createScrollTrigger(animation1)
-
-          // Simple margin animation
-          const animation2 = gsap.to(mockupContainerRef.value, {
-            marginTop: '100vh',
-            height: isLandscape ? '' : '40vh',
-            scrollTrigger: {
-              trigger: mockupContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5,
-            },
-          })
-          createScrollTrigger(animation2)
-
-          // Fade out elements - consolidated
-          const elementsToFade = [workModalHeaderRef.value, mockupContainerInnerRef.value].filter(
-            Boolean,
-          )
-          if (elementsToFade.length > 0) {
-            const animation3 = gsap.to(elementsToFade, {
-              opacity: 0,
-              scrollTrigger: {
-                trigger: mockupContainerRef.value,
-                scroller: modalOverlay,
-                start: 'top 0px',
-                end: '50px',
-                scrub: 1,
-              },
-            })
-            createScrollTrigger(animation3)
-          }
-        } else {
-          // Desktop: full animations
-          const scrollTriggerConfig1 = {
+        gsap.to(mockupWrapperRef.value, {
+          scale: 1,
+          scrollTrigger: {
             trigger: mockupContainerRef.value,
             scroller: modalOverlay,
             start: 'top top',
             end: 'bottom center',
-            scrub: 0.1,
-          }
-
-          if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
-            const animation1 = gsap.to(mockupWrapperRef.value, {
-              scale: isTablet.value ? 1 : 1.5,
-              bottom: isTablet.value ? '0%' : '-12%',
-              opacity: 1,
-              scrollTrigger: scrollTriggerConfig1,
-            })
-            createScrollTrigger(animation1)
-          }
-
-          const scrollTriggerConfig2 = {
-            trigger: mockupContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top top',
-            end: 'bottom center',
-            scrub: 0.1,
-          }
-
-          if (scrollTriggerConfig2.trigger && scrollTriggerConfig2.scroller) {
-            const animation2 = gsap.to(mockupContainerRef.value, {
-              marginTop: '100vh',
-              height: isLandscape ? '' : '40vh',
-              scrollTrigger: scrollTriggerConfig2,
-            })
-            createScrollTrigger(animation2)
-          }
-
-          const scrollTriggerConfig3 = {
-            trigger: mockupContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top 0px',
-            end: '50px',
             scrub: 1,
-          }
+            pin: true,
+          },
+        })
 
-          if (scrollTriggerConfig3.trigger && scrollTriggerConfig3.scroller) {
-            // Consolidate fade-out animations into single ScrollTrigger
-            const elementsToFade = [mockupContainerInnerRef.value, workModalHeaderRef.value].filter(
-              Boolean,
-            )
-            if (elementsToFade.length > 0) {
-              const animation3 = gsap.to(elementsToFade, {
-                opacity: 0,
-                scrollTrigger: scrollTriggerConfig3,
-              })
-              createScrollTrigger(animation3)
-            }
-          }
+        // Fade out elements - consolidated
+        const elementsToFade = [workModalHeaderRef.value, mockupContainerInnerRef.value].filter(
+          Boolean,
+        )
+        if (elementsToFade.length > 0) {
+          gsap.to(elementsToFade, {
+            opacity: 0,
+            scrollTrigger: {
+              trigger: mockupContainerRef.value,
+              scroller: modalOverlay,
+              start: 'top top',
+              end: 'center top',
+              scrub: 1,
+            },
+          })
         }
       } catch (error) {
         console.warn('Mockup animation setup failed:', error)
@@ -690,7 +581,6 @@ onUnmounted(() => {
 .work-modal-content {
   width: 100%;
   min-height: 100vh;
-  padding: 0px 0px;
 }
 
 .work-modal-header {
@@ -731,7 +621,7 @@ onUnmounted(() => {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .mockup-container-inner {
@@ -746,38 +636,26 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-.mockup-wrapper {
-  position: relative;
-  height: auto;
-  transform: scale(4);
-}
-
 .mockup-frame {
   width: 100%;
   height: auto;
-  display: block;
   position: relative;
   z-index: 2;
-  object-fit: contain;
 }
 
 .mockup-screen {
   position: absolute;
-  top: 6%;
+  top: 7%;
   left: 3%;
   width: 95%;
-  height: auto;
   border-radius: 3%;
-  overflow: hidden;
-  z-index: 1;
-  background-color: rgb(var(--gray--0));
-  pointer-events: none;
 }
 
 .mockup-video {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  /* height: 100%; */
+  /* object-fit: contain; */
+  will-change: transform;
 }
 
 /* Content Sections */
@@ -984,8 +862,14 @@ p {
     font-weight: var(--font-weight--regular);
   }
 
+  .work-modal-body {
+    padding: 0px;
+    margin-top: 50px;
+  }
+
   .content-section {
-    padding: 30px 20px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
   }
 
   .section-title {
@@ -995,6 +879,7 @@ p {
 
   .feature-block {
     padding: 20px;
+    margin-bottom: 20px;
   }
 
   .feature-content {
@@ -1008,6 +893,14 @@ p {
 
   .feature-image {
     max-width: 100%;
+  }
+
+  .challenge-block {
+    margin-bottom: 20px;
+  }
+
+  .takeaway-block {
+    margin-bottom: 20px;
   }
 }
 </style>

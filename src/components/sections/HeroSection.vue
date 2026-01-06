@@ -1,5 +1,5 @@
 <template>
-  <section class="hero-section" ref="heroSectionRef">
+  <section id="hero" class="hero-section" ref="heroSectionRef">
     <div class="hero-section-container">
       <div class="hero-grid">
         <div class="hero-grid-item hero-grid-item-empty"></div>

@@ -1,20 +1,6 @@
 <template>
-  <div
-    ref="modalOverlayRef"
-    class="work-modal-overlay"
-    @click.self="handleClose"
-    @wheel.passive.stop
-    @touchstart.passive="handleOverlayTouchStart"
-    @touchmove.passive="handleOverlayTouchMove"
-  >
-    <div
-      ref="workModalContainerRef"
-      class="work-modal-container"
-      @click.stop
-      @wheel.passive="handleModalWheel"
-      @touchstart.stop.passive
-      @touchmove.passive="handleModalTouchMove"
-    >
+  <div ref="modalOverlayRef" class="work-modal-overlay" @click.self="handleClose">
+    <div ref="workModalContainerRef" class="work-modal-container" @click.stop>
       <button class="work-modal-close" aria-label="닫기" @click="handleClose">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -119,34 +105,6 @@ const handleClose = () => {
   emit('close')
 }
 
-const handleModalWheel = (e) => {
-  // 모달 내부에서는 스크롤 허용, overlay로의 전파만 차단
-  e.stopPropagation()
-}
-
-const handleOverlayTouchStart = (e) => {
-  // overlay에서 터치 시작 이벤트 차단
-  const container = e.target.closest('.work-modal-container')
-  if (!container) {
-    e.stopPropagation()
-  }
-}
-
-const handleOverlayTouchMove = (e) => {
-  // overlay에서 터치 이벤트는 완전히 차단
-  // 모달 내부에서 발생한 이벤트는 허용
-  // CSS touch-action: none이 설정되어 있어 preventDefault 불필요
-  const container = e.target.closest('.work-modal-container')
-  if (!container) {
-    e.stopPropagation()
-  }
-}
-
-const handleModalTouchMove = (e) => {
-  // 모달 내부에서는 터치 스크롤 허용, overlay로의 전파만 차단
-  e.stopPropagation()
-}
-
 watch(
   () => props.isVisible,
   (isVisible) => {
@@ -177,9 +135,11 @@ onUnmounted(() => {
 
 .work-modal-overlay {
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   background-color: rgb(var(--white--1));
   z-index: 9999;
   overflow: hidden;
@@ -196,13 +156,10 @@ onUnmounted(() => {
 .work-modal-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 100vh;
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
 }
 
 .work-modal-close {

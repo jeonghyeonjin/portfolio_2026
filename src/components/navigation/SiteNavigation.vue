@@ -2,7 +2,12 @@
   <nav class="navigation" :class="{ 'has-scrolled': isScrolled }">
     <div class="nav-left">
       <div class="logo-container" ref="logoContainerRef">
-        <img src="@/assets/images/logo.png" alt="Logo" class="logo" />
+        <img
+          src="@/assets/images/logo.png"
+          alt="Logo"
+          class="logo"
+          @click="scrollToSection('hero')"
+        />
       </div>
     </div>
     <div class="nav-center" ref="navCenterRef">
@@ -261,7 +266,7 @@ const TRANSITION_DURATION = 0.4
 const TRANSITION_EASE = 'power2.inOut'
 
 // 섹션 정의
-const SECTION_IDS = ['skill', 'work', 'experience', 'about']
+const SECTION_IDS = ['hero', 'skill', 'work', 'experience', 'about']
 
 // Refs
 const logoContainerRef = ref(null)

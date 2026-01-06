@@ -47,8 +47,8 @@ const ORIGINAL_SECOND_LINE_TEXT = 'Hyeon-jin'
 const SCROLL_TRIGGER_START = 'top 95%'
 const SCROLL_TRIGGER_END = 'top center'
 const SCROLL_TRIGGER_SCRUB = 1
-const MOBILE_SCROLL_START_HEADER = 'bottom 90%'
-const MOBILE_SCROLL_START_BADGE = 'bottom 80%'
+const MOBILE_SCROLL_START_HEADER = 'top top'
+const MOBILE_SCROLL_START_BADGE = 'top top'
 const MOBILE_DISTANCE_MULTIPLIER = 1
 
 // Refs
@@ -648,6 +648,13 @@ onUnmounted(() => {
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
+  /* 모바일에서 뒤의 요소 클릭 가능하도록 */
+  pointer-events: none;
+}
+
+/* 내부 클릭 가능한 요소들은 pointer-events 활성화 */
+.portfolio-header :deep(> *) {
+  pointer-events: none;
 }
 
 @media (--mobile) {

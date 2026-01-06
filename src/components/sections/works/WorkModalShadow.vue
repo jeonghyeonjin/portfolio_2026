@@ -15,18 +15,17 @@
         </div>
       </div>
     </div>
-    <div class="work-modal-body">
-      <div ref="heroImageContainerRef" class="hero-image-container">
-        <div ref="heroImageWrapperRef" class="hero-image-wrapper">
-          <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
-          <img
-            src="@/assets/images/works/shadow/shadow_mockup.png"
-            alt="Shadow Application Mockup"
-            class="hero-image"
-          />
-        </div>
+    <div ref="heroImageContainerRef" class="hero-image-container">
+      <div ref="heroImageWrapperRef" class="hero-image-wrapper">
+        <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
+        <img
+          src="@/assets/images/works/shadow/shadow_mockup.png"
+          alt="Shadow Application Mockup"
+          class="hero-image"
+        />
       </div>
-
+    </div>
+    <div class="work-modal-body">
       <!-- Project Overview -->
       <section
         class="content-section"
@@ -197,7 +196,7 @@ const workModalHeaderRef = ref(null)
 const heroImageContainerRef = ref(null)
 const heroImageOverlayRef = ref(null)
 const heroImageWrapperRef = ref(null)
-const { isMobile, isTablet } = useResponsive()
+const { isMobile } = useResponsive()
 // Dynamic refs for features
 const featureBlockRefs = ref([])
 const featureTextRefs = ref([])
@@ -251,12 +250,6 @@ const addRetryTimeout = (timeoutId) => {
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
 
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(textRef, { x: 0, opacity: 1 })
-    return
-  }
-
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
@@ -308,12 +301,6 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 
 const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
   if (!codeRef || !textRef) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(codeRef, { x: 0, opacity: 1 })
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -368,12 +355,6 @@ const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
   if (!blockRef) return
 
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(blockRef, { y: 0, opacity: 1 })
-    return
-  }
-
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
 
@@ -426,12 +407,6 @@ const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
 
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
-
-  // Mobile: skip complex animations
-  if (isMobile.value) {
-    gsap.set(block, { y: 0, opacity: 1 })
-    return
-  }
 
   const modalOverlay = document.querySelector('.work-modal-container')
   if (!modalOverlay) return
@@ -490,109 +465,35 @@ onMounted(() => {
 
     if (modalOverlay && heroImageContainerRef.value) {
       try {
-        // Mobile: simplified animations with less scrub
-        if (isMobile.value) {
-          const animation1 = gsap.to(heroImageWrapperRef.value, {
-            scale: 0.6,
-            bottom: '-5%',
-            opacity: 1,
-            scrollTrigger: {
-              trigger: heroImageContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5,
-            },
-          })
-          createScrollTrigger(animation1)
+        gsap.set(heroImageWrapperRef.value, { scale: 5 })
 
-          const animation2 = gsap.to(heroImageContainerRef.value, {
-            marginTop: '100vh',
-            height: window.innerWidth > window.innerHeight ? '' : '40vh',
-            scrollTrigger: {
-              trigger: heroImageContainerRef.value,
-              scroller: modalOverlay,
-              start: 'top top',
-              end: 'bottom center',
-              scrub: 0.5,
-            },
-          })
-          createScrollTrigger(animation2)
-
-          // Fade out elements - consolidated
-          const elementsToFade = [workModalHeaderRef.value].filter(Boolean)
-          if (elementsToFade.length > 0) {
-            const animation3 = gsap.to(elementsToFade, {
-              opacity: 0,
-              scrollTrigger: {
-                trigger: heroImageContainerRef.value,
-                scroller: modalOverlay,
-                start: 'top 0px',
-                end: '50px',
-                scrub: 1,
-              },
-            })
-            createScrollTrigger(animation3)
-          }
-        } else {
-          // Desktop: full animations
-          const scrollTriggerConfig1 = {
+        const animation1 = gsap.to(heroImageWrapperRef.value, {
+          scale: 1,
+          scrollTrigger: {
             trigger: heroImageContainerRef.value,
             scroller: modalOverlay,
             start: 'top top',
             end: 'bottom center',
-            scrub: 0.1,
-          }
+            pin: true,
+            scrub: 0.5,
+          },
+        })
+        createScrollTrigger(animation1)
 
-          if (scrollTriggerConfig1.trigger && scrollTriggerConfig1.scroller) {
-            const animation1 = gsap.to(heroImageWrapperRef.value, {
-              scale: isTablet.value ? 0.7 : 0.9,
-              bottom: isTablet.value ? '0%' : '-8%',
-              opacity: 1,
-              scrollTrigger: scrollTriggerConfig1,
-            })
-            createScrollTrigger(animation1)
-          }
-
-          const scrollTriggerConfig2 = {
-            trigger: heroImageContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top top',
-            end: 'bottom center',
-            scrub: 0.1,
-          }
-
-          if (scrollTriggerConfig2.trigger && scrollTriggerConfig2.scroller) {
-            const isLandscape = window.innerWidth > window.innerHeight
-            const animation2 = gsap.to(heroImageContainerRef.value, {
-              marginTop: '100vh',
-              height: isLandscape ? '' : '40vh',
-              scrollTrigger: scrollTriggerConfig2,
-            })
-            createScrollTrigger(animation2)
-          }
-
-          const scrollTriggerConfig3 = {
-            trigger: heroImageContainerRef.value,
-            scroller: modalOverlay,
-            start: 'top 0px',
-            end: '30px',
-            scrub: 1,
-          }
-
-          if (scrollTriggerConfig3.trigger && scrollTriggerConfig3.scroller) {
-            // Consolidate fade-out animations into single ScrollTrigger
-            const elementsToFade = [heroImageOverlayRef.value, workModalHeaderRef.value].filter(
-              Boolean,
-            )
-            if (elementsToFade.length > 0) {
-              const animation3 = gsap.to(elementsToFade, {
-                opacity: 0,
-                scrollTrigger: scrollTriggerConfig3,
-              })
-              createScrollTrigger(animation3)
-            }
-          }
+        // Fade out elements - consolidated
+        const elementsToFade = [workModalHeaderRef.value, heroImageOverlayRef.value].filter(Boolean)
+        if (elementsToFade.length > 0) {
+          const animation3 = gsap.to(elementsToFade, {
+            opacity: 0,
+            scrollTrigger: {
+              trigger: heroImageContainerRef.value,
+              scroller: modalOverlay,
+              start: 'top 0px',
+              end: '50px',
+              scrub: 1,
+            },
+          })
+          createScrollTrigger(animation3)
         }
       } catch (error) {
         console.warn('Hero image animation setup failed:', error)
@@ -655,7 +556,6 @@ onUnmounted(() => {
 .work-modal-content {
   width: 100%;
   min-height: 100vh;
-  padding: 0px 0px;
   background-color: rgb(var(--gray--0));
 }
 
@@ -731,7 +631,7 @@ onUnmounted(() => {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .hero-image-overlay {
@@ -744,12 +644,6 @@ onUnmounted(() => {
   height: 100%;
   background-color: rgba(var(--gray--0), 0.8);
   z-index: 3;
-}
-
-.hero-image-wrapper {
-  position: relative;
-  height: auto;
-  transform: scale(4);
 }
 
 .hero-image {
