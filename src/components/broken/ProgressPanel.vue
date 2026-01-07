@@ -12,11 +12,8 @@
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M20 7H17.8486C17.3511 7 17 6.49751 17 6C17 4.34315 15.6569 3 14 3C12.3431 3 11 4.34315 11 6C11 6.49751 10.6488 7 10.1513 7H8C7.44771 7 7 7.44772 7 8V10.1513C7 10.6488 6.49751 11 6 11C4.34315 11 3 12.3431 3 14C3 15.6569 4.34315 17 6 17C6.49751 17 7 17.3511 7 17.8486V20C7 20.5523 7.44771 21 8 21L20 21C20.5523 21 21 20.5523 21 20V17.8486C21 17.3511 20.4975 17 20 17C18.3431 17 17 15.6569 17 14C17 12.3431 18.3431 11 20 11C20.4975 11 21 10.6488 21 10.1513L21 8C21 7.44772 20.5523 7 20 7Z"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          d="M8.8705 14.741C7.23981 14.741 5.85372 14.1703 4.71223 13.0288C3.57074 11.8873 3 10.5012 3 8.8705C3 8.54436 3.02446 8.21823 3.07338 7.89209C3.1223 7.56595 3.21199 7.25612 3.34245 6.96259C3.42398 6.79952 3.5259 6.67722 3.6482 6.59568C3.7705 6.51415 3.90504 6.45707 4.0518 6.42446C4.19856 6.39185 4.3494 6.39592 4.50432 6.43669C4.65923 6.47746 4.80192 6.56307 4.93237 6.69353L7.50072 9.26187L9.26187 7.50072L6.69353 4.93237C6.56307 4.80192 6.47746 4.65923 6.43669 4.50432C6.39592 4.3494 6.39185 4.19856 6.42446 4.0518C6.45707 3.90504 6.51415 3.7705 6.59568 3.6482C6.67722 3.5259 6.79952 3.42398 6.96259 3.34245C7.25612 3.21199 7.56595 3.1223 7.89209 3.07338C8.21823 3.02446 8.54436 3 8.8705 3C10.5012 3 11.8873 3.57074 13.0288 4.71223C14.1703 5.85372 14.741 7.23981 14.741 8.8705C14.741 9.24556 14.7084 9.60024 14.6432 9.93453C14.5779 10.2688 14.4801 10.599 14.3496 10.9252L19.2906 15.8173C19.7635 16.2902 20 16.8691 20 17.554C20 18.2388 19.7635 18.8177 19.2906 19.2906C18.8177 19.7635 18.2388 20 17.554 20C16.8691 20 16.2902 19.7554 15.8173 19.2662L10.9252 14.3496C10.599 14.4801 10.2688 14.5779 9.93453 14.6432C9.60024 14.7084 9.24556 14.741 8.8705 14.741Z"
+          fill="currentColor"
         />
       </svg>
       <div v-if="!allFixed" class="button-count-container">
@@ -63,7 +60,7 @@
             />
           </svg>
         </button>
-        <div v-if="!isAutoOpened" class="help-panel-content">
+        <div v-if="!isAutoOpened || allFixed" class="help-panel-content">
           <div class="help-header">
             <div class="help-title">Broken Portfolio</div>
             <div class="help-subtitle">Find and fix issues</div>
@@ -96,7 +93,11 @@
               </p>
             </div>
 
-            <div v-if="allFixed" class="completion-message">🎉 All issues found!</div>
+            <div v-if="allFixed" class="completion-message">
+              <div class="completion-icon">🎉</div>
+              <div class="completion-text">All issues found!</div>
+              <div class="completion-subtext">Great detective work!</div>
+            </div>
           </div>
         </div>
 
@@ -299,8 +300,11 @@ watch(
   () => fixedIssues.value.length,
   (newLength, oldLength) => {
     if (newLength > oldLength) {
-      // 이슈가 새로 해결됨
+      clearAutoClose()
+
+      // 이전 진행 상태 저장
       const previousProgress = oldLength
+
       openHelpPanel(previousProgress)
     }
   },
@@ -420,14 +424,14 @@ onUnmounted(() => {
 }
 
 .button-icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: block;
   flex-shrink: 0;
   color: rgb(var(--gray--2));
   fill: currentColor;
   margin-right: 6px;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .button-count-container {
@@ -479,7 +483,7 @@ onUnmounted(() => {
 }
 
 .help-panel-content {
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   overflow-y: auto;
   flex: 1;
 }
@@ -491,7 +495,7 @@ onUnmounted(() => {
 }
 
 .help-panel-footer {
-  padding: 0 20px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -572,10 +576,30 @@ onUnmounted(() => {
 }
 
 .completion-message {
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.completion-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.completion-text {
   color: rgb(var(--green--normal));
-  font-size: var(--heading--2);
+  font-size: var(--title--3);
   font-weight: var(--font-weight--bold);
+  letter-spacing: -0.02em;
+}
+
+.completion-subtext {
+  color: rgb(var(--gray--5s));
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--regular);
 }
 
 .reset-button {

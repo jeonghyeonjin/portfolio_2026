@@ -7,7 +7,7 @@
           <div class="hero-image-container">
             <div class="hero-image-wrapper">
               <img
-                src="@/assets/images/hero/hero.png"
+                :src="allFixed ? heroImageOn : heroImageOff"
                 alt="정현진 포트폴리오 메인 이미지"
                 class="hero-image"
                 ref="heroImageRef"
@@ -83,10 +83,12 @@ import { useResponsive } from '@/composables/useResponsive'
 import IssueMarker from '@/components/broken/IssueMarker.vue'
 import SolutionModal from '@/components/broken/SolutionModal.vue'
 import heroShapes from '@/data/heroShapes.json'
+import heroImageOn from '@/assets/images/hero/hero.png'
+import heroImageOff from '@/assets/images/hero/hero_off.png'
 
 gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin)
 
-const { isFixed, openIssue, isMarkersReady } = useBrokenPortfolio()
+const { isFixed, openIssue, isMarkersReady, allFixed } = useBrokenPortfolio()
 const { isTablet } = useResponsive()
 
 const heroSectionRef = ref(null)
