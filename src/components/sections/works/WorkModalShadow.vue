@@ -19,10 +19,20 @@
       <div ref="heroImageWrapperRef" class="hero-image-wrapper">
         <div ref="heroImageOverlayRef" class="hero-image-overlay"></div>
         <img
-          src="@/assets/images/works/shadow/shadow_mockup.png"
+          src="@/assets/images/mockup/ProDisplayXDR2.png"
           alt="Shadow Application Mockup"
           class="hero-image"
         />
+        <video
+          v-if="modalData.sections?.projectOverview?.heroVideo"
+          class="hero-video"
+          autoplay
+          loop
+          muted
+          playsinline
+        >
+          <source :src="modalData.sections.projectOverview.heroVideo" type="video/mp4" />
+        </video>
       </div>
     </div>
     <div class="work-modal-body">
@@ -40,18 +50,57 @@
         >
           {{ paragraph }}
         </p>
+        <div class="overview-meta-grid">
+          <div class="meta-item" v-if="modalData.sections.projectOverview.period">
+            <h4 class="meta-label">Period</h4>
+            <p class="meta-value">{{ modalData.sections.projectOverview.period }}</p>
+          </div>
+          <div class="meta-item" v-if="modalData.sections.projectOverview.team">
+            <h4 class="meta-label">Team</h4>
+            <p class="meta-value">{{ modalData.sections.projectOverview.team }}</p>
+          </div>
+          <div class="meta-item" v-if="modalData.sections.projectOverview.role_summary">
+            <h4 class="meta-label">Role</h4>
+            <p class="meta-value">{{ modalData.sections.projectOverview.role_summary }}</p>
+          </div>
+        </div>
       </section>
 
-      <!-- Tech Stack -->
-      <section class="content-section" v-if="modalData.sections?.techStack" id="shadow-tech">
-        <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
-        <TechStackGrid :stacks="techStacks" />
+      <!-- My Role -->
+      <section class="content-section" v-if="modalData.sections?.myRole" id="shadow-role">
+        <h2 class="section-title">{{ modalData.sections.myRole.title }}</h2>
+
+        <div class="role-subsection" v-if="modalData.sections.myRole.development">
+          <h3 class="subsection-title">{{ modalData.sections.myRole.development.title }}</h3>
+          <p class="section-text">{{ modalData.sections.myRole.development.description }}</p>
+          <ul class="feature-list">
+            <li
+              v-for="(item, index) in modalData.sections.myRole.development.responsibilities"
+              :key="index"
+            >
+              {{ item }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="role-subsection" v-if="modalData.sections.myRole.design">
+          <h3 class="subsection-title">{{ modalData.sections.myRole.design.title }}</h3>
+          <p class="section-text">{{ modalData.sections.myRole.design.description }}</p>
+          <ul class="feature-list">
+            <li
+              v-for="(item, index) in modalData.sections.myRole.design.responsibilities"
+              :key="index"
+            >
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </section>
 
       <!-- Logo Design -->
       <section class="content-section" v-if="modalData.sections?.logoDesign" id="shadow-logo">
         <h2 class="section-title">{{ modalData.sections.logoDesign.title }}</h2>
-        <p class="section-text">{{ modalData.sections.logoDesign.description }}</p>
+        <!-- <p class="section-text">{{ modalData.sections.logoDesign.description }}</p> -->
         <div class="logo-evolution">
           <div class="logo-timeline">
             <template
@@ -77,13 +126,13 @@
         </div>
       </section>
 
-      <!-- Key Features -->
+      <!-- Development Contributions (Features) -->
       <section
         class="content-section"
-        v-if="modalData.sections?.keyContributions"
-        id="shadow-features"
+        v-if="modalData.sections?.developmentContributions"
+        id="shadow-dev-contrib"
       >
-        <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
+        <h2 class="section-title">{{ modalData.sections.developmentContributions.title }}</h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
@@ -103,7 +152,17 @@
                     v-html="solution"
                   ></li>
                 </ul>
+
+                <p v-if="feature.note" class="feature-note">
+                  <span class="note-label">Note:</span> {{ feature.note }}
+                </p>
               </div>
+            </div>
+            <div v-if="feature.video" class="feature-demo-video">
+              <video class="demo-video" autoplay loop muted playsinline>
+                <source :src="feature.video" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
             <div
               v-if="feature.codeKey || feature.codeKeys"
@@ -123,9 +182,37 @@
                 />
               </template>
             </div>
-            <div class="feature-demo-image"></div>
           </div>
         </template>
+      </section>
+
+      <!-- Design Contributions -->
+      <section
+        class="content-section"
+        v-if="modalData.sections?.designContributions"
+        id="shadow-design-contrib"
+      >
+        <h2 class="section-title">{{ modalData.sections.designContributions.title }}</h2>
+
+        <div
+          v-for="(item, index) in modalData.sections.designContributions.items"
+          :key="index"
+          class="design-contrib-item"
+        >
+          <h3 class="subsection-title">{{ item.title }}</h3>
+          <p class="section-text">{{ item.description }}</p>
+          <ul class="feature-list">
+            <li v-for="(detail, dIndex) in item.details" :key="dIndex">
+              {{ detail }}
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Tech Stack -->
+      <section class="content-section" v-if="modalData.sections?.techStack" id="shadow-tech">
+        <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
+        <TechStackGrid :stacks="techStacks" />
       </section>
 
       <!-- Performance Metrics -->
@@ -226,9 +313,11 @@ const techStacks = modalData.techStacks
 
 const tocSections = [
   { id: 'shadow-overview', label: 'Project Overview' },
-  { id: 'shadow-tech', label: 'Tech Stack' },
+  { id: 'shadow-role', label: 'My Role' },
   { id: 'shadow-logo', label: 'Logo Design' },
-  { id: 'shadow-features', label: 'Key Features' },
+  { id: 'shadow-dev-contrib', label: 'Dev Contributions' },
+  { id: 'shadow-design-contrib', label: 'Design Contributions' },
+  { id: 'shadow-tech', label: 'Tech Stack' },
   { id: 'shadow-metrics', label: 'Performance Metrics' },
   { id: 'shadow-takeaways', label: 'Key Takeaways' },
 ]
@@ -522,7 +611,9 @@ onMounted(() => {
     })
 
     // Other blocks
-    const blocks = document.querySelectorAll('.takeaway-block, .tech-stack-grid')
+    const blocks = document.querySelectorAll(
+      '.takeaway-block, .tech-stack-grid, .design-contrib-item, .role-subsection',
+    )
     blocks.forEach((block, index) => {
       setupBlockAnimation(block, index)
     })
@@ -634,6 +725,15 @@ onUnmounted(() => {
   align-items: flex-end;
 }
 
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .hero-image-overlay {
   position: absolute;
   top: 0;
@@ -642,18 +742,29 @@ onUnmounted(() => {
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(var(--gray--0), 0.8);
+  background-color: rgba(var(--gray--0), 0.9);
   z-index: 3;
 }
 
 .hero-image {
   width: 100%;
-  max-width: 1400px;
   height: auto;
   object-fit: contain;
   display: block;
   position: relative;
   z-index: 2;
+}
+
+.hero-video {
+  position: absolute;
+  top: -11.15%;
+  left: 2.5%;
+  width: 95%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 /* Content Sections */
@@ -685,9 +796,55 @@ onUnmounted(() => {
   margin: 0 0 16px 0;
 }
 
+/* Overview Meta Grid */
+.overview-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.meta-item {
+  padding: 24px;
+}
+
+.meta-item.full-width {
+  grid-column: span 2;
+}
+
+.meta-label {
+  font-size: var(--caption--1);
+  color: rgb(var(--gray--5s));
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.meta-value {
+  font-size: var(--body--1--normal);
+  color: rgb(var(--white--1));
+  font-weight: var(--font-weight--medium);
+}
+
+/* Role Subsection */
+.role-subsection {
+  margin-bottom: 40px;
+}
+
+.role-subsection:last-child {
+  margin-bottom: 0;
+}
+
 /* Logo Evolution */
 .logo-evolution {
   margin-top: 40px;
+  background-color: rgba(255, 255, 255, 0.7);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-radius: 24px;
+  padding: 40px;
 }
 
 .logo-timeline {
@@ -695,7 +852,6 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin-top: 30px;
   flex-wrap: wrap;
 }
 
@@ -715,7 +871,6 @@ onUnmounted(() => {
   height: 100%;
   object-fit: contain;
   border-radius: 20px;
-  background-color: rgb(var(--white--2));
   padding: 20px;
   transition: transform 0.3s ease;
   position: relative;
@@ -727,16 +882,15 @@ onUnmounted(() => {
 
 .logo-arrow {
   font-size: 2rem;
-  color: rgb(var(--white--3));
+  color: rgb(var(--gray--5s));
   font-weight: var(--font-weight--bold);
   flex-shrink: 0;
-  margin: 0 10px;
 }
 
 .logo-label {
-  font-size: var(--body--2--normal);
+  font-size: var(--body--1--normal);
   font-weight: var(--font-weight--medium);
-  color: rgb(var(--white--2));
+  color: rgb(var(--gray--1));
   text-align: center;
   margin: 0;
 }
@@ -813,16 +967,51 @@ onUnmounted(() => {
   font-size: 1.2em;
 }
 
+.feature-note {
+  font-size: var(--caption--1);
+  color: rgb(var(--white--3));
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.note-label {
+  font-weight: var(--font-weight--bold);
+  color: rgb(var(--primary--green));
+}
+
 .feature-code-wrapper {
   width: 100%;
   margin-top: 30px;
+}
+
+.feature-demo-video {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.demo-video {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: block;
+}
+
+/* Design Contributions */
+.design-contrib-item {
+  margin-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Feature List */
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 15px 0;
+  margin: 15px 0 15px 0;
 }
 
 .feature-list li {
@@ -902,6 +1091,15 @@ onUnmounted(() => {
     font-size: 1.5rem;
     margin: 0 5px;
   }
+
+  .overview-meta-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .meta-item.full-width {
+    grid-column: span 2;
+  }
 }
 
 /* Mobile: --mobile */
@@ -979,16 +1177,41 @@ onUnmounted(() => {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
+
+  .feature-demo-video {
+    margin-top: 24px;
+  }
+
+  .overview-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .meta-item {
+    padding: 16px;
+  }
+
+  .meta-item.full-width {
+    grid-column: span 1;
+  }
 }
 
 @media (--tablet) {
   .demo-gif {
     margin-top: 30px;
   }
+
+  .feature-demo-video {
+    margin-top: 30px;
+  }
 }
 
 @media (--desktop) {
   .demo-gif {
+    margin-top: 40px;
+  }
+
+  .feature-demo-video {
     margin-top: 40px;
   }
 }

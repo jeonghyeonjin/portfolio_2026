@@ -18,7 +18,7 @@
           :key="index"
           class="toc-item"
           :class="{ 'is-active': activeSection === section.id }"
-          @click.stop="scrollToSection(section.id)"
+          @click.stop="activeSection !== section.id && scrollToSection(section.id)"
         >
           <span class="toc-label">{{ section.label }}</span>
           <div class="toc-marker"></div>
@@ -77,7 +77,7 @@ const checkVisibility = () => {
   }
 }
 
-// Active section logic - 개선된 단일 기준점 방식
+// Active section logic - 화면 중앙에 가장 가까운 섹션 감지
 const checkActiveSection = () => {
   // 사용자가 클릭한 직후라면 자동 감지 스킵
   if (isUserScrolling.value) return
@@ -85,30 +85,40 @@ const checkActiveSection = () => {
   const modalContainer = document.querySelector('.work-modal-container')
   if (!modalContainer) return
 
-  // 뷰포트 상단에서 200px 아래를 활성화 기준선으로 설정
-  const ACTIVATION_OFFSET = 200
+  // 뷰포트 중앙 지점 계산
+  const viewportCenter = window.innerHeight / 2
 
-  // 기준선을 지나친 섹션들 중 가장 마지막 것을 선택
-  let activeId = null
+  let closestId = null
+  let minDistance = Infinity
 
+  // 모든 섹션을 순회하며 화면 중앙에 가장 가까운 섹션 찾기
   for (const section of props.sections) {
     const el = document.getElementById(section.id)
     if (!el) continue
 
     const rect = el.getBoundingClientRect()
 
-    // 섹션 상단이 기준선을 지나쳤으면 (위로 올라갔으면) 활성화 후보
-    if (rect.top <= ACTIVATION_OFFSET) {
-      activeId = section.id
-    } else {
-      // 기준선을 안 지나친 첫 섹션부터는 더 볼 필요 없음
-      break
+    // 섹션이 뷰포트에 보이는지 확인
+    const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+
+    if (isVisible) {
+      // 섹션의 중앙 지점 계산
+      const sectionCenter = rect.top + rect.height / 2
+
+      // 뷰포트 중앙과의 거리 계산
+      const distance = Math.abs(sectionCenter - viewportCenter)
+
+      // 가장 가까운 섹션 업데이트
+      if (distance < minDistance) {
+        minDistance = distance
+        closestId = section.id
+      }
     }
   }
 
-  // 활성화할 섹션이 있으면 업데이트
-  if (activeId) {
-    activeSection.value = activeId
+  // 가장 가까운 섹션이 있으면 활성화
+  if (closestId) {
+    activeSection.value = closestId
   }
 }
 
@@ -229,23 +239,22 @@ watch(
 <style scoped>
 .work-modal-toc {
   position: fixed;
-  right: 25px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 900; /* Below header (1000) */
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  padding: 20px 10px;
+  padding: 20px 14px;
   /* background: rgba(0, 0, 0, 0.2); Backdrop optional */
   border-radius: 20px;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .toc-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   align-items: flex-end; /* Align right to keep dots aligned */
 }
 
@@ -256,18 +265,18 @@ watch(
   justify-content: flex-end;
   gap: 12px;
   cursor: pointer;
-  height: 20px;
-  transition: all 0.3s ease;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.4s ease;
   position: relative;
 }
 
 /* The Label */
 .toc-label {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--body--2--normal);
   opacity: 0;
   transform: translateX(10px);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   white-space: nowrap;
   pointer-events: none; /* Let clicks pass to item */
   text-align: right;
@@ -275,15 +284,16 @@ watch(
 
 /* The Dot/Dash */
 .toc-marker {
-  width: 6px;
+  width: 10px;
   height: 3px;
   border-radius: 3px;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 /* Dark Theme (Default) */
 .work-modal-toc.theme-dark .toc-label {
-  color: rgb(var(--white--1));
+  color: rgb(var(--gray--1));
+  font-weight: var(--font-weight--regular);
 }
 
 .work-modal-toc.theme-dark .toc-marker {
@@ -295,7 +305,7 @@ watch(
 }
 
 .work-modal-toc.theme-dark .toc-item.is-active .toc-label {
-  color: rgb(var(--white--1));
+  color: rgb(var(--yellow--normal));
 }
 
 /* Light Theme */
@@ -316,20 +326,50 @@ watch(
 }
 
 /* Hover/Expanded State */
+.work-modal-toc.is-expanded {
+  background-color: rgba(var(--white--2), 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 .work-modal-toc.is-expanded .toc-label {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
+  color: rgb(var(--gray--5s));
+}
+
+.work-modal-toc.is-expanded .toc-marker {
+  background-color: rgba(var(--gray--5s), 0.5);
+}
+
+.work-modal-toc.is-expanded:hover .toc-marker {
+  background-color: rgba(var(--gray--5s), 0.8);
+}
+
+.work-modal-toc.is-expanded .toc-item:hover:not(.is-active) .toc-label {
+  color: rgba(var(--gray--0), 1);
+}
+
+.work-modal-toc.is-expanded .toc-item.is-active {
+  cursor: default;
+  pointer-events: none;
+}
+
+.work-modal-toc.is-expanded .toc-item.is-active .toc-label {
+  color: rgb(var(--gray--0));
+  text-decoration: none;
 }
 
 /* Active State */
 .toc-item.is-active .toc-marker {
   background-color: rgb(var(--yellow--normal));
-  transform: scale(1.5);
+  border: 0.5px solid rgb(var(--yellow--light));
 }
 
-.toc-item.is-active .toc-label {
-  font-weight: 700;
+/* Expanded 상태에서 활성화된 항목의 마커 색상 유지 */
+.work-modal-toc.is-expanded .toc-item.is-active .toc-marker {
+  background-color: rgb(var(--yellow--normal));
 }
 
 /* Transitions */

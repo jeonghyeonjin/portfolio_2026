@@ -5,18 +5,82 @@
       "paragraphs": [
         "Shadow는 AI 기반 실시간 회의 기록 및 분석 애플리케이션입니다. macOS에서 시스템 오디오를 캡처하고, 자동으로 텍스트 변환 및 요약을 제공하는 데스크톱 앱입니다.",
         "Flutter를 사용하여 개발을 진행했으며, GetX를 활용한 상태 관리와 네이티브 플러그인 연동을 통해 고성능 앱을 구현했습니다."
+      ],
+      "period": "2023.09 - 2026.01",
+      "team": "4-5인 스타트업 (PM, Dev, Designer)",
+      "role_summary": "Shadow Mac 클라이언트 개발 및 UI/UX 설계를 담당한 Frontend Developer & Product Designer",
+      "heroVideo": "/portfolio_2026/videos/shadow/demo.mp4"
+    },
+    "myRole": {
+      "title": "👤 My Role",
+      "development": {
+        "title": "Development",
+        "description": "Shadow Mac 클라이언트의 핵심 기능 개발과 API 연동을 담당했습니다.",
+        "responsibilities": [
+          "Flutter 기반 Mac 클라이언트 아키텍처 설계 및 구현",
+          "Google Calendar API 연동 및 실시간 이벤트 동기화 시스템 구축",
+          "고성능 이미지 갤러리 (프리로딩, 캐싱) 개발",
+          "키보드 인터랙션 시스템 구현",
+          "Omnisearch 검색 시스템 설계 및 최적화",
+          "반응형 레이아웃 알고리즘 개발",
+          "복잡한 데이터베이스 로직 및 엔티티 관리 구현"
+        ]
+      },
+      "design": {
+        "title": "Design",
+        "description": "Shadow V1의 전체 UI/UX 설계 및 사용자 경험 개선을 담당했습니다.",
+        "responsibilities": [
+          "Shadow 전체 UI 시스템 및 디자인 가이드 설계",
+          "각 화면의 레이아웃, 인터랙션, 상태 변화 디자인",
+          "사용자 플로우 정의 (녹음 → 분석 → 후속 작업)",
+          "UX 디테일 개선 (온보딩, 에러 처리, Empty State 등)"
+        ]
+      }
+    },
+    "logoDesign": {
+      "title": "🎨 Logo Design",
+      "description": "Shadow 로고는 다음과 같은 과정으로 발전하며 완성되었습니다. 원형의 물체가 그림자를 받은 모양을 형상화한 후, 그림자만 따서 Shadow의 S자를 그려냈습니다.",
+      "logoLabels": ["원형 물체 + 그림자", "그림자 모양을 형상화", "Shadow의 S", "Final"]
+    },
+    "developmentContributions": {
+      "title": "💻 Development Contributions | 개발 기여"
+    },
+    "designContributions": {
+      "title": "🎨 Design Contributions | 디자인 기여",
+      "items": [
+        {
+          "title": "Shadow V1 UI System Design",
+          "description": "Mac 데스크톱 앱에 최적화된 전체 UI 시스템을 설계했습니다. 녹음 중, 분석 중, 완료 등 각 상태별 시각적 피드백과 인터랙션을 정의했습니다.",
+          "details": [
+            "메인 화면, 설정 화면, 대화 상세 화면 등 핵심 스크린 UI 설계",
+            "3단 레이아웃(사이드바, 메인, 디테일 패널) 구조 설계",
+            "상태별 시각적 피드백 시스템 (녹음 중, 처리 중, 완료 등)",
+            "다크 모드 지원 및 일관된 디자인 언어 구축"
+          ]
+        },
+        {
+          "title": "User Flow & Interaction Design",
+          "description": "사용자가 최소한의 클릭으로 회의 기록부터 후속 작업까지 완료할 수 있도록 전체 플로우를 설계했습니다.",
+          "details": [
+            "미팅 전 세팅 → 녹화/노트 → 요약/액션 생성까지의 End-to-end UX 플로우 정의",
+            "키보드 중심 인터랙션 플로우 설계 (마우스 없이 모든 기능 접근 가능)",
+            "검색, 필터링, 선택 등 주요 인터랙션 패턴 설계"
+          ]
+        },
+        {
+          "title": "UX Detail Improvements",
+          "description": "초기 사용자 피드백을 바탕으로 UX 개선 과제를 주도하며 세부 경험을 개선했습니다.",
+          "details": [
+            "온보딩 플로우 개선 (첫 사용자도 직관적으로 시작 가능)",
+            "에러 메시지 및 Empty State 디자인",
+            "로딩 상태 및 피드백 최적화",
+            "접근성 및 사용성 개선"
+          ]
+        }
       ]
     },
     "techStack": {
       "title": "🛠️ Tech Stack Summary"
-    },
-    "logoDesign": {
-      "title": "🎨 Logo Design | 로고 디자인",
-      "description": "Shadow 로고는 다음과 같은 과정으로 발전하며 완성되었습니다. 원형의 물체가 그림자를 받은 모양을 형상화한 후, 그림자만 따서 Shadow의 S자를 그려냈습니다.",
-      "logoLabels": ["물체에 그림자가 생긴 모습", "그림자 모양을 형상화", "Shadow의 S", "Final"]
-    },
-    "keyContributions": {
-      "title": "🎨 My Key Contributions"
     },
     "performanceImpact": {
       "title": "📈 Performance Impact"
@@ -53,7 +117,21 @@
   },
   "features": [
     {
-      "title": "1. Zero-Latency Image Gallery Core",
+      "title": "UI/UX Redesign & Layout System",
+      "subtitle": "UI/UX 재설계 및 레이아웃 시스템",
+      "period": "2024.04 - 2024.09",
+      "problem": "초기 UI가 기능 중심으로 설계되어 사용자 경험이 분산되고, 대화 기록 조회와 상세 정보 확인 간의 전환이 비효율적이었습니다. 다양한 화면 크기에서도 일관된 경험을 제공하는 레이아웃 시스템이 필요했습니다.",
+      "solutions": [
+        "<strong>Conversation Tab Redesign:</strong> 대화 기록 탭을 분할하여 리스트와 상세 뷰 동시 표시",
+        "<strong>Meta UI Development:</strong> 전체 UI 시스템을 재개발하여 일관된 디자인 언어 구축",
+        "<strong>Layout System:</strong> 사이드바, 메인, 디테일 패널의 동적 레이아웃 시스템 설계",
+        "<strong>Detail Refinement:</strong> 각 화면의 디테일 작업 및 인터랙션 개선",
+        "<strong>Responsive Design:</strong> 창 크기 변경에 따른 레이아웃 자동 조정"
+      ],
+      "tags": ["UI/UX", "Layout", "Design System", "Responsive"]
+    },
+    {
+      "title": "Zero-Latency Image Gallery Core",
       "subtitle": "이미지 갤러리 최적화 엔진",
       "problem": "고해상도 스크린샷 이미지를 PageView로 단순히 구현했을 때, 이미지를 넘기는 순간(Swipe)마다 프레임 드랍(Jank)과 로딩 인디케이터가 발생하는 현상이 있었습니다.",
       "solutions": [
@@ -61,10 +139,11 @@
         "<strong>Dual-Layer Caching:</strong> ImageSizeCache와 WidgetCache를 통해 레이아웃 시프트 방지 및 재렌더링 비용 제거",
         "<strong>Smart Memory Management:</strong> 뷰포트에서 멀어진 이미지는 자동으로 캐시에서 해제하여 OOM 방지"
       ],
-      "codeKey": "cachingCode"
+      "codeKey": "cachingCode",
+      "video": "/portfolio_2026/videos/shadow/screenshot.mp4"
     },
     {
-      "title": "2. Adaptive Responsive Layout Algorithm",
+      "title": "Adaptive Responsive Layout Algorithm",
       "subtitle": "적응형 반응형 레이아웃 알고리즘",
       "problem": "데스크톱 앱이지만 윈도우 크기를 자유롭게 조절할 수 있습니다. 단순히 미디어 쿼리나 하드코딩된 브레이크포인트로는 다양한 해상도와 창 크기에서 최적의 UX를 제공할 수 없었습니다. 특히 좌우 사이드바, 메인 컨텐츠, 상세 패널이 있는 3단 레이아웃에서는 각 영역이 동적으로 켜지고 꺼져야 했습니다.",
       "solutions": [
@@ -75,28 +154,20 @@
       "codeKey": "adaptiveLayoutCode"
     },
     {
-      "title": "3. Desktop-Class Keyboard Interaction",
-      "subtitle": "데스크톱급 키보드 인터랙션",
-      "problem": "데스크톱 앱에서는 마우스 없이 키보드만으로 검색 결과를 선택하고 이동하고 싶어 하는 니즈가 있습니다. 단순한 TextField는 방향키 입력을 커서 이동으로 소비해버리기 때문에, 이를 가로채는 로직이 필요했습니다.",
-      "solutions": [
-        "<strong>Event Interception:</strong> FocusNode의 onKeyEvent 단계에서 키 입력을 먼저 검사하여 검색 컨트롤러로 라우팅",
-        "<strong>State Locking:</strong> 마우스 호버와 키보드 선택 간의 충돌을 방지하기 위한 상태 잠금 구현",
-        "<strong>Viewport Synchronization:</strong> 선택된 아이템이 항상 화면에 보이도록 스크롤 동기화"
-      ],
-      "codeKey": "keyboardCode"
-    },
-    {
-      "title": "4. Generic Search & Scroll Orchestration",
+      "title": "Search: Generic Search & Scroll Orchestration",
       "subtitle": "추상화된 검색 및 스크롤 로직",
       "problem": "'스킬(Skill)' 검색과 '스크린샷(Screenshot)' 검색은 데이터 구조도 다르고, UI 형태(세로 리스트 vs 가로 리스트)도 다릅니다. 각각 별도의 로직으로 구현하면 코드 중복이 발생합니다.",
       "solutions": [
         "<strong>Abstracted Initialization:</strong> 어떤 데이터 리스트와 스크롤 컨트롤러가 들어오든 필터링 함수만 주입하면 동작하도록 설계 (Strategy Pattern)",
-        "<strong>Viewport Aware Scrolling:</strong> 선택된 인덱스가 뷰포트를 벗어났는지 계산하여 필요한 만큼만 스크롤"
+        "<strong>Viewport Aware Scrolling:</strong> 선택된 인덱스가 뷰포트를 벗어났는지 계산하여 필요한 만큼만 스크롤",
+        "<strong>Unified Search Experience:</strong> 통합 검색 시스템(Omnisearch)으로 모든 검색 기능을 단일 인터페이스로 통합"
       ],
-      "codeKey": "searchCode"
+      "codeKey": "searchCode",
+      "note": "2024년 11월부터 여러 차례 최적화 및 개선 작업을 진행했습니다.",
+      "video": "/portfolio_2026/videos/shadow/search.mp4"
     },
     {
-      "title": "5. Real-Time Calendar Event Monitoring",
+      "title": "Real-Time Calendar Event Monitoring",
       "subtitle": "실시간 캘린더 이벤트 모니터링",
       "problem": "사용자가 미팅을 시작할 때, 해당 미팅이 Google Calendar 이벤트와 연결되어야 참석자 정보, 제목, 시간 등이 자동으로 채워집니다. 또한 앞으로 다가올 이벤트(upcoming event)를 미리 캐싱하여 빠르게 표시해야 했습니다. API 호출 비용을 줄이고 실시간 동기화가 필요했습니다.",
       "solutions": [
@@ -105,10 +176,11 @@
         "<strong>Multi-Criteria Matching:</strong> 미팅 링크, 참석자 수, 시간 차이 등 여러 조건을 만족하는 이벤트만 선택",
         "<strong>Upcoming Event Pre-fetching:</strong> 현재 시간 기준 향후 24시간 내 이벤트를 백그라운드에서 미리 가져와 로컬 DB에 캐싱"
       ],
-      "codeKeys": ["calendarFetchCode", "calendarUpcomingCode"]
+      "codeKeys": ["calendarFetchCode", "calendarUpcomingCode"],
+      "note": "2024년 12월에 Calendar Integration API 연동 작업을 진행했습니다."
     },
     {
-      "title": "6. Event-Conversation Linking System",
+      "title": "Event-Conversation Linking System",
       "subtitle": "이벤트-대화 연결 시스템",
       "problem": "사용자가 녹음을 시작하면, 해당 녹음이 어떤 캘린더 이벤트와 연결되는지 자동으로 매칭해야 합니다. 단순히 시간만 비교하면 오류가 발생하므로, 미팅 URL, 참석자 수, 시간 범위 등 여러 조건을 종합적으로 고려해야 했습니다.",
       "solutions": [
@@ -119,7 +191,7 @@
       "codeKeys": ["eventLinkingCode", "meetingGuardCode"]
     },
     {
-      "title": "7. Complex Entity Management & Form UX",
+      "title": "Complex Entity Management & Form UX",
       "subtitle": "복잡한 엔티티 관리 및 폼 UX",
       "problem": "화자 이름을 수정할 때, 단순히 텍스트만 바꾸는 것이 아니라 이메일/이름 매칭을 통해 기존 연락처(Contact)와 자동으로 연결해야 했습니다. 특히 이미 존재하는 화자 이름으로 변경 시, 두 화자의 발화 데이터를 병합(Merge)하고 마우스 없이 키보드만으로 검색, 선택, 적용이 가능한 빠른 워크플로우가 필요했습니다.",
       "solutions": [
@@ -127,33 +199,55 @@
         "<strong>Keyboard-Centric Control:</strong> FocusNode와 KeyEvent를 정교하게 제어하여, 화살표 이동, 숫자 단축키(Cmd+1~9) 선택, 엔터 적용 등 마우스 없는 완전한 제어 구현",
         "<strong>Context-Aware Searching:</strong> 본인(Me), 회의 참석자, 전체 연락처 순으로 우선순위를 부여한 검색 알고리즘 적용"
       ],
-      "codeKey": "assignSpeakerCode"
+      "codeKey": "assignSpeakerCode",
+      "video": "/portfolio_2026/videos/shadow/assign_speaker.mp4"
     }
   ],
   "techStacks": [
     {
-      "items": [
-        "Flutter",
-        "Dart",
-        "GetX",
-        "SQLite",
-        "Native Plugins",
-        "Google Calendar API",
-        "WebSocket"
-      ]
+      "title": "Frontend",
+      "items": ["Flutter", "Dart", "GetX"]
+    },
+    {
+      "title": "Database",
+      "items": ["SQLite"]
+    },
+    {
+      "title": "Integration",
+      "items": ["Native Plugins", "Google Calendar API", "WebSocket"]
+    },
+    {
+      "title": "Development",
+      "items": ["Git", "Linear", "Doppler"]
     }
   ],
   "performanceMetrics": [
-    { "label": "Image Loading Time", "value": "0ms (Preloaded)" },
-    { "label": "API Call Reduction", "value": "80% (Incremental Sync)" },
-    { "label": "Memory Efficiency", "value": "Smart Cache Cleanup" },
-    { "label": "Keyboard Support", "value": "100% Navigation" }
+    {
+      "label": "Image Loading Time",
+      "value": "0ms",
+      "description": "(Predictive Preloading)"
+    },
+    {
+      "label": "API Call Reduction",
+      "value": "80%",
+      "description": "(Incremental Sync)"
+    },
+    {
+      "label": "Memory Efficiency",
+      "value": "Optimized",
+      "description": "(Smart Cache Cleanup)"
+    },
+    {
+      "label": "Keyboard Support",
+      "value": "100%",
+      "description": "(Full Navigation)"
+    }
   ],
   "codeSnippets": {
     "cachingCode": "/// Smart Caching System with Predictive Preloading\nvoid _preloadImagesForNavigation(int oldIndex, int newIndex) {\n  // 1. Direction analysis\n  final direction = newIndex > oldIndex ? 1 : -1;\n\n  // 2. Priority queue construction\n  final indicesToLoad = <int>[newIndex]; // Critical\n\n  if (direction > 0 && newIndex < screenshots.length - 1) {\n    indicesToLoad.add(newIndex + 1); // High priority\n  } else if (direction < 0 && newIndex > 0) {\n    indicesToLoad.add(newIndex - 1);\n  }\n\n  // 3. Async preloading (non-blocking UI)\n  for (final index in indicesToLoad) {\n    final path = screenshots[index]['screenshotFilePath'];\n    if (path != null && !_imageCache.containsKey(path)) {\n      _preloadImage(path);\n    }\n  }\n\n  // 4. Memory management\n  _cleanupCacheDelayed(indicesToLoad);\n}",
     "adaptiveLayoutCode": "/// Adaptive Layout Calculator\nbool _shouldShowDetail(double screenWidth) {\n  // Calculate available space after essential elements\n  const sidebarWidth = 240.0;\n  const padding = 32.0;\n  const mainMinWidth = 600.0;  // Minimum for main content\n  const detailMinWidth = 400.0; // Minimum for detail panel\n\n  final availableWidth = screenWidth - sidebarWidth - padding;\n\n  // Priority-based rendering\n  if (availableWidth < mainMinWidth) {\n    return false; // Not enough space even for main\n  }\n\n  if (availableWidth < mainMinWidth + detailMinWidth) {\n    return false; // Main area would be too cramped\n  }\n\n  return true; // Enough space for both\n}\n\n@override\nWidget build(BuildContext context) {\n  return LayoutBuilder(\n    builder: (context, constraints) {\n      final showDetail = _shouldShowDetail(constraints.maxWidth);\n\n      return Row(\n        children: [\n          Sidebar(width: 240),\n          Expanded(\n            flex: showDetail ? 3 : 1,\n            child: MainContent(),\n          ),\n          if (showDetail)\n            Expanded(\n              flex: 2,\n              child: DetailPanel(),\n            ),\n        ],\n      );\n    },\n  );\n}",
     "keyboardCode": "/// Event Routing Architecture\nKeyEventResult handleAskInputFieldKey(KeyEvent event, bool isDisabled) {\n  if (event is! KeyDownEvent) return KeyEventResult.ignored;\n\n  // Screenshot search mode\n  if (isScreenshotSearchVisible.value && filteredScreenshotList.isNotEmpty) {\n    if (event.logicalKey == LogicalKeyboardKey.arrowRight) {\n      if (selectedScreenshotIndex.value < filteredScreenshotList.length - 1) {\n        // State locking to prevent mouse hover conflicts\n        _setKeyboardNavigationState(true);\n\n        selectedScreenshotIndex.value++;\n        scrollToSelectedScreenshotItem(); // Viewport sync\n      }\n      return KeyEventResult.handled; // Prevent cursor movement\n    }\n\n    else if (event.logicalKey == LogicalKeyboardKey.enter) {\n      selectScreenshot(\n        filteredScreenshotList[selectedScreenshotIndex.value],\n        closeSearch: true\n      );\n      return KeyEventResult.handled;\n    }\n  }\n\n  return KeyEventResult.ignored;\n}",
-    "searchCode": "/// Generic Search Initialization with Strategy Pattern\nvoid _initializeSearch({\n  required RxBool isVisible,\n  required RxList filteredList,\n  required List<dynamic> sourceData,\n  required Function(List<dynamic>) filterFunction,\n}) {\n  // 1. Data filtering\n  try {\n    if (query.isEmpty) {\n      filteredList.assignAll(sourceData.cast<Map<String, dynamic>>());\n    } else {\n      final filtered = filterFunction(sourceData);\n      filteredList.assignAll(filtered.cast<Map<String, dynamic>>());\n    }\n  } catch (e) {\n    filteredList.clear();\n  }\n\n  // 2. Visibility state management\n  if (!isVisible.value) {\n    isVisible.value = true;\n    selectedIndex.value = 0;\n  }\n\n  // 3. Post-frame scroll adjustment\n  if (onScrollToSelected != null) {\n    WidgetsBinding.instance.addPostFrameCallback((_) {\n      onScrollToSelected();\n    });\n  }\n}",
+    "searchCode": "/// Omnisearch: Generic Search Initialization with Strategy Pattern\nvoid _initializeSearch({\n  required RxBool isVisible,\n  required RxList filteredList,\n  required List<dynamic> sourceData,\n  required Function(List<dynamic>) filterFunction,\n}) {\n  // 1. Data filtering\n  try {\n    if (query.isEmpty) {\n      filteredList.assignAll(sourceData.cast<Map<String, dynamic>>());\n    } else {\n      final filtered = filterFunction(sourceData);\n      filteredList.assignAll(filtered.cast<Map<String, dynamic>>());\n    }\n  } catch (e) {\n    filteredList.clear();\n  }\n\n  // 2. Visibility state management\n  if (!isVisible.value) {\n    isVisible.value = true;\n    selectedIndex.value = 0;\n  }\n\n  // 3. Post-frame scroll adjustment\n  if (onScrollToSelected != null) {\n    WidgetsBinding.instance.addPostFrameCallback((_) {\n      onScrollToSelected();\n    });\n  }\n}",
     "calendarFetchCode": "/// Time-Window Based Event Fetching with Incremental Sync\nFuture<void> fetchEventsForListening() async {\n  if (!isConnected.value) return;\n\n  // UTC time calculation (timezone-safe)\n  final utcNow = DateTime.now().toUtc();\n  final startTime = utcNow.subtract(const Duration(minutes: 10));\n  final endTime = utcNow.add(const Duration(minutes: 10));\n\n  // Duplicate request prevention\n  final requestKey = 'listening:$startTime-$endTime';\n  if (_shouldSkipRequest(requestKey)) return;\n\n  try {\n    // Incremental sync if syncToken exists\n    if (localEventCount > 0 && _lastSyncToken.value.isNotEmpty) {\n      await fetchChangedEvents(startTime: startTime, endTime: endTime);\n      return;\n    }\n\n    // Full sync\n    final response = await Api.getCalendarEvents(\n      type: 'full',\n      startTime: startTime.toIso8601String(),\n      endTime: endTime.toIso8601String(),\n      syncToken: _lastSyncToken.value,\n    );\n\n    // Extract and save syncToken\n    if (response['syncToken'] != null) {\n      _lastSyncToken.value = response['syncToken'].toString();\n    }\n\n    // Multi-criteria filtering\n    final filteredEvents = newEvents\n        .whereType<Map<String, dynamic>>()\n        .where((event) => _passesMeetingGuards(event))\n        .toList();\n  } finally {\n    _endRequest();\n  }\n}",
     "calendarUpcomingCode": "/// Upcoming Event Pre-fetching\nFuture<void> fetchUpcomingEvents() async {\n  final now = DateTime.now().toUtc();\n  final endTime = now.add(const Duration(hours: 24));\n\n  final response = await Api.getCalendarEvents(\n    type: 'upcoming',\n    startTime: now.toIso8601String(),\n    endTime: endTime.toIso8601String(),\n  );\n\n  // Store in local DB for quick access\n  final events = (response['items'] as List?)\n      ?.whereType<Map<String, dynamic>>()\n      .toList() ?? [];\n\n  for (final event in events) {\n    await CalendarEventDb.upsert(event);\n  }\n}",
     "eventLinkingCode": "/// Event-Conversation Linking\nFuture<void> linkEventToConversation(String conversationId) async {\n  final listeningStartTime = DateTime.now();\n\n  // Get events within time window\n  final events = await CalendarEventDb.getEventsInRange(\n    startTime: listeningStartTime.subtract(const Duration(minutes: 10)),\n    endTime: listeningStartTime.add(const Duration(minutes: 10)),\n  );\n\n  // Filter by meeting guards\n  final validEvents = events.where(_passesMeetingGuards).toList();\n\n  if (validEvents.isEmpty) return;\n\n  // Score by time proximity\n  final scoredEvents = validEvents.map((event) {\n    final eventStart = DateTime.parse(event['start']['dateTime']);\n    final timeDiff = eventStart.difference(listeningStartTime).abs();\n    return {'event': event, 'score': timeDiff.inMinutes};\n  }).toList();\n\n  scoredEvents.sort((a, b) => a['score'].compareTo(b['score']));\n\n  // Link best match\n  final bestMatch = scoredEvents.first['event'];\n  await ConversationDb.updateEventId(conversationId, bestMatch['id']);\n\n  // Store attendees\n  final attendees = bestMatch['attendees'] as List?;\n  if (attendees != null) {\n    for (final attendee in attendees) {\n      await AttendeeDb.upsert(conversationId, attendee);\n    }\n  }\n}",

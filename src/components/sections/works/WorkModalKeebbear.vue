@@ -218,11 +218,6 @@ const workData = computed(() => {
   return worksData.find((work) => work.id === workId) || null
 })
 
-// 비디오 URL (public 폴더의 파일은 BASE_URL 사용)
-const videoWebmUrl = computed(() => {
-  return `${import.meta.env.BASE_URL}videos/keebbear_1.webm`
-})
-
 const videoMp4Url = computed(() => {
   return `${import.meta.env.BASE_URL}videos/keebbear_1.mp4`
 })

@@ -1,8 +1,9 @@
 <template>
   <div class="progress-panel-wrapper">
     <!-- Compact 버튼 (항상 표시) -->
-    <div class="progress-button">
+    <div class="progress-button" :class="{ 'all-fixed': allFixed }">
       <svg
+        v-if="!allFixed"
         class="button-icon"
         width="24"
         height="24"
@@ -18,7 +19,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <div class="button-count-container">
+      <div v-if="!allFixed" class="button-count-container">
         <span class="button-count-current">{{ progress }}</span>
         <span class="button-count-separator">/</span>
         <span class="button-count-total">{{ totalIssues }}</span>
@@ -62,14 +63,14 @@
             />
           </svg>
         </button>
-        <div class="help-panel-content">
+        <div v-if="!isAutoOpened" class="help-panel-content">
           <div class="help-header">
             <div class="help-title">Broken Portfolio</div>
             <div class="help-subtitle">Find and fix issues</div>
           </div>
 
           <div class="help-content">
-            <div class="help-section">
+            <div v-if="!allFixed" class="help-section">
               <div class="help-label">
                 <svg
                   class="help-label-icon"
@@ -95,13 +96,13 @@
               </p>
             </div>
 
-            <div v-if="allFixed" class="completion-message">🎉 all issues found!</div>
+            <div v-if="allFixed" class="completion-message">🎉 All issues found!</div>
           </div>
         </div>
 
         <!-- 하단 고정 영역 (프로그레스 표시, 리셋 버튼, 프로그레스바) -->
         <div class="help-panel-footer">
-          <div class="help-section">
+          <div v-if="!allFixed" class="help-section">
             <div class="progress-display">
               <span class="progress-number">{{ animatedProgress }}</span>
               <span class="progress-separator">/</span>
@@ -110,7 +111,7 @@
             </div>
           </div>
 
-          <div class="help-section">
+          <div v-if="!isAutoOpened" class="help-section">
             <CommonButton
               variant="secondary"
               size="medium"
@@ -121,10 +122,9 @@
               Reset Progress
             </CommonButton>
           </div>
-
-          <!-- 프로그레스바 -->
-          <ProgressBar :progress="animatedProgress" :total="totalIssues" />
         </div>
+        <!-- 프로그레스바 -->
+        <ProgressBar :progress="animatedProgress" :total="totalIssues" />
       </div>
     </Transition>
 
@@ -162,6 +162,7 @@ const isHelpPanelOpen = ref(false)
 const isResetModalOpen = ref(false)
 const animatedProgress = ref(0)
 const helpPanelRef = ref(null)
+const isAutoOpened = ref(false) // 자동으로 열렸는지 여부
 let autoCloseTimeout = null
 let animationFrameId = null
 
@@ -170,7 +171,8 @@ const ANIMATION_DURATION = 600 // 애니메이션 지속 시간 (ms)
 
 const toggleHelpPanel = async () => {
   if (!isHelpPanelOpen.value) {
-    // 판넬 열기
+    // 판넬 열기 (사용자가 직접 클릭)
+    isAutoOpened.value = false
     isHelpPanelOpen.value = true
     await nextTick()
     // 판넬이 열린 후 현재 progress로 설정 (애니메이션 없이)
@@ -237,6 +239,7 @@ const openHelpPanel = async (previousProgress = null) => {
   if (!isHelpPanelOpen.value) {
     // 초기값을 이전 progress로 설정
     animatedProgress.value = fromProgress
+    isAutoOpened.value = true // 자동으로 열림
     isHelpPanelOpen.value = true
     // 판넬이 열린 후 애니메이션 시작
     await nextTick()
@@ -351,11 +354,18 @@ onUnmounted(() => {
   align-items: center;
   gap: 2px;
   padding: 8px 6px 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+.progress-button.all-fixed {
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @media (--mobile) {
@@ -401,6 +411,12 @@ onUnmounted(() => {
   width: 24px;
   height: 24px;
   display: block;
+  color: rgb(var(--gray--5s));
+  transition: color 0.3s ease;
+}
+
+.help-button:hover svg {
+  color: rgb(var(--gray--1));
 }
 
 .button-icon {
@@ -449,8 +465,7 @@ onUnmounted(() => {
   min-width: 280px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(var(--gray--5s), 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
   overflow: hidden;
   display: flex;
@@ -476,7 +491,7 @@ onUnmounted(() => {
 }
 
 .help-panel-footer {
-  padding: 20px;
+  padding: 0 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -516,7 +531,7 @@ onUnmounted(() => {
   gap: 8px;
   font-size: var(--headline--2);
   font-weight: 600;
-  color: rgb(var(--gray--2));
+  color: rgb(var(--gray--5s));
 }
 
 .help-label-icon {
@@ -524,7 +539,6 @@ onUnmounted(() => {
   height: 20px;
   display: block;
   flex-shrink: 0;
-  color: rgb(var(--gray--2));
 }
 
 .help-text {
@@ -558,14 +572,10 @@ onUnmounted(() => {
 }
 
 .completion-message {
-  padding: 10px;
-  background: rgb(var(--green--normal));
   border-radius: 8px;
-  text-align: center;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 4px;
+  color: rgb(var(--green--normal));
+  font-size: var(--heading--2);
+  font-weight: var(--font-weight--bold);
 }
 
 .reset-button {

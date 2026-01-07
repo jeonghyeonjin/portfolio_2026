@@ -3,6 +3,7 @@
     <div v-for="(metric, index) in metrics" :key="index" class="metric-item">
       <span class="metric-label">{{ metric.label }}</span>
       <span class="metric-value">{{ metric.value }}</span>
+      <span v-if="metric.description" class="metric-description">{{ metric.description }}</span>
     </div>
   </div>
 </template>
@@ -12,7 +13,7 @@ defineProps({
   metrics: {
     type: Array,
     required: true,
-    // Example: [{ label: 'Initial Load Time', value: '< 2s' }, ...]
+    // Example: [{ label: 'Initial Load Time', value: '< 2s', description: '(Predictive Preloading)' }, ...]
   },
 })
 </script>
@@ -70,6 +71,12 @@ defineProps({
   /* font-feature-settings: 'tnum'; */
 }
 
+.metric-description {
+  font-size: var(--caption--1);
+  color: rgb(var(--gray--3));
+  margin-top: 4px;
+}
+
 /* Tablet */
 @media (--tablet) {
   .metrics-grid {
@@ -103,6 +110,10 @@ defineProps({
 
   .metric-value {
     font-size: var(--body--1--normal);
+  }
+
+  .metric-description {
+    font-size: var(--caption--2);
   }
 }
 </style>

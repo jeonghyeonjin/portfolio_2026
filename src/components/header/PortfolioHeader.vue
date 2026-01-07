@@ -648,12 +648,12 @@ onUnmounted(() => {
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
-  /* 모바일에서 뒤의 요소 클릭 가능하도록 */
-  pointer-events: none;
+  /* 기본적으로 클릭 가능 */
+  pointer-events: auto;
 }
 
-/* 내부 클릭 가능한 요소들은 pointer-events 활성화 */
-.portfolio-header :deep(> *) {
+/* 숨겨진 상태에서는 클릭 불가 */
+.portfolio-header[style*='opacity: 0'] {
   pointer-events: none;
 }
 

@@ -26,29 +26,20 @@
       <div class="slider-image-next" ref="sliderImageNextRef"></div>
       <div class="transition-overlay" ref="transitionOverlayRef"></div>
 
-      <!-- Content -->
-      <div class="content" ref="contentRef">
-        <h1 class="content-title">
-          <span ref="contentTitleSpanRef">{{ currentSlide.title }}</span>
-        </h1>
-        <div class="content-paragraph" ref="contentParagraphRef">
-          <div class="description-line">{{ currentSlide.description.en }}</div>
-          <div class="description-line">{{ currentSlide.description.ko }}</div>
-        </div>
-      </div>
-
       <!-- Thumbnails -->
-      <div class="thumbnails" ref="thumbnailsRef">
-        <div
-          v-for="(slide, index) in slides"
-          :key="`thumb-${index}`"
-          class="thumbnail"
-          :class="{ active: index === activeIndex }"
-          :data-index="index"
-          @click="handleThumbnailClick(index)"
-          ref="thumbnailItemsRef"
-        >
-          <div class="thumbnail-img" :style="{ backgroundImage: `url(${slide.image})` }"></div>
+      <div class="thumbnails-wrapper" ref="thumbnailsWrapperRef">
+        <div class="thumbnails" ref="thumbnailsRef">
+          <div
+            v-for="(slide, index) in slides"
+            :key="`thumb-${index}`"
+            class="thumbnail"
+            :class="{ active: index === activeIndex }"
+            :data-index="index"
+            @click="handleThumbnailClick(index)"
+            ref="thumbnailItemsRef"
+          >
+            <div class="thumbnail-img" :style="{ backgroundImage: `url(${slide.image})` }"></div>
+          </div>
         </div>
       </div>
 
@@ -57,7 +48,8 @@
         <button
           class="switch-button switch-button-grid"
           :class="{ 'switch-button-current': currentMode === 'grid' }"
-          @click="toggleView('grid')"
+          :disabled="isAnimating"
+          @click="(toggleView('grid'), (isInfoVisible = false))"
         >
           <span class="indicator-dot"></span>
           GRID
@@ -65,18 +57,61 @@
         <button
           class="switch-button switch-button-slider"
           :class="{ 'switch-button-current': currentMode === 'slider' }"
-          @click="toggleView('slider')"
+          :disabled="isAnimating"
+          @click="(toggleView('slider'), (isInfoVisible = false))"
         >
           <span class="indicator-dot"></span>
           SLIDER
         </button>
       </div>
+
+      <!-- Info Text -->
+      <div v-if="currentMode === 'slider'" class="info-container" ref="infoContainerRef">
+        <div class="info-text" :class="{ visible: isInfoVisible }" ref="infoTextRef" @click.stop>
+          <div class="info-text-title">{{ currentSlide.title }}</div>
+          <div class="info-text-line en">{{ currentSlide.description.en }}</div>
+          <div class="info-text-line ko">{{ currentSlide.description.ko }}</div>
+        </div>
+      </div>
     </div>
+
+    <!-- Overlay to catch outside clicks for info text -->
+    <div
+      v-if="currentMode === 'slider' && isInfoVisible"
+      class="info-overlay"
+      @click="closeInfo"
+    ></div>
+
+    <!-- Info Button - moved outside work-modal-body for mix-blend-mode -->
+    <button
+      v-if="currentMode === 'slider'"
+      class="info-button"
+      @click="toggleInfo"
+      :class="{ active: isInfoVisible }"
+      ref="infoButtonRef"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="info-icon"
+      >
+        <path
+          d="M12 11V16M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 8V8.1L11.9502 8.1002V8H12.0498Z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { gsap } from 'gsap'
 import { Flip } from 'gsap/all'
 import imgHero from '@/assets/images/works/master-forge/20241120_214422.jpg'
@@ -84,13 +119,9 @@ import imgHeroWide from '@/assets/images/works/master-forge/20241120_214422_1.jp
 import imgPin from '@/assets/images/works/master-forge/m4g_pin.png'
 import imgMockup from '@/assets/images/works/master-forge/m4g_pin_mockup.png'
 import imgSticker from '@/assets/images/works/master-forge/m4g_sticker.png'
-import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalMasterForge.json'
 
 gsap.registerPlugin(Flip)
-
-const workId = inject('workId', 2)
-const workData = worksData.find((work) => work.id === workId) || null
 
 // Refs
 const containerRef = ref(null)
@@ -101,12 +132,13 @@ const sliderImageRef = ref(null)
 const sliderImageBgRef = ref(null)
 const sliderImageNextRef = ref(null)
 const transitionOverlayRef = ref(null)
-const contentRef = ref(null)
-const contentTitleSpanRef = ref(null)
-const contentParagraphRef = ref(null)
+const thumbnailsWrapperRef = ref(null)
 const thumbnailsRef = ref(null)
 const thumbnailItemsRef = ref([])
 const switchRef = ref(null)
+const infoContainerRef = ref(null)
+const infoTextRef = ref(null)
+const infoButtonRef = ref(null)
 
 // State
 const currentMode = ref('grid')
@@ -116,6 +148,7 @@ const previousIndex = ref(0)
 const slideDirection = ref('right')
 const viewportWidth = ref(window.innerWidth)
 const viewportHeight = ref(window.innerHeight)
+const isInfoVisible = ref(false)
 
 // Computed
 const isLandscape = computed(() => viewportWidth.value > viewportHeight.value)
@@ -123,19 +156,6 @@ const heroImage = computed(() => (isLandscape.value ? imgHeroWide : imgHero))
 
 // Data from JSON
 const slides = computed(() => {
-  const heroSlide = {
-    image: heroImage.value,
-    title: workData?.title?.toUpperCase() || 'MASTER FORGE',
-    description: {
-      en:
-        workData?.description ||
-        "Designed for the Master Forge keyboard's pin and sticker design contest on Kickstarter. Expressing the passion and creativity of the keyboard community.",
-      ko:
-        workData?.description ||
-        'Kickstarter의 Master Forge 키보드 핀 및 스티커 디자인 콘테스트를 위해 제작되었습니다. 키보드 커뮤니티의 열정과 창의성을 표현했습니다.',
-    },
-  }
-
   // JSON에서 가져온 슬라이드 데이터를 이미지 import와 매핑
   const imageMap = {
     '@/assets/images/works/master-forge/m4g_pin.png': imgPin,
@@ -143,13 +163,11 @@ const slides = computed(() => {
     '@/assets/images/works/master-forge/m4g_sticker.png': imgSticker,
   }
 
-  const additionalSlides = modalData.slides.map((slide) => ({
-    image: imageMap[slide.imagePath] || slide.imagePath,
+  return modalData.slides.map((slide) => ({
+    image: slide.isHero ? heroImage.value : imageMap[slide.imagePath] || slide.imagePath,
     title: slide.title,
     description: slide.description,
   }))
-
-  return [heroSlide, ...additionalSlides]
 })
 
 const currentSlide = computed(() => slides.value[activeIndex.value])
@@ -250,40 +268,10 @@ const showSliderView = () => {
               ease: 'power2.inOut',
             })
 
-            // Show content
+            // Show UI elements
             const contentTl = gsap.timeline({
               onComplete: resolve,
             })
-
-            contentTl.to(
-              contentRef.value,
-              {
-                opacity: 1,
-                duration: TIMING.SHORT,
-                ease: EASES.MAIN,
-              },
-              0,
-            )
-
-            contentTl.to(
-              contentTitleSpanRef.value,
-              {
-                y: 0,
-                duration: TIMING.BASE,
-                ease: EASES.SIDE,
-              },
-              TIMING.STAGGER_TINY,
-            )
-
-            contentTl.to(
-              contentParagraphRef.value,
-              {
-                opacity: 1,
-                duration: TIMING.BASE,
-                ease: EASES.MAIN,
-              },
-              TIMING.STAGGER_SMALL,
-            )
 
             contentTl.to(
               thumbnailItemsRef.value,
@@ -294,8 +282,49 @@ const showSliderView = () => {
                 stagger: TIMING.STAGGER_TINY,
                 ease: EASES.SIDE,
               },
-              TIMING.STAGGER_MED,
+              0,
             )
+
+            // Scroll to active thumbnail after animation
+            nextTick(() => {
+              scrollToActiveThumbnail()
+            })
+
+            // Show info button and container
+            if (infoButtonRef.value) {
+              contentTl.fromTo(
+                infoButtonRef.value,
+                {
+                  opacity: 0,
+                  y: 20,
+                  pointerEvents: 'none',
+                },
+                {
+                  opacity: 1,
+                  y: 0,
+                  pointerEvents: 'auto',
+                  duration: TIMING.SHORT,
+                  ease: EASES.SIDE,
+                },
+                TIMING.STAGGER_TINY,
+              )
+            }
+            if (infoContainerRef.value) {
+              contentTl.fromTo(
+                infoContainerRef.value,
+                {
+                  y: 20,
+                  pointerEvents: 'none',
+                },
+                {
+                  y: 0,
+                  pointerEvents: 'auto',
+                  duration: TIMING.SHORT,
+                  ease: EASES.SIDE,
+                },
+                TIMING.STAGGER_TINY,
+              )
+            }
           },
         })
       },
@@ -365,6 +394,32 @@ const showGridView = () => {
     })
 
     // Hide UI elements
+    if (infoButtonRef.value) {
+      contentTl.to(
+        infoButtonRef.value,
+        {
+          opacity: 0,
+          y: 20,
+          pointerEvents: 'none',
+          duration: TIMING.SHORT,
+          ease: EASES.SIDE,
+        },
+        0,
+      )
+    }
+    if (infoContainerRef.value) {
+      contentTl.to(
+        infoContainerRef.value,
+        {
+          y: 20,
+          pointerEvents: 'none',
+          duration: TIMING.SHORT,
+          ease: EASES.SIDE,
+        },
+        0,
+      )
+    }
+
     contentTl.to(
       thumbnailItemsRef.value,
       {
@@ -376,42 +431,17 @@ const showGridView = () => {
       },
       0,
     )
-
-    contentTl.to(
-      contentParagraphRef.value,
-      {
-        opacity: 0,
-        duration: TIMING.SHORT,
-        ease: EASES.MAIN,
-      },
-      TIMING.STAGGER_TINY,
-    )
-
-    contentTl.to(
-      contentTitleSpanRef.value,
-      {
-        y: '100%',
-        duration: TIMING.SHORT,
-        ease: EASES.SIDE,
-      },
-      TIMING.STAGGER_SMALL,
-    )
-
-    contentTl.to(
-      contentRef.value,
-      {
-        opacity: 0,
-        duration: TIMING.SHORT,
-        ease: EASES.MAIN,
-      },
-      TIMING.STAGGER_MED,
-    )
   })
 }
 
 const transitionToSlide = (index) => {
   if (isAnimating.value || index === activeIndex.value) return
   isAnimating.value = true
+
+  // Close info text when transitioning
+  if (isInfoVisible.value) {
+    isInfoVisible.value = false
+  }
 
   slideDirection.value = index > activeIndex.value ? 'right' : 'left'
   previousIndex.value = activeIndex.value
@@ -462,56 +492,9 @@ const transitionToSlide = (index) => {
       })
 
       activeIndex.value = index
-
-      // Show content
-      const showTl = gsap.timeline({
-        onComplete: () => {
-          isAnimating.value = false
-        },
-      })
-
-      showTl.to(
-        contentTitleSpanRef.value,
-        {
-          y: 0,
-          duration: TIMING.BASE,
-          ease: EASES.SIDE,
-        },
-        0,
-      )
-
-      showTl.to(
-        contentParagraphRef.value,
-        {
-          opacity: 1,
-          duration: TIMING.BASE,
-          ease: EASES.MAIN,
-        },
-        TIMING.STAGGER_SMALL,
-      )
+      isAnimating.value = false
     },
   })
-
-  // Hide current content
-  masterTl.to(
-    contentParagraphRef.value,
-    {
-      opacity: 0,
-      duration: TIMING.SHORT,
-      ease: EASES.MAIN,
-    },
-    0,
-  )
-
-  masterTl.to(
-    contentTitleSpanRef.value,
-    {
-      y: '100%',
-      duration: TIMING.SHORT,
-      ease: EASES.SIDE,
-    },
-    TIMING.STAGGER_TINY,
-  )
 
   // Flash effect
   masterTl.to(
@@ -583,6 +566,45 @@ const handleGridItemClick = (index) => {
   }
 }
 
+const toggleInfo = () => {
+  isInfoVisible.value = !isInfoVisible.value
+}
+
+const closeInfo = () => {
+  isInfoVisible.value = false
+}
+
+// Scroll to active thumbnail
+const scrollToActiveThumbnail = () => {
+  if (!thumbnailsRef.value || !thumbnailItemsRef.value[activeIndex.value]) return
+
+  nextTick(() => {
+    const activeThumbnail = thumbnailItemsRef.value[activeIndex.value]
+    const container = thumbnailsRef.value
+    const containerRect = container.getBoundingClientRect()
+    const thumbnailRect = activeThumbnail.getBoundingClientRect()
+
+    const scrollLeft =
+      thumbnailRect.left -
+      containerRect.left +
+      container.scrollLeft -
+      containerRect.width / 2 +
+      thumbnailRect.width / 2
+
+    container.scrollTo({
+      left: scrollLeft,
+      behavior: 'smooth',
+    })
+  })
+}
+
+// Watch activeIndex to scroll to active thumbnail
+watch(activeIndex, () => {
+  if (currentMode.value === 'slider') {
+    scrollToActiveThumbnail()
+  }
+})
+
 // Keyboard navigation
 const handleKeydown = (e) => {
   if (currentMode.value !== 'slider' || isAnimating.value) return
@@ -609,6 +631,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@import '@/assets/styles/breakpoints.css';
+
 .work-modal-content {
   width: 100%;
   height: 100vh;
@@ -726,70 +750,36 @@ onUnmounted(() => {
   will-change: opacity;
 }
 
-/* Content */
-.content {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0;
-  padding: 10% 10%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.content-title {
-  text-align: left;
-  font-size: var(--hero--1);
-  color: rgb(var(--white--1));
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  overflow: hidden;
-  font-weight: var(--font-weight--bold);
-}
-
-.content-title span {
-  display: inline-block;
-  transform: translateY(100%);
-  background-color: rgb(var(--gray--0));
-}
-
-.content-paragraph {
-  text-align: left;
-  font-size: var(--body--1--normal);
-  color: rgb(var(--white--1));
-  max-width: 600px;
-  line-height: 1.3;
-  margin-bottom: 10%;
-  opacity: 0;
-  background-color: rgb(var(--gray--0));
-}
-
-.description-line {
-  display: block;
-}
-
-.description-line:not(:last-child) {
-  margin-bottom: 0.5em;
-}
-
 /* Thumbnails */
-.thumbnails {
+.thumbnails-wrapper {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  z-index: 100;
+  max-width: calc(100vw - 40px);
+  overflow: hidden;
+}
+
+.thumbnails {
   display: flex;
   gap: 10px;
-  z-index: 200;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  padding: 0 10px;
+}
+
+.thumbnails::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .thumbnail {
   width: 60px;
   height: 40px;
+  min-width: 60px;
+  flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
@@ -816,7 +806,7 @@ onUnmounted(() => {
 /* Switch */
 .switch {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -824,7 +814,7 @@ onUnmounted(() => {
   background: #222;
   padding: 10px 20px;
   border-radius: 4px;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .switch-button {
@@ -836,6 +826,12 @@ onUnmounted(() => {
   padding: 5px 10px;
   position: relative;
   transition: all 0.3s ease-in-out;
+}
+
+.switch-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .switch-button-current {
@@ -867,23 +863,121 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(1, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+/* Info Button */
+.info-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  background-color: transparent;
+  border-radius: 50%;
+  color: rgb(var(--white--2));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  border: none;
+  z-index: 98;
+  mix-blend-mode: difference;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.info-container {
+  position: fixed;
+  top: 74px;
+  left: 20px;
+  z-index: 98;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.info-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  z-index: 99;
+  pointer-events: auto;
+  background: transparent;
+}
+
+.info-button svg,
+.info-button .info-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.info-button:hover {
+  color: rgb(var(--white--1));
+  transform: scale(1.1);
+}
+
+.info-button.active {
+  color: rgb(var(--white--1));
+}
+
+.info-text {
+  max-width: 350px;
+  padding: 16px;
+  background-color: rgba(var(--gray--0), 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.info-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.info-text-title {
+  display: flex;
+  font-size: var(--title--2);
+  color: rgb(var(--white--1));
+  font-weight: var(--font-weight--bold);
+  border-left: 4px solid rgba(var(--white--3), 0.5);
+  padding-left: 16px;
+  margin-bottom: 8px;
+}
+
+.info-text-line {
+  font-size: var(--body--1--normal);
+  color: rgb(var(--white--1));
+  line-height: 1.4;
+}
+
+.info-text-line:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.info-text-line.ko {
+  font-size: var(--body--2--normal);
+  color: rgb(var(--white--3));
+}
+
+@media (--mobile) {
+  .thumbnails-wrapper {
+    bottom: 20px;
+    right: 20px;
+    max-width: calc(100vw - 40px);
   }
 
-  .content-title {
-    font-size: 3rem;
-  }
-
-  .content-paragraph {
-    margin-bottom: 20%;
-  }
-
-  .thumbnails {
-    top: 100px;
+  .info-text {
+    max-width: calc(100vw - 80px);
   }
 }
 </style>

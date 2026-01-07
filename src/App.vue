@@ -8,6 +8,9 @@ import SkillSection from './components/sections/SkillSection.vue'
 import WorkSection from './components/sections/WorkSection.vue'
 import ExperienceSection from './components/sections/ExperienceSection.vue'
 
+// 페이지 로드 시 CSS 변수 초기화 (이전 세션의 값 제거)
+document.documentElement.style.removeProperty('--scrollbar-width')
+
 // Works 데이터 및 메서드를 provide로 공유
 const works = ref([])
 const selectWorkCallback = ref(null)

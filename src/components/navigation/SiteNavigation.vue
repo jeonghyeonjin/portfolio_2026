@@ -964,8 +964,8 @@ onUnmounted(() => {
 .navigation {
   position: fixed;
   top: 20px;
-  left: 30px;
-  right: calc(30px + var(--scrollbar-width, 0px));
+  left: 20px;
+  right: calc(20px + var(--scrollbar-width, 0px));
   z-index: 1000;
   display: grid;
   grid-template-columns: 0.5fr 1fr 0.5fr;
@@ -982,14 +982,6 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-}
-
 .nav-center {
   height: 60px;
   display: flex;
@@ -1002,6 +994,14 @@ onUnmounted(() => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
 }
 
 .logo {
@@ -1097,31 +1097,19 @@ onUnmounted(() => {
   height: 24px;
 }
 
-/* Tablet: --tablet */
-@media (--tablet) {
-  .navigation {
-    top: 20px;
-    left: 30px;
-    right: calc(30px + var(--scrollbar-width, 0px));
-    grid-template-columns: 0.5fr 1fr 0.5fr;
-  }
-}
-
 /* Mobile: --mobile */
 @media (--mobile) {
   .navigation {
-    top: 20px;
-    left: 20px;
-    right: calc(20px + var(--scrollbar-width, 0px));
+    height: 50px;
     grid-template-columns: auto 1fr auto;
     justify-content: space-between;
-    padding: 0 10px;
     transition: all 0.3s ease;
     border-radius: 12px;
   }
 
   .navigation.has-scrolled {
     top: 10px;
+    padding: 0 10px;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -1136,8 +1124,13 @@ onUnmounted(() => {
     justify-content: flex-end;
   }
 
+  .logo-container {
+    width: 44px;
+    height: 44px;
+  }
+
   .logo {
-    max-width: 26px;
+    max-width: 22px;
   }
 
   .menu-list {
