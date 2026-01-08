@@ -42,7 +42,10 @@
         v-if="modalData.sections?.projectOverview"
         id="shadow-overview"
       >
-        <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🔦" type="3d" :size="48" />
+          {{ modalData.sections.projectOverview.title }}
+        </h2>
         <p
           v-for="(paragraph, index) in modalData.sections.projectOverview.paragraphs"
           :key="index"
@@ -68,7 +71,10 @@
 
       <!-- My Role -->
       <section class="content-section" v-if="modalData.sections?.myRole" id="shadow-role">
-        <h2 class="section-title">{{ modalData.sections.myRole.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🗃️" type="3d" :size="48" />
+          {{ modalData.sections.myRole.title }}
+        </h2>
 
         <div class="role-subsection" v-if="modalData.sections.myRole.development">
           <h3 class="subsection-title">{{ modalData.sections.myRole.development.title }}</h3>
@@ -99,7 +105,10 @@
 
       <!-- Logo Design -->
       <section class="content-section" v-if="modalData.sections?.logoDesign" id="shadow-logo">
-        <h2 class="section-title">{{ modalData.sections.logoDesign.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🖌️" type="3d" :size="48" />
+          {{ modalData.sections.logoDesign.title }}
+        </h2>
         <!-- <p class="section-text">{{ modalData.sections.logoDesign.description }}</p> -->
         <div class="logo-evolution">
           <div class="logo-timeline">
@@ -132,7 +141,10 @@
         v-if="modalData.sections?.developmentContributions"
         id="shadow-dev-contrib"
       >
-        <h2 class="section-title">{{ modalData.sections.developmentContributions.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🧑‍💻" type="3d" :size="48" />
+          {{ modalData.sections.developmentContributions.title }}
+        </h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
@@ -141,10 +153,14 @@
                 <h3 class="feature-title">{{ feature.title }}</h3>
                 <p v-if="feature.subtitle" class="feature-subtitle">{{ feature.subtitle }}</p>
 
-                <h4 v-if="feature.problem" class="content-heading">📄 Problem</h4>
+                <h4 v-if="feature.problem" class="content-heading">
+                  <FluentEmoji emoji="🔒" type="3d" :size="24" /> Problem
+                </h4>
                 <p v-if="feature.problem" class="content-text">{{ feature.problem }}</p>
 
-                <h4 v-if="feature.solutions" class="content-heading">💡 Solution</h4>
+                <h4 v-if="feature.solutions" class="content-heading">
+                  <FluentEmoji emoji="🔓" type="3d" :size="24" /> Solution
+                </h4>
                 <ul v-if="feature.solutions" class="solution-list">
                   <li
                     v-for="(solution, solIndex) in feature.solutions"
@@ -154,7 +170,7 @@
                 </ul>
 
                 <p v-if="feature.note" class="feature-note">
-                  <span class="note-label">Note:</span> {{ feature.note }}
+                  {{ feature.note }}
                 </p>
               </div>
             </div>
@@ -192,7 +208,10 @@
         v-if="modalData.sections?.designContributions"
         id="shadow-design-contrib"
       >
-        <h2 class="section-title">{{ modalData.sections.designContributions.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🧑‍🎨" type="3d" :size="48" />
+          {{ modalData.sections.designContributions.title }}
+        </h2>
 
         <div
           v-for="(item, index) in modalData.sections.designContributions.items"
@@ -211,7 +230,10 @@
 
       <!-- Tech Stack -->
       <section class="content-section" v-if="modalData.sections?.techStack" id="shadow-tech">
-        <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🛠️" type="3d" :size="48" />
+          {{ modalData.sections.techStack.title }}
+        </h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
@@ -221,7 +243,10 @@
         v-if="modalData.sections?.performanceImpact"
         id="shadow-metrics"
       >
-        <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="📈" type="3d" :size="48" />
+          {{ modalData.sections.performanceImpact.title }}
+        </h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
@@ -231,7 +256,10 @@
         v-if="modalData.sections?.keyTakeaways"
         id="shadow-takeaways"
       >
-        <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="💡" type="3d" :size="48" />
+          {{ modalData.sections.keyTakeaways.title }}
+        </h2>
 
         <div
           v-for="(takeaway, index) in modalData.sections.keyTakeaways.takeaways"
@@ -259,6 +287,7 @@ import CodeBlock from '@/components/common/CodeBlock.vue'
 import MetricsGrid from '@/components/common/MetricsGrid.vue'
 import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
+import FluentEmoji from '@/components/common/FluentEmoji.vue'
 import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalShadow.json'
 import logo1 from '@/assets/images/works/shadow/logo1.png'
@@ -356,15 +385,15 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 
   try {
     gsap.set(textRef, {
-      x: -100,
+      y: 50,
       opacity: 0,
     })
 
     const scrollTriggerConfig = {
       trigger: textRef,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -375,7 +404,7 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
     }
 
     const animation = gsap.to(textRef, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -408,7 +437,7 @@ const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
 
   try {
     gsap.set(codeRef, {
-      x: 100,
+      y: 50,
       opacity: 0,
     })
 
@@ -416,8 +445,8 @@ const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
     const scrollTriggerConfig = {
       trigger: textRef,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -428,7 +457,7 @@ const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
     }
 
     const animation = gsap.to(codeRef, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -780,6 +809,9 @@ onUnmounted(() => {
   color: rgb(var(--white--1));
   margin: 0 0 30px 0;
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .section-text {
@@ -904,10 +936,6 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.feature-content {
-  margin-bottom: 30px;
-}
-
 .feature-text {
   display: flex;
   flex-direction: column;
@@ -928,8 +956,11 @@ onUnmounted(() => {
 }
 
 .content-heading {
-  font-size: var(--body--1--medium);
-  font-weight: var(--font-weight--semibold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--heading--1);
+  font-weight: var(--font-weight--medium);
   color: rgb(var(--white--1));
   margin: 24px 0 12px 0;
 }
@@ -945,7 +976,7 @@ onUnmounted(() => {
 .solution-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px 0;
+  margin: 0;
 }
 
 .solution-list li {
@@ -956,6 +987,10 @@ onUnmounted(() => {
   margin-bottom: 16px;
   padding-left: 24px;
   position: relative;
+}
+
+.solution-list li:last-child {
+  margin-bottom: 0;
 }
 
 .solution-list li::before {
@@ -1127,6 +1162,7 @@ onUnmounted(() => {
 
   .logo-evolution {
     margin-top: 30px;
+    padding: 10px 0;
   }
 
   .logo-timeline {
@@ -1167,8 +1203,7 @@ onUnmounted(() => {
   }
 
   .logo-label {
-    font-size: var(--caption--1);
-    line-height: 1.3;
+    display: none;
   }
 
   .demo-gif {

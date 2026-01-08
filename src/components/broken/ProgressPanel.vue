@@ -94,7 +94,9 @@
             </div>
 
             <div v-if="allFixed" class="completion-message">
-              <div class="completion-icon">🎉</div>
+              <div class="completion-icon">
+                <FluentEmoji emoji="👏" type="anim" :size="64" />
+              </div>
               <div class="completion-text">All issues found!</div>
               <div class="completion-subtext">Great detective work!</div>
             </div>
@@ -156,6 +158,7 @@ import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useBrokenPortfolio } from '@/composables/useBrokenPortfolio'
 import CommonButton from '@/components/common/CommonButton.vue'
 import ProgressBar from '@/components/common/ProgressBar.vue'
+import FluentEmoji from '@/components/common/FluentEmoji.vue'
 
 const { progress, totalIssues, allFixed, fixedIssues, resetProgress } = useBrokenPortfolio()
 
@@ -585,8 +588,9 @@ onUnmounted(() => {
 }
 
 .completion-icon {
-  font-size: 48px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .completion-text {

@@ -166,10 +166,6 @@ onUnmounted(() => {
   align-items: start;
 }
 
-.experience-item:hover {
-  background-color: rgb(var(--white--2));
-}
-
 .experience-date {
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);

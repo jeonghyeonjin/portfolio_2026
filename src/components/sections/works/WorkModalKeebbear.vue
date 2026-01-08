@@ -27,14 +27,20 @@
         v-if="modalData.sections?.projectOverview"
         id="keeb-overview"
       >
-        <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🧭" type="3d" :size="48" />
+          {{ modalData.sections.projectOverview.title }}
+        </h2>
         <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
         <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
       </section>
 
       <!-- Key Features -->
       <section class="content-section" v-if="modalData.sections?.keyFeatures" id="keeb-features">
-        <h2 class="section-title">{{ modalData.sections.keyFeatures.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="✨" type="3d" :size="48" />
+          {{ modalData.sections.keyFeatures.title }}
+        </h2>
 
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
@@ -48,7 +54,10 @@
                   <li v-for="(item, itemIndex) in feature.items.ko" :key="itemIndex">{{ item }}</li>
                 </ul>
               </div>
-              <div class="feature-image-wrapper">
+              <div
+                v-if="(index === 0 && !isMobile) || (index === 1 && !isMobile) || index === 2"
+                class="feature-image-wrapper"
+              >
                 <TypingDemo v-if="index === 0 && !isMobile" ref="typingDemoRef" />
                 <div v-else-if="index === 0 && isMobile" class="feature-placeholder-mobile">
                   <span>Typing Demo (Desktop Only)</span>
@@ -66,7 +75,10 @@
 
       <!-- Design Features -->
       <section class="content-section" v-if="modalData.sections?.designFeatures" id="keeb-design">
-        <h2 class="section-title">{{ modalData.sections.designFeatures.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🖌️" type="3d" :size="48" />
+          {{ modalData.sections.designFeatures.title }}
+        </h2>
 
         <div class="feature-block" ref="designFeatureBlockRef">
           <div class="feature-content">
@@ -98,7 +110,10 @@
         v-if="modalData.sections?.technicalHighlights"
         id="keeb-tech-highlights"
       >
-        <h2 class="section-title">{{ modalData.sections.technicalHighlights.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="⌨️" type="3d" :size="48" />
+          {{ modalData.sections.technicalHighlights.title }}
+        </h2>
 
         <template v-for="(techBlock, index) in modalData.techBlocks" :key="index">
           <div class="tech-block">
@@ -119,13 +134,19 @@
         v-if="modalData.sections?.componentArchitecture"
         id="keeb-architecture"
       >
-        <h2 class="section-title">{{ modalData.sections.componentArchitecture.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🔩" type="3d" :size="48" />
+          {{ modalData.sections.componentArchitecture.title }}
+        </h2>
         <TreeDiagram :data="componentArchitectureTree" />
       </section>
 
       <!-- Future Roadmap -->
       <section class="content-section" v-if="modalData.sections?.futureRoadmap" id="keeb-roadmap">
-        <h2 class="section-title">{{ modalData.sections.futureRoadmap.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🚀" type="3d" :size="48" />
+          {{ modalData.sections.futureRoadmap.title }}
+        </h2>
         <div v-for="(phase, index) in modalData.roadmap" :key="index" class="roadmap-block">
           <h4 class="roadmap-phase">{{ phase.phase }}</h4>
           <ul class="feature-list">
@@ -140,7 +161,10 @@
         v-if="modalData.sections?.technicalChallenges"
         id="keeb-challenges"
       >
-        <h2 class="section-title">{{ modalData.sections.technicalChallenges.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="💡" type="3d" :size="48" />
+          {{ modalData.sections.technicalChallenges.title }}
+        </h2>
 
         <div
           v-for="(challenge, index) in modalData.challenges"
@@ -148,8 +172,17 @@
           class="challenge-block"
         >
           <h3 class="challenge-title">{{ challenge.title }}</h3>
-          <p v-if="challenge.problem" class="section-text">{{ challenge.problem }}</p>
-          <p v-if="challenge.solution" class="section-text">{{ challenge.solution }}</p>
+
+          <h4 v-if="challenge.problem" class="content-heading">
+            <FluentEmoji emoji="🔒" type="3d" :size="24" /> Problem
+          </h4>
+          <p v-if="challenge.problem" class="content-text">{{ challenge.problem }}</p>
+
+          <h4 v-if="challenge.solution" class="content-heading">
+            <FluentEmoji emoji="🔓" type="3d" :size="24" /> Solution
+          </h4>
+          <p v-if="challenge.solution" class="content-text">{{ challenge.solution }}</p>
+
           <CodeBlock v-if="challenge.codeKey" :code="modalData.codeSnippets[challenge.codeKey]" />
           <ul v-if="challenge.items" class="feature-list">
             <li v-for="(item, itemIndex) in challenge.items" :key="itemIndex">{{ item }}</li>
@@ -163,19 +196,28 @@
         v-if="modalData.sections?.performanceMetrics"
         id="keeb-metrics"
       >
-        <h2 class="section-title">{{ modalData.sections.performanceMetrics.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="📈" type="3d" :size="48" />
+          {{ modalData.sections.performanceMetrics.title }}
+        </h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Tech Stack -->
       <section class="content-section" v-if="modalData.sections?.techStackSummary" id="keeb-tech">
-        <h2 class="section-title">{{ modalData.sections.techStackSummary.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🛠️" type="3d" :size="48" />
+          {{ modalData.sections.techStackSummary.title }}
+        </h2>
         <TechStackGrid :stacks="techStacks" theme="light" />
       </section>
 
       <!-- Key Takeaways -->
       <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="keeb-takeaways">
-        <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🧑‍💻" type="3d" :size="48" />
+          {{ modalData.sections.keyTakeaways.title }}
+        </h2>
 
         <div v-for="(takeaway, index) in modalData.takeaways" :key="index" class="takeaway-block">
           <h3 class="takeaway-title">{{ takeaway.title }}</h3>
@@ -200,6 +242,7 @@ import CodeBlock from '@/components/common/CodeBlock.vue'
 import MetricsGrid from '@/components/common/MetricsGrid.vue'
 import TechStackGrid from '@/components/common/TechStackGrid.vue'
 import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
+import FluentEmoji from '@/components/common/FluentEmoji.vue'
 import TypingDemo from './demos/TypingDemo.vue'
 import KeyboardTesterDemo from './demos/KeyboardTesterDemo.vue'
 import PixelBorderDemo from './demos/PixelBorderDemo.vue'
@@ -305,17 +348,17 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
   }
 
   try {
-    // 초기 상태: 오른쪽으로 이동하고 투명하게
+    // 초기 상태: 아래로 이동하고 투명하게
     gsap.set(demoElement, {
-      x: 100,
+      y: 50,
       opacity: 0,
     })
 
     const scrollTriggerConfig = {
       trigger: demoElement,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -326,9 +369,9 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
       return
     }
 
-    // 스크롤 트리거로 애니메이션
+    // 스크롤 트리거로 애니메이션 (아래에서 위로)
     const animation = gsap.to(demoElement, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -360,17 +403,17 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   }
 
   try {
-    // 초기 상태: 왼쪽으로 이동하고 투명하게
+    // 초기 상태: 아래로 이동하고 투명하게
     gsap.set(textRef, {
-      x: -100,
+      y: 50,
       opacity: 0,
     })
 
     const scrollTriggerConfig = {
       trigger: textRef,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -381,9 +424,9 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
       return
     }
 
-    // 스크롤 트리거로 애니메이션 (왼쪽에서 오른쪽으로)
+    // 스크롤 트리거로 애니메이션 (아래에서 위로)
     const animation = gsap.to(textRef, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -666,9 +709,15 @@ onUnmounted(() => {
   color: rgb(var(--gray--1));
   margin: 0 0 30px 0;
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .section-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);
   line-height: 1.7;
@@ -698,7 +747,7 @@ onUnmounted(() => {
 }
 
 .feature-title {
-  font-size: var(--body--1--normal);
+  font-size: var(--heading--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
   margin: 0 0 15px 0;
@@ -707,7 +756,6 @@ onUnmounted(() => {
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 15px 0;
 }
 
 .feature-list li {
@@ -716,20 +764,17 @@ onUnmounted(() => {
   line-height: 1.6;
   color: rgb(var(--gray--2));
   margin-bottom: 8px;
-  padding-left: 20px;
+  padding-left: 10px;
   position: relative;
 }
 
-/* Language distinction */
-.text-en {
-  opacity: 0.8;
-  margin-bottom: 24px;
-  font-size: 0.95em;
+.feature-list li:last-child {
+  margin-bottom: 0;
 }
 
 .text-ko {
   color: rgb(var(--gray--1));
-  font-weight: var(--font-weight--medium);
+  font-weight: var(--font-weight--regular);
 }
 
 .feature-image-wrapper {
@@ -756,7 +801,7 @@ onUnmounted(() => {
 }
 
 .tech-title {
-  font-size: var(--body--1--normal);
+  font-size: var(--heading--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
   margin: 0 0 15px 0;
@@ -795,10 +840,32 @@ onUnmounted(() => {
 }
 
 .challenge-title {
-  font-size: var(--body--1--normal);
+  font-size: var(--heading--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
   margin: 0 0 15px 0;
+}
+
+.content-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--heading--1);
+  font-weight: var(--font-weight--medium);
+  color: rgb(var(--gray--1));
+  margin: 24px 0 12px 0;
+}
+
+.content-heading:first-of-type {
+  margin-top: 0;
+}
+
+.content-text {
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--regular);
+  line-height: 1.7;
+  color: rgb(var(--gray--2));
+  margin: 0 0 16px 0;
 }
 
 /* Takeaway Blocks */
@@ -811,7 +878,7 @@ onUnmounted(() => {
 }
 
 .takeaway-title {
-  font-size: var(--body--1--normal);
+  font-size: var(--heading--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--gray--1));
   margin: 0 0 15px 0;

@@ -32,7 +32,11 @@
         v-if="modalData.sections?.projectOverview"
         id="tape-overview"
       >
-        <h2 class="section-title">{{ modalData.sections.projectOverview.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="📼" type="3d" :size="48" />{{
+            modalData.sections.projectOverview.title
+          }}
+        </h2>
         <p class="section-text text-ko">{{ modalData.sections.projectOverview.paragraphs.ko }}</p>
         <p class="section-text text-en">{{ modalData.sections.projectOverview.paragraphs.en }}</p>
         <!-- <div class="video-container">
@@ -67,7 +71,9 @@
 
       <!-- Tech Stack -->
       <section class="content-section" v-if="modalData.sections?.techStack" id="tape-tech">
-        <h2 class="section-title">{{ modalData.sections.techStack.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🛠️" type="3d" :size="48" />{{ modalData.sections.techStack.title }}
+        </h2>
         <TechStackGrid :stacks="techStacks" />
       </section>
 
@@ -77,7 +83,11 @@
         v-if="modalData.sections?.keyContributions"
         id="tape-features"
       >
-        <h2 class="section-title">{{ modalData.sections.keyContributions.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="🧑‍💻" type="3d" :size="48" />{{
+            modalData.sections.keyContributions.title
+          }}
+        </h2>
         <template v-for="(feature, index) in modalData.features" :key="index">
           <div class="feature-block" :ref="(el) => setFeatureBlockRef(el, index)">
             <div class="feature-content">
@@ -86,19 +96,30 @@
 
                 <template v-if="feature.scope">
                   <p class="section-text">
+                    <FluentEmoji emoji="🎯" type="3d" :size="24" />
                     <strong>{{ feature.scope.label }}</strong>
                   </p>
-                  <ul class="feature-list">
-                    <li
-                      v-for="(item, itemIndex) in feature.scope.items"
-                      :key="itemIndex"
-                      v-html="item"
-                    ></li>
-                  </ul>
+                  <table class="scope-table">
+                    <tbody>
+                      <tr
+                        v-for="(item, itemIndex) in feature.scope.items"
+                        :key="itemIndex"
+                        class="scope-row"
+                      >
+                        <td class="scope-title-cell">
+                          <strong>{{ item.title }}</strong>
+                        </td>
+                        <td class="scope-content-cell">
+                          {{ item.content }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </template>
 
                 <template v-if="feature.challenge">
                   <p class="section-text">
+                    <FluentEmoji emoji="🔒" type="3d" :size="24" />
                     <strong>{{ feature.challenge.label }}</strong>
                   </p>
                   <ul class="feature-list">
@@ -110,6 +131,7 @@
 
                 <template v-if="feature.solution">
                   <p class="section-text">
+                    <FluentEmoji emoji="🔓" type="3d" :size="24" />
                     <strong>{{ feature.solution.label }}</strong>
                   </p>
                   <ul class="feature-list">
@@ -123,6 +145,7 @@
 
                 <template v-if="feature.deliverables">
                   <p class="section-text">
+                    <FluentEmoji emoji="🗝️" type="3d" :size="24" />
                     <strong>{{ feature.deliverables.label }}</strong>
                   </p>
                   <ul class="feature-list">
@@ -134,10 +157,12 @@
 
                 <template v-if="feature.impact">
                   <p class="section-text">
+                    <FluentEmoji emoji="✨" type="3d" :size="24" />
                     <strong>{{ feature.impact.label }}</strong>
                   </p>
                   <ul class="feature-list">
                     <li v-for="(item, itemIndex) in feature.impact.items" :key="itemIndex">
+                      <FluentEmoji emoji="☑️" type="3d" :size="24" />
                       {{ item }}
                     </li>
                   </ul>
@@ -168,13 +193,19 @@
         v-if="modalData.sections?.performanceImpact"
         id="tape-metrics"
       >
-        <h2 class="section-title">{{ modalData.sections.performanceImpact.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="📈" type="3d" :size="48" />{{
+            modalData.sections.performanceImpact.title
+          }}
+        </h2>
         <MetricsGrid :metrics="performanceMetrics" />
       </section>
 
       <!-- Key Takeaways -->
       <section class="content-section" v-if="modalData.sections?.keyTakeaways" id="tape-takeaways">
-        <h2 class="section-title">{{ modalData.sections.keyTakeaways.title }}</h2>
+        <h2 class="section-title">
+          <FluentEmoji emoji="💡" type="3d" :size="48" />{{ modalData.sections.keyTakeaways.title }}
+        </h2>
 
         <div v-for="(takeaway, index) in modalData.takeaways" :key="index" class="takeaway-block">
           <h3 class="takeaway-title">{{ takeaway.title }}</h3>
@@ -203,6 +234,7 @@ import VideoDetailDemo from './demos/VideoDetailDemo.vue'
 import WorkModalTOC from '@/components/common/WorkModalTOC.vue'
 import worksData from '@/data/works.json'
 import modalData from '@/data/modals/WorkModalTape.json'
+import FluentEmoji from '@/components/common/FluentEmoji.vue'
 
 const workId = inject('workId', 4)
 
@@ -279,15 +311,15 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 
   try {
     gsap.set(textRef, {
-      x: -100,
+      y: 50,
       opacity: 0,
     })
 
     const scrollTriggerConfig = {
       trigger: textRef,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -298,7 +330,7 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
     }
 
     const animation = gsap.to(textRef, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -343,17 +375,17 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
   }
 
   try {
-    // 초기 상태: 오른쪽으로 이동하고 투명하게
+    // 초기 상태: 아래로 이동하고 투명하게
     gsap.set(demoElement, {
-      x: 100,
+      y: 50,
       opacity: 0,
     })
 
     const scrollTriggerConfig = {
       trigger: demoElement,
       scroller: modalOverlay,
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 90%',
+      end: 'top 60%',
       toggleActions: 'play none none reverse',
       invalidateOnRefresh: true,
     }
@@ -364,9 +396,9 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
       return
     }
 
-    // 스크롤 트리거로 애니메이션
+    // 스크롤 트리거로 애니메이션 (아래에서 위로)
     const animation = gsap.to(demoElement, {
-      x: 0,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: 'power2.out',
@@ -710,6 +742,9 @@ onUnmounted(() => {
 }
 
 .section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: var(--title--1);
   font-weight: var(--font-weight--bold);
   color: rgb(var(--white--1));
@@ -718,6 +753,9 @@ onUnmounted(() => {
 }
 
 .section-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: var(--headline--1);
   font-weight: var(--font-weight--bold);
   line-height: 1.7;
@@ -793,6 +831,7 @@ onUnmounted(() => {
 }
 
 .feature-list li {
+  gap: 8px;
   font-size: var(--body--1--normal);
   font-weight: var(--font-weight--regular);
   line-height: 1.6;
@@ -800,6 +839,54 @@ onUnmounted(() => {
   margin-bottom: 8px;
   padding-left: 20px;
   position: relative;
+}
+
+.scope-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.scope-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background-color 0.2s ease;
+}
+
+.scope-row:last-child {
+  border-bottom: none;
+}
+
+.scope-row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.scope-title-cell {
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--bold);
+  line-height: 1.6;
+  color: rgb(var(--white--1));
+  padding: 8px;
+  vertical-align: top;
+  width: 180px;
+  min-width: 180px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.scope-title-cell strong {
+  color: rgb(var(--white--1));
+  font-weight: var(--font-weight--bold);
+}
+
+.scope-content-cell {
+  font-size: var(--body--1--normal);
+  font-weight: var(--font-weight--regular);
+  line-height: 1.6;
+  color: rgb(var(--white--2));
+  padding: 8px;
+  vertical-align: top;
 }
 
 .feature-image-wrapper {
@@ -951,7 +1038,18 @@ p {
   }
 
   .feature-content {
+    grid-template-columns: 1fr 0.8fr;
     gap: 30px;
+  }
+
+  .scope-title-cell {
+    width: 130px;
+    min-width: 130px;
+    padding: 10px;
+  }
+
+  .scope-content-cell {
+    padding: 10px;
   }
 }
 
@@ -1001,6 +1099,22 @@ p {
   .section-text {
     font-size: var(--body--1--normal);
     font-weight: var(--font-weight--regular);
+  }
+
+  .scope-table {
+    border-radius: 8px;
+  }
+
+  .scope-title-cell {
+    width: 120px;
+    min-width: 120px;
+    padding: 12px;
+    font-size: var(--body--2--normal);
+  }
+
+  .scope-content-cell {
+    padding: 12px;
+    font-size: var(--body--2--normal);
   }
 
   .feature-block {

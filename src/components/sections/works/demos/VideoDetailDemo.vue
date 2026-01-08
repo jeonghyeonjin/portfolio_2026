@@ -150,7 +150,7 @@ const addRandomReaction = () => {
 
   // Remove after animation
   setTimeout(() => {
-    const idx = reactions.value.findIndex(r => r.id === id)
+    const idx = reactions.value.findIndex((r) => r.id === id)
     if (idx !== -1) reactions.value.splice(idx, 1)
   }, 2000)
 }
@@ -170,7 +170,7 @@ const addComment = () => {
     id: comments.value.length + 1,
     username: 'Me',
     timestamp: 'Just now',
-    text: newComment.value
+    text: newComment.value,
   })
   newComment.value = ''
 
@@ -191,7 +191,7 @@ const addComment = () => {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  aspect-ratio: 16/9;
+  aspect-ratio: 16/12;
   display: flex;
   flex-direction: column;
 }
@@ -448,9 +448,39 @@ const addComment = () => {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  overflow-x: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--gray--5), 0.4) rgba(var(--gray--0), 0.7);
+}
+
+/* Custom Scrollbar Styles */
+.comment-list::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.comment-list::-webkit-scrollbar-track {
+  background: rgba(var(--gray--0), 0.3);
+  border-radius: 4px;
+}
+
+.comment-list::-webkit-scrollbar-thumb {
+  background: rgba(var(--gray--5), 0.5);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.comment-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--gray--5), 0.7);
+}
+
+.comment-list::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .comment-item {

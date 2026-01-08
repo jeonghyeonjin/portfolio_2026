@@ -1,89 +1,74 @@
 {
   "sections": {
     "projectOverview": {
-      "title": "📌 Project Overview | 프로젝트 개요",
+      "title": "Project Overview",
       "paragraphs": {
         "ko": "KeeBBear는 기계식 키보드 애호가들을 위한 종합 웹 플랫폼입니다. 현재 타이핑 연습 시스템과 키보드 스위치 테스터를 제공하며, 향후 스위치 - 키캡 호환성 체크 시스템, 키보드 추천 프로그램, 타이핑 게임, 키보드 빌드 로그, 커뮤니티 기능으로 확장될 예정입니다.",
         "en": "KeeBBear is a comprehensive web platform for mechanical keyboard enthusiasts. Currently featuring a typing practice system and keyboard switch tester, with plans to expand into typing games, keyboard build logs, switch compatibility check system, keyboard recommendation program, and community features."
       }
     },
     "keyFeatures": {
-      "title": "🎯 Key Features | 주요 기능"
+      "title": "Key Features"
     },
     "designFeatures": {
-      "title": "🎨 Design Features | 디자인 특징"
+      "title": "Design Features"
     },
     "technicalHighlights": {
-      "title": "💻 Technical Highlights | 기술적 특징"
+      "title": "Technical Highlights"
     },
     "componentArchitecture": {
-      "title": "🎨 Component Architecture | 컴포넌트 아키텍처"
+      "title": "Component Architecture"
     },
     "futureRoadmap": {
-      "title": "🚀 Future Roadmap | 향후 개발 계획"
+      "title": "Future Roadmap"
     },
     "technicalChallenges": {
-      "title": "💡 Technical Challenges & Solutions | 기술적 과제 및 해결"
+      "title": "Technical Challenges & Solutions"
     },
     "performanceMetrics": {
-      "title": "📈 Performance Metrics | 성능 지표"
+      "title": "Performance Metrics"
     },
     "techStackSummary": {
-      "title": "🛠️ Tech Stack Summary | 기술 스택 요약"
+      "title": "Tech Stack Summary"
     },
     "keyTakeaways": {
-      "title": "👨‍💻 Key Takeaways | 핵심 요약"
+      "title": "Key Takeaways"
     }
   },
   "features": [
     {
-      "title": "1. Interactive Typing Practice | 인터랙티브 타이핑 연습",
+      "title": "Interactive Typing Practice",
       "items": {
         "en": [
           "Real-time CPM/WPM calculation and accuracy tracking",
           "Performance visualization with charts and statistics",
           "Login streak management for continuous improvement"
-        ],
-        "ko": [
-          "실시간 CPM/WPM 계산 및 정확도 추적",
-          "차트와 통계를 통한 성능 시각화",
-          "지속적인 향상을 위한 로그인 연속 기록 관리"
         ]
       }
     },
     {
-      "title": "2. Keyboard Switch Tester | 키보드 스위치 테스터",
+      "title": "Keyboard Switch Tester",
       "items": {
         "en": [
           "Real-time keypress detection and visualization",
           "Switch sound and feel simulation",
           "Testing interface for keyboard enthusiasts"
-        ],
-        "ko": [
-          "실시간 키 입력 감지 및 시각화",
-          "스위치 사운드 및 타감 시뮬레이션",
-          "키보드 애호가를 위한 테스트 인터페이스"
         ]
       }
     },
     {
-      "title": "3. User Profile & Progress Tracking | 사용자 프로필 및 진행도 추적",
+      "title": "User Profile & Progress Tracking",
       "items": {
         "en": [
           "Firebase-based authentication system",
           "Personal dashboard with performance history",
           "Achievement and milestone tracking"
-        ],
-        "ko": [
-          "Firebase 기반 인증 시스템",
-          "성능 기록이 포함된 개인 대시보드",
-          "성과 및 마일스톤 추적"
         ]
       }
     }
   ],
   "designFeature": {
-    "title": "Pixel Art Style Border | 픽셀아트 스타일 보더",
+    "title": "Pixel Art Style Border",
     "description": {
       "ko": "KeeBBear의 가장 특징적인 디자인 요소는 픽셀아트 게임에서 영감을 받은 보더 스타일입니다. CSS box-shadow를 활용하여 픽셀 단위의 정확한 보더 효과를 구현했습니다.",
       "en": "The most distinctive design element of KeeBBear is the border style inspired by pixel art games. Using CSS box-shadow, we implemented precise pixel-level border effects."
@@ -94,18 +79,12 @@
         "Customizable border width (2px, 4px, 6px, 10px)",
         "Hover effects with color transitions",
         "Retro gaming aesthetic throughout the UI"
-      ],
-      "ko": [
-        "픽셀 단위의 정확한 보더를 위한 다중 box-shadow 레이어",
-        "커스터마이징 가능한 보더 두께 (2px, 4px, 6px, 10px)",
-        "색상 전환을 포함한 호버 효과",
-        "UI 전반에 걸친 레트로 게임 미학"
       ]
     }
   },
   "techBlocks": [
     {
-      "title": "Frontend Architecture | 프론트엔드 아키텍처",
+      "title": "Frontend Architecture",
       "description": "Key Implementation Points:",
       "items": [
         "Vue 3 Composition API: Modular and reusable component logic",
@@ -115,7 +94,7 @@
       "treeKey": "vueEcosystemTree"
     },
     {
-      "title": "Backend & Infrastructure | 백엔드 및 인프라",
+      "title": "Backend & Infrastructure",
       "description": "Implementation:",
       "items": [
         "User authentication with email/password and social login",
@@ -126,7 +105,7 @@
       "treeKey": "firebaseTree"
     },
     {
-      "title": "Performance Optimization | 성능 최적화",
+      "title": "Performance Optimization",
       "items": [
         "Strategic resource preloading (fonts, images)",
         "Loading state management for smooth UX",
@@ -135,7 +114,7 @@
       "codeKey": "performanceCode"
     },
     {
-      "title": "Responsive Design | 반응형 디자인",
+      "title": "Responsive Design",
       "items": [
         "Mobile-first design approach",
         "Adaptive navigation (hamburger menu for mobile)",
@@ -146,39 +125,39 @@
   ],
   "roadmap": [
     {
-      "phase": "Phase 1: Current (완료)",
+      "phase": "Phase 1: Current",
       "items": [
-        "✅ Typing practice system",
-        "✅ Keyboard switch tester",
-        "✅ User authentication",
-        "✅ Performance tracking"
+        "Typing practice system",
+        "Keyboard switch tester",
+        "User authentication",
+        "Performance tracking"
       ]
     },
     {
-      "phase": "Phase 2: In Development (개발 중)",
+      "phase": "Phase 2: In Development",
       "items": [
-        "🔄 Typing game mode (Corrupt Type)",
-        "🔄 Keyboard recommendation program",
-        "🔄 Enhanced statistics visualization",
-        "🔄 Achievement system"
+        "Typing game mode (Corrupt Type)",
+        "Keyboard recommendation program",
+        "Enhanced statistics visualization",
+        "Achievement system"
       ]
     },
     {
-      "phase": "Phase 3: Planned (계획)",
+      "phase": "Phase 3: Planned",
       "items": [
-        "📋 Switch compatibility check system",
-        "📋 Keyboard build log system",
-        "📋 Community features",
-        "📋 Leaderboard & competitions",
-        "📋 Switch database & reviews"
+        "Switch compatibility check system",
+        "Keyboard build log system",
+        "Community features",
+        "Leaderboard & competitions",
+        "Switch database & reviews"
       ]
     }
   ],
   "challenges": [
     {
       "title": "Challenge 1: Real-time Typing Performance Calculation",
-      "problem": "문제: Accurate CPM/WPM calculation during typing without performance degradation",
-      "solution": "Solution:",
+      "problem": "Accurate CPM/WPM calculation during typing without performance degradation",
+      "solution": "Implemented optimized calculation strategies using Vue 3 reactivity system and debouncing techniques to ensure real-time performance tracking without impacting typing experience.",
       "items": [
         "Implemented debounced calculation using Vue 3 reactivity",
         "Optimized state updates to minimize re-renders",
@@ -187,7 +166,8 @@
     },
     {
       "title": "Challenge 2: Loading State Management",
-      "problem": "문제: Preventing layout shift and ensuring smooth initial load",
+      "problem": "Preventing layout shift and ensuring smooth initial load",
+      "solution": "Coordinated loading of critical resources (fonts, images, authentication) using Promise.all to ensure all assets are ready before rendering, preventing layout shifts and improving perceived performance.",
       "items": [
         "Coordinated loading of fonts, images, and authentication",
         "Progressive enhancement for better perceived performance"
@@ -196,7 +176,8 @@
     },
     {
       "title": "Challenge 3: Responsive Navigation Design",
-      "problem": "문제: Seamless navigation experience across devices",
+      "problem": "Seamless navigation experience across devices",
+      "solution": "Implemented adaptive navigation system that switches between horizontal navigation bar for desktop and hamburger menu for mobile, maintaining pixel-art theme consistency while optimizing for each device type.",
       "items": [
         "Desktop: Horizontal navigation bar with pixel-art theme",
         "Mobile: Hamburger menu with smooth transitions",

@@ -1,42 +1,75 @@
 {
   "sections": {
     "projectOverview": {
-      "title": "📌 Project Overview | 프로젝트 개요",
+      "title": "Project Overview",
       "paragraphs": {
         "ko": "Tape는 비동기 비디오 메시징 도구로, 회의의 번거로움 없이 작업을 명확하게 공유하고, 신중한 피드백을 교환하며, 작업을 완료할 수 있도록 도와줍니다. Tape의 인터랙티브 기능은 협업을 원활하고 더욱 생산적으로 만듭니다.",
         "en": "Tape is an asynchronous video messaging tool that helps you share your work with clarity, exchange thoughtful feedback, and accomplish tasks without the hassles of meetings. Tape's interactive features make collaboration seamless and extra-productive."
       }
     },
     "techStack": {
-      "title": "🛠️ Tech Stack Summary"
+      "title": "Tech Stack Summary"
     },
     "keyContributions": {
-      "title": "🎨 My Key Contributions"
+      "title": "My Key Contributions"
     },
     "performanceImpact": {
-      "title": "📈 Performance Impact"
+      "title": "Performance Impact"
     },
     "keyTakeaways": {
-      "title": "🎯 Why This Matters"
+      "title": "Why This Matters"
     }
   },
   "features": [
     {
-      "title": "🥇 디자인 총괄 | Design Director",
+      "title": "디자인 총괄 | Design Director",
       "scope": {
         "label": "Scope:",
         "items": [
-          "<strong>AI 자막/요약 UI:</strong> 언어 선택 다이얼로그, Translate/Regenerate 버튼, Summary Export",
-          "<strong>텍스트 클립:</strong> TipTap Script 에디터, 코드블락 스타일, 포커스/줄바꿈 처리",
-          "<strong>커스텀 토스트:</strong> Element UI notify → vue-toastification 전환, 중복 방지",
-          "<strong>온보딩 시스템:</strong> Welcome 페이지, 툴팁 위치 조정, Progress Bar, 라우팅 전환 체크",
-          "<strong>녹화 UI:</strong> 전체 레이아웃 수정, Record type 선택, 타이머 표시 위치 변경",
-          "<strong>채널/인박스:</strong> 채널 헤더 영역, 외부 접속 CTA, 템플릿 버튼, 채널 아이콘",
-          "<strong>게스트 로그인:</strong> 팝업 문구, 이메일 가입 정합성, 이름 변경, 다운로드 제한",
-          "<strong>Notification:</strong> 기본값 설정, 디자인 개선, 퀵 레코드 비활성화",
-          "<strong>모바일 최적화:</strong> 채널 헤더, 툴팁, 가로/세로 비디오 고정, 레이아웃 버그 수정",
-          "<strong>단축키:</strong> 방향키 추가, 팝업 동작 개선",
-          "<strong>기타 UI/UX:</strong> 미팅 제목, 브라우저 탭 이름, 사이드바 여백, 폰트 사이즈, z-index"
+          {
+            "title": "AI 자막/요약 UI",
+            "content": "언어 선택 다이얼로그, Translate/Regenerate 버튼, Summary Export"
+          },
+          {
+            "title": "텍스트 클립",
+            "content": "TipTap Script 에디터, 코드블락 스타일, 포커스/줄바꿈 처리"
+          },
+          {
+            "title": "커스텀 토스트",
+            "content": "Element UI notify → vue-toastification 전환, 중복 방지"
+          },
+          {
+            "title": "온보딩 시스템",
+            "content": "Welcome 페이지, 툴팁 위치 조정, Progress Bar, 라우팅 전환 체크"
+          },
+          {
+            "title": "녹화 UI",
+            "content": "전체 레이아웃 수정, Record type 선택, 타이머 표시 위치 변경"
+          },
+          {
+            "title": "채널/인박스",
+            "content": "채널 헤더 영역, 외부 접속 CTA, 템플릿 버튼, 채널 아이콘"
+          },
+          {
+            "title": "게스트 로그인",
+            "content": "팝업 문구, 이메일 가입 정합성, 이름 변경, 다운로드 제한"
+          },
+          {
+            "title": "Notification",
+            "content": "기본값 설정, 디자인 개선, 퀵 레코드 비활성화"
+          },
+          {
+            "title": "모바일 최적화",
+            "content": "채널 헤더, 툴팁, 가로/세로 비디오 고정, 레이아웃 버그 수정"
+          },
+          {
+            "title": "단축키",
+            "content": "방향키 추가, 팝업 동작 개선"
+          },
+          {
+            "title": "기타 UI/UX",
+            "content": "미팅 제목, 브라우저 탭 이름, 사이드바 여백, 폰트 사이즈, z-index"
+          }
         ]
       },
       "deliverables": {
@@ -52,14 +85,14 @@
       "impact": {
         "label": "Impact:",
         "items": [
-          "✅ 프로젝트 디자인 총괄",
-          "✅ UI 라이브러리 커스터마이징 능력",
-          "✅ 프로덕션 수준 반응형 디자인"
+          "프로젝트 디자인 총괄",
+          "UI 라이브러리 커스터마이징 능력",
+          "프로덕션 수준 반응형 디자인"
         ]
       }
     },
     {
-      "title": "🥈 이모지 피드백 개발 | Emoji Feedback System",
+      "title": "이모지 피드백 개발 | Emoji Feedback System",
       "challenge": {
         "label": "Challenge:",
         "items": [
@@ -82,16 +115,16 @@
       "impact": {
         "label": "Impact:",
         "items": [
-          "✅ 실시간 피드백 경험 개선",
-          "✅ 비디오 위 인터랙션 디자인 능력",
-          "✅ 접근성 고려 (게스트 사용자 지원)",
-          "✅ 시간 기반 필터링 로직 구현 (성능 최적화)"
+          "실시간 피드백 경험 개선",
+          "비디오 위 인터랙션 디자인 능력",
+          "접근성 고려 (게스트 사용자 지원)",
+          "시간 기반 필터링 로직 구현 (성능 최적화)"
         ]
       },
       "codeKey": "emojiCode"
     },
     {
-      "title": "🥉 다양한 클립 타입 지원 | Multiple Clip Types Support",
+      "title": "다양한 클립 타입 지원 | Multiple Clip Types Support",
       "challenge": {
         "label": "Challenge:",
         "items": [
@@ -115,9 +148,9 @@
       "impact": {
         "label": "Impact:",
         "items": [
-          "✅ 다양한 콘텐츠 타입 지원으로 플랫폼 확장성 확보",
-          "✅ 각 클립 타입별 최적화된 UI/UX 제공",
-          "✅ 외부 서비스 통합 및 에디터 구현 능력"
+          "다양한 콘텐츠 타입 지원으로 플랫폼 확장성 확보",
+          "각 클립 타입별 최적화된 UI/UX 제공",
+          "외부 서비스 통합 및 에디터 구현 능력"
         ]
       },
       "codeKey": "embedCode"
