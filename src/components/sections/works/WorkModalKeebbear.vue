@@ -319,7 +319,7 @@ const addRetryTimeout = (timeoutId) => {
 const setupDemoAnimation = (demoRef, retryCount = 0) => {
   if (!demoRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // Vue 컴포넌트인 경우 $el 사용, 일반 요소인 경우 직접 사용
@@ -387,7 +387,7 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -442,7 +442,7 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -516,7 +516,7 @@ const tocSections = [
 onMounted(() => {
   // Mockup animations and other setups
   if (mockupContainerRef.value && mockupWrapperRef.value && mockupVideoRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-container')
+    const modalOverlay = document.querySelector('.work-modal-wrapper')
 
     gsap.set(mockupWrapperRef.value, { scale: isMobile.value ? 5 : 7.5 })
 
@@ -619,6 +619,8 @@ onUnmounted(() => {
 .work-modal-content {
   width: 100%;
   min-height: 100vh;
+  /* 스크롤바 트랙 색상을 위한 CSS 변수 (기본 배경색) */
+  --modal-bg-color: rgb(var(--white--1));
 }
 
 .work-modal-header {

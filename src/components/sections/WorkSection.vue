@@ -127,11 +127,13 @@
       </div>
     </div>
     <!-- 원형 애니메이션 요소 -->
-    <div
-      ref="circleRevealRef"
-      class="circle-reveal"
-      :class="{ 'is-optimized': isFixed('work-modal-perf') }"
-    ></div>
+    <Teleport to="body">
+      <div
+        ref="circleRevealRef"
+        class="circle-reveal"
+        :class="{ 'is-optimized': isFixed('work-modal-perf') }"
+      ></div>
+    </Teleport>
     <!-- Work Modal -->
     <Teleport to="body">
       <WorkModal

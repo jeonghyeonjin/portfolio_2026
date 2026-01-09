@@ -61,6 +61,9 @@
 html {
   overflow-x: hidden;
   width: 100%;
+  /* 커스텀 스크롤바 스타일 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--gray--5s), 1) rgb(var(--white--1));
 }
 
 body {
@@ -92,6 +95,31 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* WebKit 브라우저용 스크롤바 스타일 */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgb(var(--white--1));
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(var(--gray--5s), 1);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--gray--5s), 0.8);
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* Focus styles for accessibility */

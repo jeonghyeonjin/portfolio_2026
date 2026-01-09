@@ -294,7 +294,7 @@ const addRetryTimeout = (timeoutId) => {
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -346,7 +346,7 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 const setupDemoAnimation = (demoRef, retryCount = 0) => {
   if (!demoRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // Vue 컴포넌트인 경우 $el 사용, 일반 요소인 경우 직접 사용
@@ -414,7 +414,7 @@ const setupDemoAnimation = (demoRef, retryCount = 0) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
   if (!blockRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -467,7 +467,7 @@ const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -532,7 +532,7 @@ const tocSections = [
 onMounted(() => {
   // Hero 이미지 스크롤 애니메이션
   if (heroImageContainerRef.value && heroImageWrapperRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-container')
+    const modalOverlay = document.querySelector('.work-modal-wrapper')
 
     gsap.set(heroImageWrapperRef.value, { scale: isMobile.value ? 7 : 8 })
 
@@ -633,6 +633,8 @@ onUnmounted(() => {
   width: 100%;
   min-height: 100vh;
   background-color: rgb(29, 41, 47);
+  /* 스크롤바 트랙 색상을 위한 CSS 변수 */
+  --modal-bg-color: rgb(29, 41, 47);
 }
 
 .work-modal-header {

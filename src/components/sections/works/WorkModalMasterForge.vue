@@ -640,6 +640,8 @@ onUnmounted(() => {
   background-color: #111;
   color: #f0f0f0;
   overflow: hidden;
+  /* 스크롤바 트랙 색상을 위한 CSS 변수 */
+  --modal-bg-color: #111;
 }
 
 .work-modal-body {

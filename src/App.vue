@@ -1,5 +1,8 @@
 <script setup>
-import { ref, provide, readonly } from 'vue'
+import { ref, provide, readonly, onMounted, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import PortfolioHeader from './components/header/PortfolioHeader.vue'
 import SiteNavigation from './components/navigation/SiteNavigation.vue'
 import HeroSection from './components/sections/HeroSection.vue'
@@ -7,6 +10,9 @@ import AboutSection from './components/sections/AboutSection.vue'
 import SkillSection from './components/sections/SkillSection.vue'
 import WorkSection from './components/sections/WorkSection.vue'
 import ExperienceSection from './components/sections/ExperienceSection.vue'
+
+// GSAP 플러그인 등록
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 
 // 페이지 로드 시 CSS 변수 초기화 (이전 세션의 값 제거)
 document.documentElement.style.removeProperty('--scrollbar-width')
@@ -34,27 +40,66 @@ provide('selectWork', (workId) => {
 provide('setSelectWorkCallback', (callback) => {
   selectWorkCallback.value = callback
 })
+
+// ScrollSmoother 인스턴스
+let smoother = null
+
+onMounted(() => {
+  // ScrollSmoother 생성
+  smoother = ScrollSmoother.create({
+    smooth: 1,
+    effects: true,
+    smoothTouch: 0.1, // 터치 디바이스에서도 부드러운 스크롤 (짧은 시간)
+    normalizeScroll: true, // 모바일 주소창 숨김/표시로 인한 점프 방지
+  })
+})
+
+onUnmounted(() => {
+  // ScrollSmoother 정리
+  if (smoother) {
+    smoother.kill()
+    smoother = null
+  }
+  // ScrollTrigger도 정리
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+})
 </script>
 
 <template>
   <a href="#main-content" class="skip-link">Skip to main content</a>
-  <div class="app-layout">
-    <h1 class="visually-hidden">Jeong Hyeon-jin - Portfolio</h1>
-    <header>
-      <SiteNavigation />
-      <PortfolioHeader />
-    </header>
-    <main id="main-content">
-      <HeroSection />
-      <SkillSection />
-      <WorkSection />
-      <ExperienceSection />
-      <AboutSection />
-    </main>
+  <header>
+    <SiteNavigation />
+    <PortfolioHeader />
+  </header>
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <div class="app-layout">
+        <h1 class="visually-hidden">Jeong Hyeon-jin - Portfolio</h1>
+
+        <main id="main-content">
+          <HeroSection />
+          <SkillSection />
+          <WorkSection />
+          <ExperienceSection />
+          <AboutSection />
+        </main>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* ScrollSmoother wrapper and content */
+#smooth-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+#smooth-content {
+  will-change: transform;
+}
+
 .app-layout {
   width: 100%;
   height: 100%;

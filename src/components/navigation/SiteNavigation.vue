@@ -965,7 +965,7 @@ onUnmounted(() => {
   position: fixed;
   top: 20px;
   left: 20px;
-  right: calc(20px + var(--scrollbar-width, 0px));
+  right: 20px;
   z-index: 1000;
   display: grid;
   grid-template-columns: 0.5fr 1fr 0.5fr;

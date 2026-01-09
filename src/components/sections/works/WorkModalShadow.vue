@@ -368,7 +368,7 @@ const addRetryTimeout = (timeoutId) => {
 const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
   if (!textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -420,7 +420,7 @@ const setupFeatureTextAnimation = (textRef, retryCount = 0) => {
 const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
   if (!codeRef || !textRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -473,7 +473,7 @@ const setupFeatureCodeAnimation = (codeRef, textRef, retryCount = 0) => {
 const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
   if (!blockRef) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -526,7 +526,7 @@ const setupFeatureBlockAnimation = (blockRef, index = 0, retryCount = 0) => {
 const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
   if (!block) return
 
-  const modalOverlay = document.querySelector('.work-modal-container')
+  const modalOverlay = document.querySelector('.work-modal-wrapper')
   if (!modalOverlay) return
 
   // 요소가 실제로 DOM에 있고 크기가 있는지 확인
@@ -579,7 +579,7 @@ const setupBlockAnimation = (block, index = 0, retryCount = 0) => {
 onMounted(() => {
   // Hero image scroll animation
   if (heroImageContainerRef.value && heroImageWrapperRef.value) {
-    const modalOverlay = document.querySelector('.work-modal-container')
+    const modalOverlay = document.querySelector('.work-modal-wrapper')
 
     if (modalOverlay && heroImageContainerRef.value) {
       try {
@@ -677,6 +677,8 @@ onUnmounted(() => {
   width: 100%;
   min-height: 100vh;
   background-color: rgb(var(--gray--0));
+  /* 스크롤바 트랙 색상을 위한 CSS 변수 */
+  --modal-bg-color: rgb(var(--gray--0));
 }
 
 .work-modal-header {
